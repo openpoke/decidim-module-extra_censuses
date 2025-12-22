@@ -12,17 +12,15 @@ module Decidim
           "number" => "Decidim::Elections::CustomCsvCensus::Types::Number"
         }.freeze
 
+        @cache = {}
+
         def self.find(name)
-          REGISTRY[name]&.constantize || Base
+          @cache[name] ||= REGISTRY[name]&.constantize || Base
         end
 
-        def self.validate(type_name, value)
-          find(type_name).validate(value)
-        end
+        def self.validate(type_name, value) = find(type_name).validate(value)
 
-        def self.transform(type_name, value)
-          find(type_name).transform(value)
-        end
+        def self.transform(type_name, value) = find(type_name).transform(value)
       end
     end
   end

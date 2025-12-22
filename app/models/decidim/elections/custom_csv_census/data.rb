@@ -5,6 +5,8 @@ module Decidim
     module CustomCsvCensus
       # Parses and processes CSV data for custom census.
       class Data
+        include ColumnAccessors
+
         attr_reader :file, :columns, :errors, :duplicates_removed, :headers
 
         def initialize(file, columns = [])
@@ -20,34 +22,15 @@ module Decidim
           @data ||= process
         end
 
-        def valid?
-          data && errors.empty?
-        end
+        def valid? = data && errors.empty?
 
-        def error_messages
-          errors.map { |e| ErrorPresenter.new(e).message }
-        end
+        def error_messages = errors.map { |e| ErrorPresenter.new(e).message }
 
-        def column_names
-          @columns_index.keys
-        end
+        def column_names = @columns_index.keys
 
         private
 
-        def normalize_columns(list)
-          return [] if list.blank?
-
-          list.map do |col|
-            {
-              "name" => col["name"] || col[:name],
-              "column_type" => col["column_type"] || col[:column_type] || "free_text"
-            }
-          end
-        end
-
-        def find_column(name)
-          @columns_index[name]
-        end
+        def find_column(name) = @columns_index[name]
 
         def process
           return [] if file.blank?
@@ -108,9 +91,10 @@ module Decidim
         end
 
         def transform_row(row)
-          row.stringify_keys.transform_values.with_index do |val, i|
-            col = find_column(row.keys[i])
-            col && val ? Types.transform(col["column_type"], val.to_s) : val
+          row.to_h do |key, val|
+            col = find_column(key.to_s)
+            transformed = col && val ? Types.transform(col["column_type"], val.to_s) : val
+            [key.to_s, transformed]
           end
         end
       end

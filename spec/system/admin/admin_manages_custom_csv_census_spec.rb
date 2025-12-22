@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe "Admin manages custom CSV census" do
+describe "Admin manages custom CSV census" do # rubocop:disable RSpec/DescribeClass
   let(:manifest_name) { "elections" }
   let(:participatory_process) { create(:participatory_process, organization:) }
   let(:current_component) { create(:component, participatory_space: participatory_process, manifest_name: "elections") }

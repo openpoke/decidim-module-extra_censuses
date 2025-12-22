@@ -7,6 +7,7 @@ module Decidim
         # Form for Custom CSV census configuration and file upload.
         class CustomCsvForm < Decidim::Form
           include Decidim::HasUploadValidations
+          include CustomCsvCensus::ColumnAccessors
 
           delegate :election, to: :context, allow_nil: true
 
@@ -21,7 +22,7 @@ module Decidim
           validate :validate_no_voters_for_changes
 
           def census_settings
-            cols = columns? ? normalize_columns : persisted_columns
+            cols = columns? ? normalize_columns(columns) : persisted_columns
             { "columns" => cols }
           end
 
@@ -44,39 +45,17 @@ module Decidim
             @csv_data = nil
           end
 
-          def columns?
-            columns.present?
-          end
+          def columns? = columns.present?
 
-          def available_column_types
-            Decidim::ExtraCensuses.column_types
-          end
+          def available_column_types = Decidim::ExtraCensuses.column_types
 
-          def file?
-            file.present?
-          end
+          def file? = file.present?
 
-          def has_voters?
-            election&.voters&.any?
-          end
+          def has_voters? = election&.voters&.exists?
 
-          def persisted_columns
-            election&.census_settings&.dig("columns") || []
-          end
+          def persisted_columns = election&.census_settings&.dig("columns") || []
 
           private
-
-          def column_name(col)
-            col["name"] || col[:name]
-          end
-
-          def column_type(col)
-            col["column_type"] || col[:column_type] || "free_text"
-          end
-
-          def normalize_columns
-            columns.map { |col| { "name" => column_name(col), "column_type" => column_type(col) } }
-          end
 
           def validate_columns
             columns.each_with_index do |col, index|

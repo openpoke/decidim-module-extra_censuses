@@ -6,11 +6,7 @@ module Decidim
       module Censuses
         # Helper methods for Custom CSV census views.
         module CustomCsvHelper
-          def custom_csv_column_types_config
-            Decidim::ExtraCensuses.column_types.index_with do |type|
-              t("decidim.elections.admin.censuses.custom_csv_form.column_types.#{type}")
-            end
-          end
+          include CustomCsvCensus::ColumnAccessors
 
           def custom_csv_column_types_options
             Decidim::ExtraCensuses.column_types.map do |type|
@@ -23,18 +19,12 @@ module Decidim
           end
 
           def format_custom_csv_column(column)
-            name = column["name"] || column[:name]
-            type = column["column_type"] || column[:column_type]
             type_label = t(
-              "decidim.elections.admin.censuses.custom_csv_form.column_types.#{type}",
-              default: type
+              "decidim.elections.admin.censuses.custom_csv_form.column_types.#{column_type(column)}",
+              default: column_type(column)
             )
 
-            "#{name} (#{type_label})"
-          end
-
-          def custom_csv_js_config(form)
-            { formPrefix: form.object_name }
+            "#{column_name(column)} (#{type_label})"
           end
         end
       end
