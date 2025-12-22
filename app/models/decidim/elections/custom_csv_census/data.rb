@@ -1,186 +1,117 @@
 # frozen_string_literal: true
 
-require "csv"
-
 module Decidim
   module Elections
     module CustomCsvCensus
-      # This class parses CSV data for the custom census type.
-      # It handles dynamic columns defined by the admin, applies transformations,
-      # validates data according to column types, and removes duplicates.
+      # Parses and processes CSV data for custom census.
       class Data
-        attr_reader :file, :column_config, :errors, :duplicates_removed
+        attr_reader :file, :columns, :errors, :duplicates_removed, :headers
 
-        def initialize(file, column_config = nil)
+        def initialize(file, columns = [])
           @file = file
-          @column_config = column_config || ColumnConfig.new([])
+          @columns = normalize_columns(columns)
+          @columns_index = @columns.index_by { |c| c["name"] }
           @errors = []
           @duplicates_removed = 0
+          @headers = []
         end
 
         def data
-          @data ||= parse_and_process_csv
+          @data ||= process
         end
 
         def valid?
-          data
-          @errors.empty?
-        end
-
-        def headers
-          @headers ||= []
+          data && errors.empty?
         end
 
         def error_messages
-          errors.map { |error| format_error(error) }
+          errors.map { |e| ErrorPresenter.new(e).message }
+        end
+
+        def column_names
+          @columns_index.keys
         end
 
         private
 
-        def format_error(error)
-          case error[:type]
-          when :csv_error
-            I18n.t("activemodel.errors.models.custom_csv.attributes.file.malformed_csv", message: error[:message])
-          when :header_error
-            key = error[:error] == :missing_columns ? :missing_columns : :extra_columns
-            I18n.t("activemodel.errors.models.custom_csv.attributes.file.#{key}", columns: error[:columns].join(", "))
-          when :validation_error
-            I18n.t("activemodel.errors.models.custom_csv.attributes.file.validation_error",
-                   row: error[:row], column: error[:column], error: error[:error])
-          else
-            error.to_s
+        def normalize_columns(list)
+          return [] if list.blank?
+
+          list.map do |col|
+            {
+              "name" => col["name"] || col[:name],
+              "column_type" => col["column_type"] || col[:column_type] || "free_text"
+            }
           end
         end
 
-        def parse_and_process_csv
+        def find_column(name)
+          @columns_index[name]
+        end
+
+        def process
           return [] if file.blank?
 
-          rows = parse_csv
-          return [] if rows.empty? || @errors.any?
+          rows, @headers = parse_csv
+          return [] if rows.empty? || errors.any?
           return [] unless validate_headers
 
           rows = validate_rows(rows)
-          return [] if @errors.any?
+          return [] if errors.any?
 
-          rows = transform_rows(rows)
-          remove_duplicates(rows)
-        end
-
-        def validate_headers
-          return true if column_config.columns.empty?
-
-          expected_columns = column_config.column_names
-          actual_columns = @headers.compact
-
-          missing = expected_columns - actual_columns
-          extra = actual_columns - expected_columns
-
-          if missing.any?
-            @errors << {
-              type: :header_error,
-              error: :missing_columns,
-              columns: missing
-            }
-          end
-
-          if extra.any?
-            @errors << {
-              type: :header_error,
-              error: :extra_columns,
-              columns: extra
-            }
-          end
-
-          @errors.empty?
+          transform_and_deduplicate(rows)
         end
 
         def parse_csv
-          rows = []
-          @headers = []
-          CSV.foreach(file, headers: true, col_sep: detect_separator, encoding: "BOM|UTF-8") do |row|
-            @headers = row.headers if @headers.empty?
-            rows << row.to_h
-          end
-          rows
+          CsvParser.parse(file)
         rescue CSV::MalformedCSVError => e
           @errors << { type: :csv_error, message: e.message }
-          []
+          [[], []]
         end
 
-        def transform_rows(rows)
-          return rows if column_config.columns.empty?
+        def validate_headers
+          return true if columns.empty?
 
-          rows.map do |row|
-            transformed = {}
-            row.each do |key, value|
-              column = column_config.find_column(key)
-              transformed[key] = column ? column.transform(value) : value
-            end
-            transformed
-          end
+          missing = column_names - @headers.compact
+          extra = @headers.compact - column_names
+
+          @errors << { type: :header_error, error: :missing_columns, columns: missing } if missing.any?
+          @errors << { type: :header_error, error: :extra_columns, columns: extra } if extra.any?
+          errors.empty?
         end
 
         def validate_rows(rows)
-          return rows if column_config.columns.empty?
+          return rows if columns.empty?
 
-          valid_rows = []
-          rows.each_with_index do |row, index|
-            row_errors = validate_row(row, index)
-            if row_errors.empty?
-              valid_rows << row
-            else
-              @errors.concat(row_errors)
-            end
+          rows.each_with_index.filter_map do |row, idx|
+            errs = validate_row(row, idx)
+            errs.empty? ? row : (@errors.concat(errs) && nil)
           end
-          valid_rows
         end
 
-        def validate_row(row, index)
-          row_errors = []
-          row.each do |key, value|
-            column = column_config.find_column(key)
-            next unless column
+        def validate_row(row, idx)
+          row.filter_map do |key, val|
+            col = find_column(key)
+            next unless col && val.present?
 
-            result = column.validate_value(value)
-            next if result[:valid]
-
-            row_errors << {
-              type: :validation_error,
-              row: index + 2, # +2 because of 0-index and header row
-              column: key,
-              error: result[:error],
-              value: value
-            }
+            error = Types.validate(col["column_type"], val.to_s)
+            { type: :validation_error, row: idx + 2, column: key, error: } if error
           end
-          row_errors
         end
 
-        def remove_duplicates(rows)
+        def transform_and_deduplicate(rows)
           seen = Set.new
-          unique_rows = []
-
-          rows.each do |row|
-            key = row.values.map(&:to_s).join("|")
-
-            if seen.include?(key)
-              @duplicates_removed += 1
-            else
-              seen.add(key)
-              unique_rows << row
-            end
+          rows.each_with_object([]) do |row, result|
+            transformed = transform_row(row)
+            seen.add?(transformed.values.hash) ? result << transformed : @duplicates_removed += 1
           end
-
-          unique_rows
         end
 
-        def detect_separator
-          file.rewind if file.respond_to?(:rewind)
-          first_line = file.readline
-          file.rewind if file.respond_to?(:rewind)
-          %W(; , \t).max_by { |sep| first_line.count(sep) }
-        rescue StandardError
-          file.rewind if file.respond_to?(:rewind)
-          ";"
+        def transform_row(row)
+          row.stringify_keys.transform_values.with_index do |val, i|
+            col = find_column(row.keys[i])
+            col && val ? Types.transform(col["column_type"], val.to_s) : val
+          end
         end
       end
     end

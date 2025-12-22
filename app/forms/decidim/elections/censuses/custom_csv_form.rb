@@ -22,11 +22,13 @@ module Decidim
 
           query = election.census.users(election)
 
-          column_names.each do |col_name|
-            value = census_data[col_name]&.strip
+          column_definitions.each do |col|
+            name = col["name"]
+            value = census_data[name]
             next if value.blank?
 
-            query = query.where("data->>? = ?", col_name, value)
+            transformed = CustomCsvCensus::Types.transform(col["column_type"], value.to_s)
+            query = query.where("data->>? = ?", name, transformed)
           end
 
           @census_user = query.first

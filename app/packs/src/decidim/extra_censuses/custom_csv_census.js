@@ -24,23 +24,24 @@ const updateHiddenFields = (columnsList, hiddenFields, formPrefix) => {
   });
 };
 
-/**
- * Submits column configuration via AJAX.
- * @param {HTMLFormElement} parentForm - The parent form element
- * @param {HTMLElement} hiddenFields - Container with hidden inputs
- * @param {string} formPrefix - Form field name prefix
- * @returns {void}
- */
-const submitColumns = (parentForm, hiddenFields, formPrefix) => {
+const clearUploadedFiles = (form) => {
+  form.querySelectorAll("input[type='file']").forEach((input) => {
+    input.value = "";
+  });
+  form.querySelectorAll("[data-active-uploads]").forEach((container) => {
+    container.innerHTML = "";
+  });
+  form.querySelectorAll("input[type='hidden'][name*='[file]']").forEach((input) => {
+    input.remove();
+  });
+};
+
+const submitColumns = (parentForm, hiddenFields) => {
+  clearUploadedFiles(parentForm);
+
   hiddenFields.querySelectorAll("input").forEach((input) => {
     parentForm.appendChild(input.cloneNode(true));
   });
-
-  const marker = document.createElement("input");
-  marker.type = "hidden";
-  marker.name = `${formPrefix}[columns_submitted]`;
-  marker.value = "true";
-  parentForm.appendChild(marker);
 
   fetch(parentForm.action, {
     method: "PATCH",
@@ -125,7 +126,7 @@ const initColumnBuilder = ({ container, config, columns, suffix = "" }) => {
 
   const initialColumns = columns.length
     ? columns
-    : [{ name: "", column_type: "free_text" }];
+    : [{ name: "", column_type: "free_text" }]; // eslint-disable-line camelcase
 
   initialColumns.forEach((col) => {
     addColumnRow({
@@ -133,7 +134,7 @@ const initColumnBuilder = ({ container, config, columns, suffix = "" }) => {
       hiddenFields,
       config,
       name: col.name,
-      type: col.column_type
+      type: col.column_type // eslint-disable-line camelcase
     });
   });
 
@@ -144,7 +145,7 @@ const initColumnBuilder = ({ container, config, columns, suffix = "" }) => {
   if (saveBtn && parentForm) {
     saveBtn.addEventListener("click", (event) => {
       event.preventDefault();
-      submitColumns(parentForm, hiddenFields, config.formPrefix);
+      submitColumns(parentForm, hiddenFields);
     });
   }
 };

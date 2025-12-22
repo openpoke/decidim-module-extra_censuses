@@ -12,23 +12,25 @@ module Decidim
 
           attribute :file, Decidim::Attributes::Blob
           attribute :columns, [Hash]
-          attribute :columns_submitted, Decidim::AttributeObject::Model::Boolean, default: false
           attribute :remove_all, Decidim::AttributeObject::Model::Boolean, default: false
 
           validates :file, file_content_type: { allow: %w(text/csv text/plain) }, if: :file?
 
-          validate :validate_columns, if: :configuring_columns?
+          validate :validate_columns, if: :columns?
           validate :validate_csv_data, if: :file?
           validate :validate_no_voters_for_changes
 
           def census_settings
-            return { "columns" => saved_columns } unless columns_submitted?
-
-            { "columns" => normalize_columns }
+            cols = columns? ? normalize_columns : persisted_columns
+            { "columns" => cols }
           end
 
           def data
             csv_data&.data || []
+          end
+
+          def effective_columns
+            columns.presence || persisted_columns
           end
 
           def csv_data
@@ -36,26 +38,14 @@ module Decidim
             return nil if file.blank?
 
             file_io = StringIO.new(file.download)
-            @csv_data = CustomCsvCensus::Data.new(file_io, column_config)
+            @csv_data = CustomCsvCensus::Data.new(file_io, effective_columns)
           rescue CSV::MalformedCSVError
             errors.add(:file, :malformed)
             @csv_data = nil
           end
 
-          def column_config
-            @column_config ||= CustomCsvCensus::ColumnConfig.new(effective_columns)
-          end
-
-          def effective_columns
-            columns.presence || saved_columns
-          end
-
-          def saved_columns
-            election&.census_settings&.dig("columns") || []
-          end
-
-          def columns_configured?
-            saved_columns.present?
+          def columns?
+            columns.present?
           end
 
           def available_column_types
@@ -66,41 +56,37 @@ module Decidim
             file.present?
           end
 
-          def configuring_columns?
-            columns_submitted? && !file?
-          end
-
-          def columns_submitted?
-            columns_submitted == true
-          end
-
           def has_voters?
             election&.voters&.any?
           end
 
+          def persisted_columns
+            election&.census_settings&.dig("columns") || []
+          end
+
           private
 
+          def column_name(col)
+            col["name"] || col[:name]
+          end
+
+          def column_type(col)
+            col["column_type"] || col[:column_type] || "free_text"
+          end
+
           def normalize_columns
-            columns.map do |col|
-              {
-                "name" => col[:name] || col["name"],
-                "column_type" => col[:column_type] || col["column_type"] || "free_text"
-              }
-            end
+            columns.map { |col| { "name" => column_name(col), "column_type" => column_type(col) } }
           end
 
           def validate_columns
             columns.each_with_index do |col, index|
-              name = col[:name] || col["name"]
-              column_type = col[:column_type] || col["column_type"]
-
-              errors.add(:columns, :blank_name, index: index + 1) if name.blank?
-              errors.add(:columns, :invalid_type, index: index + 1, type: column_type) unless available_column_types.include?(column_type)
+              errors.add(:columns, :blank_name, index: index + 1) if column_name(col).blank?
+              errors.add(:columns, :invalid_type, index: index + 1, type: column_type(col)) unless available_column_types.include?(column_type(col))
             end
           end
 
           def validate_csv_data
-            return errors.add(:file, :columns_not_configured) unless columns_configured?
+            return errors.add(:file, :columns_not_configured) unless effective_columns.present?
             return if csv_data&.valid?
 
             csv_data&.error_messages&.each { |msg| errors.add(:file, msg) }
@@ -108,14 +94,10 @@ module Decidim
 
           def validate_no_voters_for_changes
             return unless has_voters?
-            return if remove_all?
+            return if remove_all
 
             errors.add(:file, :voters_exist) if file?
-            errors.add(:columns, :voters_exist) if columns_submitted?
-          end
-
-          def remove_all?
-            remove_all == true
+            errors.add(:columns, :voters_exist) if columns?
           end
         end
       end
