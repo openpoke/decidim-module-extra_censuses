@@ -1,6 +1,59 @@
 ---
 en:
+  activemodel:
+    attributes:
+      custom_csv:
+        columns: Columns
+        file: File
+        remove_all: Remove all current census data
+    errors:
+      models:
+        custom_csv:
+          attributes:
+            columns:
+              blank_name: Column %{index} must have a name
+              invalid_type: 'Column %{index} has invalid type: %{type}'
+              voters_exist: Cannot change configuration while census data exists.
+                Remove existing data first.
+            file:
+              columns_not_configured: Please configure columns first
+              extra_columns: 'Unexpected columns in CSV: %{columns}. Please use only
+                the configured columns.'
+              malformed_csv: 'The CSV file is malformed: %{message}'
+              missing_columns: 'Missing columns in CSV: %{columns}'
+              validation_error: 'Row %{row}, column ''%{column}'': %{error}'
+              voters_exist: Cannot upload file while census data exists. Remove existing
+                data first.
   decidim:
-    components:
-      extra_censuses:
-        name: ExtraCensuses
+    elections:
+      admin:
+        censuses:
+          custom_csv_form:
+            cancel: Cancel
+            census_attributes: Census attributes
+            column_name: 'Column name:'
+            column_type: 'Column type:'
+            column_types:
+              alphanumeric: A-Z 0-9 only text
+              date: Date
+              free_text: Free text input
+              number: Number
+              text_trim: Text (trim spaces)
+            current_configuration: Current configuration
+            description: Built your own census with custom attributes. The main requirement
+              is that the combination of attributes must be unique (no 2 rows can
+              have the exact combination)
+            edit_columns: Edit columns
+            new_column: "+ New column"
+            remove_before_upload: If you want to upload a new census or change the
+              configuration, you must first remove the existing data.
+            save_configuration: Save configuration
+            upload_description_html: Must be a file in CSV format with the columns
+              defined above. It must be separated with a semicolon (;)
+            upload_file: Upload file
+            upload_title: Upload a CSV file
+      censuses:
+        custom_csv:
+          label: Custom CSV
+        custom_csv_form:
+          invalid: The provided data does not match any registered voter

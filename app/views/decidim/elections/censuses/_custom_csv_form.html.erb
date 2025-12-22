@@ -1,0 +1,8 @@
+<% form.object.column_definitions.each do |column| %>
+  <%= form.text_field "census_data[#{column["name"]}]",
+                      label: column["name"].humanize,
+                      required: true,
+                      autofocus: column == form.object.column_definitions.first %>
+<% end %>
+
+<%= render "decidim/elections/censuses/submit_button", form: form %>

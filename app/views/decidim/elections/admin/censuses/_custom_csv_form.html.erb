@@ -1,0 +1,104 @@
+<% append_javascript_pack_tag "decidim_extra_censuses" %>
+
+<%
+  saved_columns = form.object.saved_columns
+  columns_configured = form.object.columns_configured?
+  has_voters = census_count(election).positive?
+  t_scope = "decidim.elections.admin.censuses.custom_csv_form"
+  js_config = custom_csv_js_config(form)
+%>
+
+<% if has_voters %>
+  <div class="row column">
+    <div class="callout secondary mb-4">
+      <div class="font-semibold mb-1"><%= t("#{t_scope}.current_configuration") %></div>
+      <div class="text-sm"><%= format_custom_csv_columns(saved_columns) %></div>
+    </div>
+  </div>
+
+  <div class="row column mb-4 font-semibold border p-4 rounded w-1/2">
+    <%= form.check_box :remove_all, help_text: t("#{t_scope}.remove_before_upload") %>
+  </div>
+
+<% elsif columns_configured %>
+  <div data-custom-csv-census
+       data-config="<%= js_config.to_json %>"
+       data-saved-columns="<%= saved_columns.to_json %>"
+       data-configured="true">
+
+    <div class="row column">
+      <div class="callout secondary mb-4 flex justify-between items-start gap-4">
+        <div>
+          <div class="font-semibold mb-1"><%= t("#{t_scope}.current_configuration") %></div>
+          <div class="text-sm"><%= format_custom_csv_columns(saved_columns) %></div>
+        </div>
+        <button type="button" id="toggle-edit-btn" class="p-1 text-gray-2 hover:text-secondary" title="<%= t("#{t_scope}.edit_columns") %>">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M15.7279 9.57629L14.3137 8.16207L5 17.4758V18.89H6.41421L15.7279 9.57629ZM17.1421 8.16207L18.5563 6.74786L17.1421 5.33365L15.7279 6.74786L17.1421 8.16207ZM7.24264 20.89H3V16.6474L16.435 3.21233C16.8256 2.8218 17.4587 2.8218 17.8492 3.21233L20.6777 6.04075C21.0682 6.43128 21.0682 7.06444 20.6777 7.45497L7.24264 20.89Z"></path></svg>
+        </button>
+      </div>
+
+      <div id="column-editor-section" class="hidden mb-6">
+        <div class="font-semibold text-lg mb-4"><%= t("#{t_scope}.census_attributes") %></div>
+        <div id="columns-list-edit" class="mb-4"></div>
+        <div class="flex gap-4 items-center mb-4">
+          <button type="button" id="add-column-btn-edit" class="button button__sm button__secondary">
+            <%= t("#{t_scope}.new_column") %>
+          </button>
+        </div>
+        <div id="hidden-fields-edit"></div>
+        <button type="button" id="save-columns-edit-btn" class="button button__sm button__secondary">
+          <%= t("#{t_scope}.save_configuration") %>
+        </button>
+      </div>
+
+      <div id="upload-section">
+        <div class="row column font-semibold pb-4"><%= t("#{t_scope}.upload_title") %></div>
+        <div class="row column">
+          <p class="mb-2"><%= t("#{t_scope}.upload_description_html") %></p>
+          <% column_names = saved_columns.map { |c| c["name"] } %>
+          <% example_values = column_names.each_with_index.map { |_, i| "value#{i + 1}" } %>
+          <pre class="code-block"><%= column_names.join(";") %>
+<%= example_values.join(";") %></pre>
+        </div>
+        <div class="row column">
+          <div class="font-semibold">
+            <%= form.upload :file,
+                  button_label: t("#{t_scope}.upload_file"),
+                  help_i18n_scope: "decidim.admin.forms.file_help.import_csv",
+                  button_class: "button button__sm button__transparent-secondary",
+                  required: true %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<% else %>
+  <div data-custom-csv-census
+       data-config="<%= js_config.to_json %>"
+       data-saved-columns="[]"
+       data-configured="false">
+
+    <div class="row column">
+      <p class="mb-6"><%= t("#{t_scope}.description") %></p>
+
+      <div class="font-semibold text-lg mb-4"><%= t("#{t_scope}.census_attributes") %></div>
+
+      <div id="columns-list" class="mb-4"></div>
+
+      <div class="flex gap-4 items-center">
+        <button type="button" id="add-column-btn" class="button button__sm button__secondary">
+          <%= t("#{t_scope}.new_column") %>
+        </button>
+      </div>
+
+      <div id="hidden-fields"></div>
+
+      <div class="mt-6 pt-4 border-t border-gray-3">
+        <button type="button" class="button button__sm button__secondary" id="save-columns-btn">
+          <%= t("#{t_scope}.save_configuration") %>
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>
