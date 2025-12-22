@@ -1,7 +1,7 @@
 /**
  * Custom CSV Census column builder for Decidim Elections.
- * Handles dynamic column configuration and CSV file upload.
  */
+import icon from "src/decidim/refactor/moved/icon";
 
 /**
  * Creates hidden input fields for form submission.
@@ -54,11 +54,6 @@ const submitColumns = (parentForm, hiddenFields) => {
 /**
  * Adds a column row to the builder.
  * @param {Object} options - Row options
- * @param {HTMLElement} options.columnsList - Container for column rows
- * @param {HTMLElement} options.hiddenFields - Container for hidden inputs
- * @param {Object} options.config - Configuration object with labels and types
- * @param {string} options.name - Existing column name
- * @param {string} options.type - Existing column type
  * @returns {void}
  */
 const addColumnRow = ({ columnsList, hiddenFields, config, name = "", type = "free_text" }) => {
@@ -86,18 +81,19 @@ const addColumnRow = ({ columnsList, hiddenFields, config, name = "", type = "fr
     </div>
     <div class="flex items-center pb-1">
       <button type="button" class="delete-column-btn p-2 text-gray-2 hover:text-alert rounded" title="Delete">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-          <path d="M17 6H22V8H20V21C20 21.5523 19.5523 22 19 22H5C4.44772 22 4 21.5523 4 21V8H2V6H7V3C7 2.44772 7.44772 2 8 2H16C16.5523 2 17 2.44772 17 3V6ZM18 8H6V20H18V8ZM9 11H11V17H9V11ZM13 11H15V17H13V11ZM9 4V6H15V4H9Z"></path>
-        </svg>
+        ${icon("delete-bin-line", { width: 18, height: 18 })}
       </button>
     </div>
   `;
 
+  const nameInput = row.querySelector(".column-name");
+  const typeSelect = row.querySelector(".column-type");
+  const deleteBtn = row.querySelector(".delete-column-btn");
   const updateHidden = () => updateHiddenFields(columnsList, hiddenFields, config.formPrefix);
 
-  row.querySelector(".column-name").addEventListener("input", updateHidden);
-  row.querySelector(".column-type").addEventListener("change", updateHidden);
-  row.querySelector(".delete-column-btn").addEventListener("click", () => {
+  nameInput.addEventListener("input", updateHidden);
+  typeSelect.addEventListener("change", updateHidden);
+  deleteBtn.addEventListener("click", () => {
     row.remove();
     updateHidden();
   });
@@ -109,10 +105,6 @@ const addColumnRow = ({ columnsList, hiddenFields, config, name = "", type = "fr
 /**
  * Initializes the column builder UI.
  * @param {Object} options - Builder options
- * @param {HTMLElement} options.container - Main container element
- * @param {Object} options.config - Configuration object
- * @param {Array} options.columns - Existing columns array
- * @param {string} options.suffix - Element ID suffix
  * @returns {void}
  */
 const initColumnBuilder = ({ container, config, columns, suffix = "" }) => {
