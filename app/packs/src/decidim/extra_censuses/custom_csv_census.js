@@ -77,11 +77,11 @@ const addColumnRow = ({ columnsList, hiddenFields, config, name = "", type = "fr
     </div>
     <div class="flex-1">
       <label class="block font-medium mb-2 text-gray-2">${config.labels.columnType}</label>
-      <select class="column-type w-full">${typeOptions}</select>
+      <select class="column-type w-full" title="${config.labels.columnType}">${typeOptions}</select>
     </div>
     <div class="flex items-center pb-1">
       <button type="button" class="delete-column-btn p-2 text-gray-2 hover:text-alert rounded" title="Delete">
-        ${icon("delete-bin-line", { width: 18, height: 18 })}
+        ${icon("delete-bin-line", { class: "w-4 h-4 fill-current" })}
       </button>
     </div>
   `;

@@ -86,7 +86,7 @@ module Decidim
           end
 
           def validate_csv_data
-            return errors.add(:file, :columns_not_configured) unless effective_columns.present?
+            return errors.add(:file, :columns_not_configured) if effective_columns.blank?
             return if csv_data&.valid?
 
             csv_data&.error_messages&.each { |msg| errors.add(:file, msg) }
