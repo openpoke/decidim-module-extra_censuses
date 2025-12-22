@@ -12,6 +12,12 @@ module Decidim
             end
           end
 
+          def custom_csv_column_types_options
+            Decidim::ExtraCensuses.column_types.map do |type|
+              [t("decidim.elections.admin.censuses.custom_csv_form.column_types.#{type}"), type]
+            end
+          end
+
           def format_custom_csv_columns(columns)
             columns.map { |col| format_custom_csv_column(col) }.join(", ")
           end
@@ -28,14 +34,7 @@ module Decidim
           end
 
           def custom_csv_js_config(form)
-            {
-              formPrefix: form.object_name,
-              columnTypes: custom_csv_column_types_config,
-              labels: {
-                columnName: t("decidim.elections.admin.censuses.custom_csv_form.column_name"),
-                columnType: t("decidim.elections.admin.censuses.custom_csv_form.column_type")
-              }
-            }
+            { formPrefix: form.object_name }
           end
         end
       end

@@ -40,6 +40,7 @@ en:
               number: Number
               text_trim: Text (trim spaces)
             current_configuration: Current configuration
+            delete: Delete
             description: Built your own census with custom attributes. The main requirement
               is that the combination of attributes must be unique (no 2 rows can
               have the exact combination)

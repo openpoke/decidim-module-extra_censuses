@@ -5,8 +5,13 @@
   columns_configured = current_columns.any?
   has_voters = census_count(election).positive?
   t_scope = "decidim.elections.admin.censuses.custom_csv_form"
-  js_config = custom_csv_js_config(form)
+  form_prefix = form.object_name
+  column_types_options = custom_csv_column_types_options
 %>
+
+<template id="column-row-template">
+  <%= render "decidim/elections/admin/censuses/column_row", column_types_options: column_types_options %>
+</template>
 
 <% if has_voters %>
   <div class="row column">
@@ -21,11 +26,7 @@
   </div>
 
 <% elsif columns_configured %>
-  <div data-custom-csv-census
-       data-config="<%= js_config.to_json %>"
-       data-saved-columns="<%= current_columns.to_json %>"
-       data-configured="true">
-
+  <div data-custom-csv-census data-form-prefix="<%= form_prefix %>" data-configured="true">
     <div class="row column">
       <div class="callout secondary mb-4 flex justify-between items-start gap-4">
         <div>
@@ -33,13 +34,17 @@
           <div class="text-sm"><%= format_custom_csv_columns(current_columns) %></div>
         </div>
         <button type="button" id="toggle-edit-btn" class="p-1 text-gray-2 hover:text-secondary" title="<%= t("#{t_scope}.edit_columns") %>">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M15.7279 9.57629L14.3137 8.16207L5 17.4758V18.89H6.41421L15.7279 9.57629ZM17.1421 8.16207L18.5563 6.74786L17.1421 5.33365L15.7279 6.74786L17.1421 8.16207ZM7.24264 20.89H3V16.6474L16.435 3.21233C16.8256 2.8218 17.4587 2.8218 17.8492 3.21233L20.6777 6.04075C21.0682 6.43128 21.0682 7.06444 20.6777 7.45497L7.24264 20.89Z"></path></svg>
+          <%= icon "pencil-line", class: "w-5 h-5 fill-current" %>
         </button>
       </div>
 
       <div id="column-editor-section" class="hidden mb-6">
         <div class="font-semibold text-lg mb-4"><%= t("#{t_scope}.census_attributes") %></div>
-        <div id="columns-list-edit" class="mb-4"></div>
+        <div id="columns-list-edit" class="mb-4">
+          <% current_columns.each do |col| %>
+            <%= render "decidim/elections/admin/censuses/column_row", column_types_options: column_types_options, column_name: col["name"] || col[:name], column_type: col["column_type"] || col[:column_type] %>
+          <% end %>
+        </div>
         <div class="flex gap-4 items-center mb-4">
           <button type="button" id="add-column-btn-edit" class="button button__sm button__secondary">
             <%= t("#{t_scope}.new_column") %>
@@ -74,17 +79,15 @@
   </div>
 
 <% else %>
-  <div data-custom-csv-census
-       data-config="<%= js_config.to_json %>"
-       data-saved-columns="[]"
-       data-configured="false">
-
+  <div data-custom-csv-census data-form-prefix="<%= form_prefix %>" data-configured="false">
     <div class="row column">
       <p class="mb-6"><%= t("#{t_scope}.description") %></p>
 
       <div class="font-semibold text-lg mb-4"><%= t("#{t_scope}.census_attributes") %></div>
 
-      <div id="columns-list" class="mb-4"></div>
+      <div id="columns-list" class="mb-4">
+        <%= render "decidim/elections/admin/censuses/column_row", column_types_options: column_types_options %>
+      </div>
 
       <div class="flex gap-4 items-center">
         <button type="button" id="add-column-btn" class="button button__sm button__secondary">
