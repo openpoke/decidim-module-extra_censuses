@@ -19,19 +19,21 @@ module Decidim
 
         def census_user
           return @census_user if defined?(@census_user)
+          return @census_user = nil if census_data.blank?
 
           query = election.census.users(election)
+          has_criteria = false
 
           column_definitions.each do |col|
-            name = col["name"]
-            value = census_data[name]
+            value = census_data[col["name"].to_sym]
             next if value.blank?
 
+            has_criteria = true
             transformed = CustomCsvCensus::Types.transform(col["column_type"], value.to_s)
-            query = query.where("data->>? = ?", name, transformed)
+            query = query.where("data->>? = ?", col["name"], transformed)
           end
 
-          @census_user = query.first
+          @census_user = has_criteria ? query.first : nil
         end
 
         def column_names

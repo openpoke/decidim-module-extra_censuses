@@ -2,6 +2,14 @@
  * Custom CSV Census column builder for Decidim Elections.
  */
 
+const createHiddenInput = (name, value) => {
+  const input = document.createElement("input");
+  input.type = "hidden";
+  input.name = name;
+  input.value = value;
+  return input;
+};
+
 const updateHiddenFields = (columnsList, hiddenFields, formPrefix) => {
   hiddenFields.innerHTML = "";
 
@@ -9,10 +17,12 @@ const updateHiddenFields = (columnsList, hiddenFields, formPrefix) => {
     const name = row.querySelector(".column-name").value;
     const type = row.querySelector(".column-type").value;
 
-    hiddenFields.insertAdjacentHTML("beforeend", `
-      <input type="hidden" name="${formPrefix}[columns][${index}][name]" value="${name}">
-      <input type="hidden" name="${formPrefix}[columns][${index}][column_type]" value="${type}">
-    `);
+    hiddenFields.appendChild(
+      createHiddenInput(`${formPrefix}[columns][${index}][name]`, name)
+    );
+    hiddenFields.appendChild(
+      createHiddenInput(`${formPrefix}[columns][${index}][column_type]`, type)
+    );
   });
 };
 
