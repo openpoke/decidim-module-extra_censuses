@@ -6,7 +6,9 @@ locales: [en]
 ignore_unused:
   - "decidim.components.extra_censuses.name"
   - "decidim.elections.admin.censuses.custom_csv_form.*"
+  - "decidim.elections.admin.census_updates.*"
   - "decidim.elections.censuses.custom_csv.*"
+  - "decidim.admin.menu.elections_menu.*"
   - "activemodel.attributes.custom_csv.*"
   - "activemodel.errors.models.custom_csv.*"
 
