@@ -14,3 +14,5 @@ ignore_unused:
 
 ignore_missing:
   - decidim.participatory_processes.scopes.global
+  - decidim.elections.admin.census.update.success
+  - decidim.elections.admin.census.update.error
