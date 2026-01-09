@@ -5,8 +5,6 @@ module Decidim
     module CustomCsvCensus
       # Formats CSV validation errors for display.
       class ErrorPresenter
-        SCOPE = "activemodel.errors.models.custom_csv.attributes.file"
-
         def initialize(error)
           @error = error
         end
@@ -14,11 +12,11 @@ module Decidim
         def message
           case @error[:type]
           when :csv_error
-            I18n.t("#{SCOPE}.malformed_csv", message: @error[:message])
+            I18n.t("activemodel.errors.models.custom_csv.attributes.file.malformed_csv", message: @error[:message])
           when :header_error
-            I18n.t("#{SCOPE}.#{@error[:error]}", columns: @error[:columns].join(", "))
+            I18n.t("activemodel.errors.models.custom_csv.attributes.file.#{@error[:error]}", columns: @error[:columns].join(", "))
           when :validation_error
-            I18n.t("#{SCOPE}.validation_error", row: @error[:row], column: @error[:column], error: @error[:error])
+            I18n.t("activemodel.errors.models.custom_csv.attributes.file.validation_error", row: @error[:row], column: @error[:column], error: @error[:error])
           else
             @error.to_s
           end

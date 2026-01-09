@@ -14,7 +14,7 @@ const updateHiddenFields = (columnsList, hiddenFields, formPrefix) => {
   hiddenFields.innerHTML = "";
 
   columnsList.querySelectorAll("[data-column-row]").forEach((row, index) => {
-    const name = row.querySelector(".column-name").value;
+    const name = row.querySelector(".column-name").value.trim();
     const type = row.querySelector(".column-type").value;
 
     hiddenFields.appendChild(
@@ -52,11 +52,17 @@ const cloneColumnRow = () => {
   return template.content.firstElementChild.cloneNode(true);
 };
 
-const initColumnBuilder = ({ container, formPrefix, suffix = "" }) => {
+const updateStickyButtonText = (text) => {
+  const stickyButton = document.querySelector(".item__edit-sticky button[form='census-election-form']");
+  if (stickyButton) {
+    stickyButton.textContent = text;
+  }
+};
+
+const initColumnBuilder = ({ container, formPrefix, suffix = "", buttonText = null }) => {
   const columnsList = container.querySelector(`#columns-list${suffix}`);
   const hiddenFields = container.querySelector(`#hidden-fields${suffix}`);
   const addColumnBtn = container.querySelector(`#add-column-btn${suffix}`);
-  const saveBtn = container.querySelector(`#save-columns${suffix}-btn`);
   const parentForm = document.getElementById("census-election-form");
 
   const updateHidden = () => updateHiddenFields(columnsList, hiddenFields, formPrefix);
@@ -74,28 +80,22 @@ const initColumnBuilder = ({ container, formPrefix, suffix = "" }) => {
     updateHidden();
   });
 
-  if (saveBtn && parentForm) {
-    saveBtn.addEventListener("click", (event) => {
-      event.preventDefault();
+  if (parentForm && suffix === "-edit") {
+    parentForm.addEventListener("submit", () => {
       clearUploadedFiles(parentForm);
-      hiddenFields.querySelectorAll("input").forEach((input) => {
-        parentForm.appendChild(input.cloneNode(true));
-      });
-
-      fetch(parentForm.action, {
-        method: "PATCH",
-        body: new FormData(parentForm),
-        headers: { "X-Requested-With": "XMLHttpRequest" },
-        credentials: "same-origin"
-      }).then(() => window.location.reload());
     });
+  }
+
+  if (buttonText) {
+    updateStickyButtonText(buttonText);
   }
 };
 
-const initEditMode = (container, formPrefix) => {
+const initEditMode = (container, formPrefix, buttonText, originalButtonText) => {
   const toggleBtn = container.querySelector("#toggle-edit-btn");
   const editorSection = container.querySelector("#column-editor-section");
   const uploadSection = container.querySelector("#upload-section");
+  const parentForm = document.getElementById("census-election-form");
   let initialized = false;
 
   toggleBtn.addEventListener("click", () => {
@@ -103,9 +103,18 @@ const initEditMode = (container, formPrefix) => {
     editorSection.classList.toggle("hidden", !isHidden);
     uploadSection.classList.toggle("hidden", isHidden);
 
-    if (isHidden && !initialized) {
-      initColumnBuilder({ container, formPrefix, suffix: "-edit" });
-      initialized = true;
+    if (isHidden) {
+      if (parentForm) {
+        clearUploadedFiles(parentForm);
+      }
+      updateStickyButtonText(buttonText);
+
+      if (!initialized) {
+        initColumnBuilder({ container, formPrefix, suffix: "-edit" });
+        initialized = true;
+      }
+    } else {
+      updateStickyButtonText(originalButtonText);
     }
   });
 };
@@ -117,12 +126,14 @@ const initCustomCsvCensus = () => {
   }
 
   container.dataset.initialized = "true";
-  const { formPrefix, configured } = container.dataset;
+  const { formPrefix, configured, buttonText } = container.dataset;
+  const stickyButton = document.querySelector(".item__edit-sticky button[form='census-election-form']");
+  const originalButtonText = stickyButton?.textContent || "";
 
   if (configured === "true") {
-    initEditMode(container, formPrefix);
+    initEditMode(container, formPrefix, buttonText, originalButtonText);
   } else {
-    initColumnBuilder({ container, formPrefix });
+    initColumnBuilder({ container, formPrefix, buttonText });
   }
 };
 

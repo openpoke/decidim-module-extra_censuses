@@ -12,7 +12,7 @@ module Decidim
         def initialize(file, columns = [])
           @file = file
           @columns = normalize_columns(columns)
-          @columns_index = @columns.index_by { |c| c["name"] }
+          @columns_index = @columns.index_by { |c| c["name"]&.downcase }
           @errors = []
           @duplicates_removed = 0
           @headers = []
@@ -22,15 +22,15 @@ module Decidim
           @data ||= process
         end
 
-        def valid? = data && errors.empty?
+        def valid? = data.present? && errors.empty?
 
         def error_messages = errors.map { |e| ErrorPresenter.new(e).message }
 
-        def column_names = @columns_index.keys
+        def column_names = @columns.map { |c| c["name"] }
 
         private
 
-        def find_column(name) = @columns_index[name]
+        def find_column(name) = @columns_index[name&.downcase]
 
         def process
           return [] if file.blank?
@@ -55,8 +55,11 @@ module Decidim
         def validate_headers
           return true if columns.empty?
 
-          missing = column_names - @headers.compact
-          extra = @headers.compact - column_names
+          column_names_lower = column_names.map(&:downcase)
+          headers_lower = @headers.compact.map(&:downcase)
+
+          missing = column_names.reject { |name| headers_lower.include?(name.downcase) }
+          extra = @headers.compact.reject { |h| column_names_lower.include?(h.downcase) }
 
           @errors << { type: :header_error, error: :missing_columns, columns: missing } if missing.any?
           @errors << { type: :header_error, error: :extra_columns, columns: extra } if extra.any?
@@ -94,7 +97,9 @@ module Decidim
           row.to_h do |key, val|
             col = find_column(key.to_s)
             transformed = col && val ? Types.transform(col["column_type"], val.to_s) : val
-            [key.to_s, transformed]
+            # Use a column name from config (not from CSV) for consistency
+            column_name = col ? col["name"] : key.to_s
+            [column_name, transformed]
           end
         end
       end

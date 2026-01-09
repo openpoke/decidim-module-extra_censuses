@@ -7,17 +7,10 @@ module Decidim
     module CustomCsvCensus
       # Utility for parsing CSV files.
       module CsvParser
-        SEPARATOR = ";"
-
-        module_function
-
-        def parse(file)
-          rows = []
-          headers = []
-          CSV.foreach(file, headers: true, col_sep: SEPARATOR, encoding: "BOM|UTF-8") do |row|
-            headers = row.headers if headers.empty?
-            rows << row.to_h
-          end
+        def self.parse(file)
+          table = CSV.read(file, headers: true, col_sep: Decidim.default_csv_col_sep, encoding: "BOM|UTF-8")
+          headers = table.headers.map { |h| h&.strip }
+          rows = table.map { |row| row.to_h.transform_keys { |k| k&.strip } }
           [rows, headers]
         end
       end

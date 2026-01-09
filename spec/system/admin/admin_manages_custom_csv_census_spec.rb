@@ -73,7 +73,7 @@ describe "Admin manages custom CSV census" do # rubocop:disable RSpec/DescribeCl
 
         click_on "Save configuration"
 
-        expect(page).to have_content("Census updated successfully")
+        expect(page).to have_content("Census configuration saved")
       end
     end
 

@@ -75,4 +75,67 @@ describe "Voter authentication with Custom CSV census" do # rubocop:disable RSpe
       expect(page).to have_no_content("does not match any registered voter")
     end
   end
+
+  context "when using date column type" do
+    let(:election) do
+      create(:election, :published, :ongoing, :with_questions, component:, census_manifest: "custom_csv", census_settings: {
+               "columns" => [
+                 { "name" => "Name", "column_type" => "text_trim" },
+                 { "name" => "BirthDate", "column_type" => "date" }
+               ]
+             })
+    end
+
+    let!(:voter) do
+      create(:election_voter, election:, data: { "Name" => "John Doe", "BirthDate" => "1990-05-15" })
+    end
+
+    it "authenticates with date value" do
+      visit election_path
+      click_on "Vote"
+
+      fill_in "Name", with: "John Doe"
+      fill_in "census_data_BirthDate_date", with: "15/05/1990"
+      click_on "Access"
+
+      expect(page).to have_no_content("does not match any registered voter")
+    end
+  end
+
+  context "when using number column type" do
+    let(:election) do
+      create(:election, :published, :ongoing, :with_questions, component:, census_manifest: "custom_csv", census_settings: {
+               "columns" => [
+                 { "name" => "Name", "column_type" => "text_trim" },
+                 { "name" => "EmployeeID", "column_type" => "number" }
+               ]
+             })
+    end
+
+    let!(:voter) do
+      create(:election_voter, election:, data: { "Name" => "John Doe", "EmployeeID" => "12345" })
+    end
+
+    it "authenticates with numeric value" do
+      visit election_path
+      click_on "Vote"
+
+      fill_in "Name", with: "John Doe"
+      fill_in "EmployeeID", with: "12345"
+      click_on "Access"
+
+      expect(page).to have_no_content("does not match any registered voter")
+    end
+
+    it "rejects invalid number format" do
+      visit election_path
+      click_on "Vote"
+
+      fill_in "Name", with: "John Doe"
+      fill_in "EmployeeID", with: "12345abc"
+      click_on "Access"
+
+      expect(page).to have_content("does not match any registered voter")
+    end
+  end
 end

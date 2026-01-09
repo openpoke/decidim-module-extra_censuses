@@ -9,6 +9,8 @@ module Decidim
           include Decidim::HasUploadValidations
           include CustomCsvCensus::ColumnAccessors
 
+          mimic :custom_csv
+
           delegate :election, to: :context, allow_nil: true
 
           attribute :file, Decidim::Attributes::Blob
@@ -40,9 +42,6 @@ module Decidim
 
             file_io = StringIO.new(file.download)
             @csv_data = CustomCsvCensus::Data.new(file_io, effective_columns)
-          rescue CSV::MalformedCSVError
-            errors.add(:file, :malformed)
-            @csv_data = nil
           end
 
           def columns? = columns.present?
@@ -53,7 +52,9 @@ module Decidim
 
           def has_voters? = election&.voters&.exists?
 
-          def persisted_columns = election&.census_settings&.dig("columns") || []
+          def persisted_columns
+            election&.census_settings&.[]("columns") || []
+          end
 
           private
 

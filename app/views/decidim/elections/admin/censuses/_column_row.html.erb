@@ -1,16 +1,16 @@
 <div class="flex gap-4 p-4 mb-3 bg-background border border-gray-3 rounded items-end" data-column-row>
   <div class="flex-1">
-    <%= label_tag nil, t("column_name", scope: "decidim.elections.admin.censuses.custom_csv_form"), class: "block font-medium mb-2 text-gray-2" %>
-    <%= text_field_tag nil, local_assigns[:column_name], class: "column-name w-full" %>
+    <%= label_tag nil, t(".column_name"), class: "block font-medium mb-2 text-gray-2" %>
+    <%= text_field_tag nil, local_assigns[:column_name], class: "column-name w-full", autocomplete: "off" %>
   </div>
 
   <div class="flex-1">
-    <%= label_tag nil, t("column_type", scope: "decidim.elections.admin.censuses.custom_csv_form"), class: "block font-medium mb-2 text-gray-2" %>
+    <%= label_tag nil, t(".column_type"), class: "block font-medium mb-2 text-gray-2" %>
     <%= select_tag nil, options_for_select(column_types_options, local_assigns[:column_type]), class: "column-type w-full" %>
   </div>
 
   <div class="flex items-center pb-1">
-    <%= button_tag type: "button", class: "delete-column-btn p-2 text-gray-2 hover:text-alert rounded", title: t("delete", scope: "decidim.elections.admin.censuses.custom_csv_form") do %>
+    <%= button_tag type: "button", class: "delete-column-btn p-2 text-gray-2 hover:text-alert rounded", title: t(".delete") do %>
       <%= icon "delete-bin-line", class: "w-4 h-4 fill-current" %>
     <% end %>
   </div>

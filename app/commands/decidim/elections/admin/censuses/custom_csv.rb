@@ -19,7 +19,7 @@ module Decidim
           # Returns nothing.
           def call
             return broadcast(:invalid) if @form.invalid?
-            return broadcast(:invalid) if @form.remove_all && @election.census.blank?
+            return broadcast(:invalid) if @form.remove_all && @election.voters.empty?
 
             if @form.remove_all
               @election.voters.delete_all

@@ -10,13 +10,13 @@ module Decidim
         def column_type(col) = col["column_type"] || col[:column_type] || "free_text"
 
         def normalize_column(col)
-          { "name" => column_name(col), "column_type" => column_type(col) }
+          { "name" => column_name(col)&.strip, "column_type" => column_type(col) }
         end
 
         def normalize_columns(list)
           return [] if list.blank?
 
-          list.map { |col| normalize_column(col) }
+          list.filter_map { |col| normalize_column(col) if col.is_a?(Hash) }
         end
       end
     end

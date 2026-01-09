@@ -5,6 +5,10 @@ module Decidim
     module Censuses
       # Form for voter authentication using custom CSV census.
       class CustomCsvForm < Decidim::Form
+        include CustomCsvCensus::ColumnAccessors
+
+        mimic :census_data
+
         attribute :census_data, Hash
 
         validate :data_in_census
@@ -24,13 +28,18 @@ module Decidim
           query = election.census.users(election)
           has_criteria = false
 
+          # Build case-insensitive lookup for input data
+          input_data_lower = census_data.transform_keys { |k| k.to_s.strip.downcase }
+
           column_definitions.each do |col|
-            value = census_data[col["name"].to_sym]
+            column_name = col["name"]
+            value = input_data_lower[column_name&.downcase]
             next if value.blank?
 
             has_criteria = true
             transformed = CustomCsvCensus::Types.transform(col["column_type"], value.to_s)
-            query = query.where("data->>? = ?", col["name"], transformed)
+            # Query using original column name (as stored in DB)
+            query = query.where("data->>? = ?", column_name, transformed)
           end
 
           @census_user = has_criteria ? query.first : nil
@@ -47,7 +56,7 @@ module Decidim
         private
 
         def columns_config
-          @columns_config ||= election.census_settings&.dig("columns") || []
+          @columns_config ||= normalize_columns(election.census_settings&.dig("columns") || [])
         end
 
         def data_in_census

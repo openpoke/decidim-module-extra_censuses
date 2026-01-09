@@ -28,12 +28,10 @@ module Decidim
         Decidim.register_assets_path File.expand_path("app/packs", root)
       end
 
-      initializer "decidim.extra_censuses.helpers" do
-        config.to_prepare do
-          Decidim::Elections::Admin::CensusController.helper(
-            Decidim::Elections::Admin::Censuses::CustomCsvHelper
-          )
-        end
+      # Overrides and helpers
+      config.to_prepare do
+        Decidim::Elections::Admin::CensusController.include(Decidim::ExtraCensuses::CensusControllerOverride)
+        Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
       end
     end
   end

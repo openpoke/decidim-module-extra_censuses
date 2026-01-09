@@ -115,7 +115,7 @@ module Decidim
             context "when columns are not submitted but persisted" do
               let(:election) { create(:election, component:, census_settings: { "columns" => [{ "name" => "ID", "column_type" => "number" }] }) }
 
-              it "returns persisted columns" do
+              it "returns persisted columns normalized" do
                 expect(subject.effective_columns).to eq([{ "name" => "ID", "column_type" => "number" }])
               end
             end

@@ -82,7 +82,7 @@ module Decidim
 
         describe "#column_names" do
           it "returns column names from settings" do
-            expect(subject.column_names).to eq(%w[Name ID])
+            expect(subject.column_names).to eq(%w(Name ID))
           end
 
           context "when election has no columns in census_settings" do
