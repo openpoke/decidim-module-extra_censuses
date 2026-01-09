@@ -139,14 +139,14 @@ describe "Admin manages census updates" do # rubocop:disable RSpec/DescribeClass
 
         expect(page).to have_content("New Census Entry")
         expect(page).to have_field("dni")
-        expect(page).to have_field("birth_date")
+        expect(page).to have_field("data_birth_date_date")
       end
 
       it "creates entry with valid data" do
         click_on "New entry"
 
         fill_in "dni", with: "99999999X"
-        fill_in "birth_date", with: "1995-06-15"
+        fill_in_datepicker :data_birth_date_date, with: "15/06/1995"
         click_on "Create"
 
         expect(page).to have_content("Entry created successfully")
@@ -260,7 +260,7 @@ describe "Admin manages census updates" do # rubocop:disable RSpec/DescribeClass
 
     it "shows all required fields" do
       expect(page).to have_field("dni")
-      expect(page).to have_field("birth_date")
+      expect(page).to have_field("data_birth_date_date")
     end
   end
 end
