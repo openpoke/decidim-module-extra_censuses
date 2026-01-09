@@ -56,11 +56,7 @@ module Decidim
           voters = election.voters.order(created_at: :desc)
           return voters if params[:q].blank?
 
-          voters.where("data->>? ILIKE ?", identifier_column, "%#{sanitize_sql_like(params[:q])}%")
-        end
-
-        def sanitize_sql_like(string)
-          string.gsub(/[\\%_]/) { |x| "\\#{x}" }
+          voters.where("data->>? ILIKE ?", identifier_column, "%#{ActiveRecord::Base.sanitize_sql_like(params[:q])}%")
         end
 
         def identifier_column
