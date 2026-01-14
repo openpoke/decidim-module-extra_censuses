@@ -12,6 +12,14 @@ module Decidim
         Decidim::Elections::AdminEngine.routes.prepend do
           resources :elections, only: [] do
             resources :census_updates, only: [:index, :new, :create, :destroy], controller: "/decidim/elections/admin/census_updates"
+
+            resources :survey_imports, only: [:index, :new, :create], controller: "/decidim/elections/admin/survey_imports" do
+              collection do
+                post :import
+                get :surveys
+                get :questions
+              end
+            end
           end
         end
       end
