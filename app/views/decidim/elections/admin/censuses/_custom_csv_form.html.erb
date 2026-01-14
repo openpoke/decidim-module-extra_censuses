@@ -25,34 +25,42 @@
   </div>
 
 <% elsif columns_configured %>
-  <div data-custom-csv-census data-form-prefix="<%= form_prefix %>" data-configured="true" data-button-text="<%= t(".save_configuration") %>">
+  <div data-controller="custom-csv-census"
+       data-custom-csv-census-form-prefix-value="<%= form_prefix %>"
+       data-custom-csv-census-configured-value="true"
+       data-custom-csv-census-button-text-value="<%= t(".save_configuration") %>">
     <div class="row column">
       <div class="callout secondary mb-4 flex justify-between items-start gap-4">
         <div>
           <div class="font-semibold mb-1"><%= t(".current_configuration") %></div>
           <div class="text-sm"><%= format_custom_csv_columns(current_columns) %></div>
         </div>
-        <button type="button" id="toggle-edit-btn" class="p-1 text-gray-2 hover:text-secondary" title="<%= t(".edit_columns") %>">
+        <button type="button"
+                data-action="click->custom-csv-census#toggleEdit"
+                class="p-1 text-gray-2 hover:text-secondary"
+                title="<%= t(".edit_columns") %>">
           <%= icon "pencil-line", class: "w-5 h-5 fill-current" %>
         </button>
       </div>
 
-      <div id="column-editor-section" class="hidden mb-6">
+      <div data-custom-csv-census-target="editorSection" class="hidden mb-6">
         <div class="font-semibold text-lg mb-4"><%= t(".census_attributes") %></div>
-        <div id="columns-list-edit" class="mb-4">
+        <div data-custom-csv-census-target="columnsList" class="mb-4">
           <% current_columns.each do |col| %>
             <%= render "decidim/elections/admin/censuses/column_row", column_types_options: column_types_options, column_name: col["name"] || col[:name], column_type: col["column_type"] || col[:column_type] %>
           <% end %>
         </div>
         <div class="flex gap-4 items-center mb-4">
-          <button type="button" id="add-column-btn-edit" class="button button__sm button__secondary">
+          <button type="button"
+                  data-action="click->custom-csv-census#addColumn"
+                  class="button button__sm button__secondary">
             <%= t(".new_column") %>
           </button>
         </div>
-        <div id="hidden-fields-edit"></div>
+        <div data-custom-csv-census-target="hiddenFields"></div>
       </div>
 
-      <div id="upload-section">
+      <div data-custom-csv-census-target="uploadSection">
         <div class="row column font-semibold pb-4"><%= t(".upload_title") %></div>
         <div class="row column">
           <p class="mb-2"><%= t(".upload_description_html") %></p>
@@ -75,23 +83,28 @@
   </div>
 
 <% else %>
-  <div data-custom-csv-census data-form-prefix="<%= form_prefix %>" data-configured="false" data-button-text="<%= t(".save_configuration") %>">
+  <div data-controller="custom-csv-census"
+       data-custom-csv-census-form-prefix-value="<%= form_prefix %>"
+       data-custom-csv-census-configured-value="false"
+       data-custom-csv-census-button-text-value="<%= t(".save_configuration") %>">
     <div class="row column">
       <p class="mb-6"><%= t(".description") %></p>
 
       <div class="font-semibold text-lg mb-4"><%= t(".census_attributes") %></div>
 
-      <div id="columns-list" class="mb-4">
+      <div data-custom-csv-census-target="columnsList" class="mb-4">
         <%= render "decidim/elections/admin/censuses/column_row", column_types_options: column_types_options %>
       </div>
 
       <div class="flex gap-4 items-center">
-        <button type="button" id="add-column-btn" class="button button__sm button__secondary">
+        <button type="button"
+                data-action="click->custom-csv-census#addColumn"
+                class="button button__sm button__secondary">
           <%= t(".new_column") %>
         </button>
       </div>
 
-      <div id="hidden-fields"></div>
+      <div data-custom-csv-census-target="hiddenFields"></div>
     </div>
   </div>
 <% end %>

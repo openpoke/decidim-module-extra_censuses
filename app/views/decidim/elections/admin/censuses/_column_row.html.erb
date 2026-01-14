@@ -1,16 +1,24 @@
 <div class="flex gap-4 p-4 mb-3 bg-background border border-gray-3 rounded items-end" data-column-row>
   <div class="flex-1">
     <%= label_tag nil, t(".column_name"), class: "block font-medium mb-2 text-gray-2" %>
-    <%= text_field_tag nil, local_assigns[:column_name], class: "column-name w-full", autocomplete: "off" %>
+    <%= text_field_tag nil, local_assigns[:column_name],
+        class: "column-name w-full",
+        autocomplete: "off",
+        data: { action: "input->custom-csv-census#updateHiddenFields" } %>
   </div>
 
   <div class="flex-1">
     <%= label_tag nil, t(".column_type"), class: "block font-medium mb-2 text-gray-2" %>
-    <%= select_tag nil, options_for_select(column_types_options, local_assigns[:column_type]), class: "column-type w-full" %>
+    <%= select_tag nil, options_for_select(column_types_options, local_assigns[:column_type]),
+        class: "column-type w-full",
+        data: { action: "change->custom-csv-census#updateHiddenFields" } %>
   </div>
 
   <div class="flex items-center pb-1">
-    <%= button_tag type: "button", class: "delete-column-btn p-2 text-gray-2 hover:text-alert rounded", title: t(".delete") do %>
+    <%= button_tag type: "button",
+        class: "p-2 text-gray-2 hover:text-alert rounded",
+        title: t(".delete"),
+        data: { action: "click->custom-csv-census#removeColumn" } do %>
       <%= icon "delete-bin-line", class: "w-4 h-4 fill-current" %>
     <% end %>
   </div>
