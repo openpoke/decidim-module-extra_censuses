@@ -22,7 +22,7 @@ module Decidim
           enforce_permission_to :update, :census, election: election
           @form = CensusUpdateForm.new(data: census_data_params).with_context(election: election, current_user: current_user)
 
-          CreateCensusEntry.call(@form, election, current_user) do
+          CreateCensusEntry.call(@form, election) do
             on(:ok) do
               flash[:notice] = I18n.t("create.success", scope: "decidim.elections.admin.census_updates")
               redirect_to election_census_updates_path(election)
@@ -37,8 +37,9 @@ module Decidim
         def destroy
           enforce_permission_to :update, :census, election: election
           voter = election.voters.find(params[:id])
+          @form = CensusUpdateForm.new.with_context(election:, voter:, current_user:)
 
-          DestroyCensusEntry.call(voter, current_user) do
+          DestroyCensusEntry.call(@form, election) do
             on(:ok) do
               flash[:notice] = I18n.t("destroy.success", scope: "decidim.elections.admin.census_updates")
               redirect_to election_census_updates_path(election)

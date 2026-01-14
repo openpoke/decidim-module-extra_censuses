@@ -6,7 +6,7 @@ module Decidim
   module Elections
     module Admin
       describe DestroyCensusEntry do
-        subject { described_class.new(voter, current_user) }
+        subject { described_class.new(form, election) }
 
         let(:organization) { create(:organization) }
         let(:participatory_process) { create(:participatory_process, organization:) }
@@ -20,6 +20,9 @@ module Decidim
                  })
         end
         let!(:voter) { create(:election_voter, election:, data: { "dni" => "12345678A" }) }
+        let(:form) do
+          CensusUpdateForm.new.with_context(election:, voter:, current_user:)
+        end
 
         describe "#call" do
           it "broadcasts :ok" do
@@ -37,8 +40,8 @@ module Decidim
 
           it "traces the action", versioning: true do
             expect(Decidim.traceability)
-              .to receive(:perform_action!)
-              .with(:delete, voter, current_user)
+              .to receive(:update!)
+              .with(election, current_user, {})
               .and_call_original
 
             subject.call

@@ -6,7 +6,7 @@ module Decidim
   module Elections
     module Admin
       describe CreateCensusEntry do
-        subject { described_class.new(form, election, current_user) }
+        subject { described_class.new(form, election) }
 
         let(:organization) { create(:organization) }
         let(:participatory_process) { create(:participatory_process, organization:) }
@@ -21,7 +21,7 @@ module Decidim
                  })
         end
         let(:form) do
-          CensusUpdateForm.from_params(data: { dni: "12345678A", birth_date: "1990-01-15" }).with_context(election:)
+          CensusUpdateForm.from_params(data: { dni: "12345678A", birth_date: "1990-01-15" }).with_context(election:, current_user:)
         end
 
         describe "when form is valid" do
@@ -44,12 +44,8 @@ module Decidim
 
           it "traces the action", versioning: true do
             expect(Decidim.traceability)
-              .to receive(:create!)
-              .with(
-                Decidim::Elections::Voter,
-                current_user,
-                hash_including(election:, data: kind_of(Hash))
-              )
+              .to receive(:update!)
+              .with(election, current_user, {})
               .and_call_original
 
             subject.call
@@ -57,7 +53,7 @@ module Decidim
 
           context "when data needs transformation" do
             let(:form) do
-              CensusUpdateForm.from_params(data: { dni: "12-345-678-A", birth_date: "1990-01-15" }).with_context(election:)
+              CensusUpdateForm.from_params(data: { dni: "12-345-678-A", birth_date: "1990-01-15" }).with_context(election:, current_user:)
             end
 
             it "saves transformed data" do
@@ -71,7 +67,7 @@ module Decidim
 
         describe "when form is invalid" do
           let(:form) do
-            CensusUpdateForm.from_params(data: { dni: "", birth_date: "" }).with_context(election:)
+            CensusUpdateForm.from_params(data: { dni: "", birth_date: "" }).with_context(election:, current_user:)
           end
 
           it "broadcasts :invalid" do

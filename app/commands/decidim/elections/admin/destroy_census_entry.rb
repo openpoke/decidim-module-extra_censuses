@@ -4,30 +4,17 @@ module Decidim
   module Elections
     module Admin
       # Command to destroy a census entry (voter).
-      class DestroyCensusEntry < Decidim::Command
-        def initialize(voter, current_user)
-          @voter = voter
-          @current_user = current_user
+      class DestroyCensusEntry < Decidim::Commands::UpdateResource
+        def invalid?
+          form.voter.blank?
         end
 
-        def call
-          destroy_voter
-
-          broadcast(:ok)
+        def attributes
+          {}
         end
 
-        private
-
-        attr_reader :voter, :current_user
-
-        def destroy_voter
-          Decidim.traceability.perform_action!(
-            :delete,
-            voter,
-            current_user
-          ) do
-            voter.destroy!
-          end
+        def run_after_hooks
+          form.voter.destroy!
         end
       end
     end

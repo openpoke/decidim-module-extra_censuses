@@ -16,6 +16,10 @@ module Decidim
           @election ||= context[:election]
         end
 
+        def voter
+          @voter ||= context[:voter]
+        end
+
         def column_definitions
           @column_definitions ||= election&.census_settings&.dig("columns") || []
         end

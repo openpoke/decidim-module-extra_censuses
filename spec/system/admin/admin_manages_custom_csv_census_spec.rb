@@ -52,7 +52,7 @@ describe "Admin manages custom CSV census" do # rubocop:disable RSpec/DescribeCl
         expect(page).to have_css("[data-column-row]", count: 2)
 
         within all("[data-column-row]").first do
-          find(".delete-column-btn").click
+          click_button "Delete"
         end
 
         expect(page).to have_css("[data-column-row]", count: 1)
