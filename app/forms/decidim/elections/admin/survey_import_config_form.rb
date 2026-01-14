@@ -44,7 +44,7 @@ module Decidim
         def available_questions
           return [] if questionnaire.blank?
 
-          questionnaire.questions.where(question_type: %w[short_response long_response])
+          questionnaire.questions.where(question_type: %w(short_response long_response))
         end
 
         def census_columns

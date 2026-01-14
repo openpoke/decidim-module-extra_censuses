@@ -70,7 +70,7 @@ module Decidim
           return render json: [] if survey.blank?
 
           questions_list = survey.questionnaire.questions
-                                 .where(question_type: %w[short_response long_response])
+                                 .where(question_type: %w(short_response long_response))
                                  .map do |question|
             { id: question.id, body: translated_attribute(question.body) }
           end

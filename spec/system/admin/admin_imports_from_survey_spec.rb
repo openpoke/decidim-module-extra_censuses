@@ -101,15 +101,15 @@ describe "Admin imports from survey" do
   describe "viewing survey import index" do
     before do
       election.update!(census_settings: election.census_settings.merge(
-                         "survey_import" => {
-                           "survey_component_id" => surveys_component.id,
-                           "survey_id" => survey.id,
-                           "field_mapping" => {
-                             "dni" => dni_question.id.to_s,
-                             "birth_date" => birth_date_question.id.to_s
-                           }
-                         }
-                       ))
+        "survey_import" => {
+          "survey_component_id" => surveys_component.id,
+          "survey_id" => survey.id,
+          "field_mapping" => {
+            "dni" => dni_question.id.to_s,
+            "birth_date" => birth_date_question.id.to_s
+          }
+        }
+      ))
     end
 
     context "when survey has valid responses" do
@@ -240,23 +240,21 @@ describe "Admin imports from survey" do
   describe "importing responses", :slow do
     include ActiveJob::TestHelper
 
-    before do
-      election.update!(census_settings: election.census_settings.merge(
-                         "survey_import" => {
-                           "survey_component_id" => surveys_component.id,
-                           "survey_id" => survey.id,
-                           "field_mapping" => {
-                             "dni" => dni_question.id.to_s,
-                             "birth_date" => birth_date_question.id.to_s
-                           }
-                         }
-                       ))
-    end
-
     let!(:user1) { create(:user, :confirmed, organization:) }
     let!(:user2) { create(:user, :confirmed, organization:) }
 
     before do
+      election.update!(census_settings: election.census_settings.merge(
+        "survey_import" => {
+          "survey_component_id" => surveys_component.id,
+          "survey_id" => survey.id,
+          "field_mapping" => {
+            "dni" => dni_question.id.to_s,
+            "birth_date" => birth_date_question.id.to_s
+          }
+        }
+      ))
+
       create(:response, questionnaire:, question: dni_question, session_token: "token1", user: user1, body: "12345678A")
       create(:response, questionnaire:, question: birth_date_question, session_token: "token1", user: user1, body: "1990-01-15")
       create(:response, questionnaire:, question: dni_question, session_token: "token2", user: user2, body: "87654321B")
@@ -284,26 +282,70 @@ describe "Admin imports from survey" do
     end
 
     it "creates voters when job is processed" do
-      perform_enqueued_jobs do
-        click_on "Import 2 entries"
-      end
+      perform_enqueued_jobs { click_on "Import 2 entries" }
 
       expect(election.voters.count).to eq(2)
+    end
+
+    context "when some entries already exist in census" do
+      before do
+        # Create existing voter with same data as one of the survey responses
+        create(:election_voter, election:, data: { "dni" => "12345678A", "birth_date" => "1990-01-15" })
+        visit survey_imports_path
+      end
+
+      it "does not create duplicate entries" do
+        expect(election.voters.count).to eq(1)
+
+        perform_enqueued_jobs { click_on "Import 1 entry" }
+
+        # Should only add the new entry, not the duplicate
+        expect(election.voters.count).to eq(2)
+
+        # Verify exact data
+        dni_values = election.voters.pluck(:data).map { |d| d["dni"] }
+        expect(dni_values).to contain_exactly("12345678A", "87654321B")
+      end
+
+      it "displays correct count excluding duplicates" do
+        expect(page).to have_content("Ready to import: 1")
+        expect(page).to have_button("Import 1 entry")
+      end
+    end
+
+    context "when all entries already exist in census" do
+      before do
+        create(:election_voter, election:, data: { "dni" => "12345678A", "birth_date" => "1990-01-15" })
+        create(:election_voter, election:, data: { "dni" => "87654321B", "birth_date" => "1985-05-20" })
+        visit survey_imports_path
+      end
+
+      it "shows no responses to import" do
+        expect(page).to have_content("No responses found")
+      end
+
+      it "does not display import button" do
+        expect(page).to have_no_button(/Import/)
+      end
+
+      it "keeps same voter count after visiting page" do
+        expect(election.voters.count).to eq(2)
+      end
     end
   end
 
   describe "changing survey configuration" do
     before do
       election.update!(census_settings: election.census_settings.merge(
-                         "survey_import" => {
-                           "survey_component_id" => surveys_component.id,
-                           "survey_id" => survey.id,
-                           "field_mapping" => {
-                             "dni" => dni_question.id.to_s,
-                             "birth_date" => birth_date_question.id.to_s
-                           }
-                         }
-                       ))
+        "survey_import" => {
+          "survey_component_id" => surveys_component.id,
+          "survey_id" => survey.id,
+          "field_mapping" => {
+            "dni" => dni_question.id.to_s,
+            "birth_date" => birth_date_question.id.to_s
+          }
+        }
+      ))
       visit survey_imports_path
     end
 

@@ -8,7 +8,7 @@
 </div>
 
 <div class="item__edit-form">
-  <%= decidim_form_for(@form, url: election_survey_imports_path(election), method: :post, html: { class: "form-defaults form", id: "survey_import_config_form" }) do |f| %>
+  <%= decidim_form_for(@form, url: election_survey_imports_path(election), method: :post, html: { class: "form-defaults form", id: "survey_import_config_form", data: { controller: "survey-import" } }) do |f| %>
     <div class="form__wrapper">
       <div class="card pt-4">
         <div class="card-section">
@@ -26,7 +26,8 @@
                              class: "w-full",
                              data: {
                                "survey-import-target": "componentSelect",
-                               "surveys-url": surveys_election_survey_imports_path(election)
+                               "surveys-url": surveys_election_survey_imports_path(election),
+                               action: "change->survey-import#loadSurveys"
                              }
                            } %>
               <%= f.label :survey_component_id, t(".survey_component") %>
@@ -43,7 +44,8 @@
                              class: "w-full",
                              data: {
                                "survey-import-target": "surveySelect",
-                               "questions-url": questions_election_survey_imports_path(election)
+                               "questions-url": questions_election_survey_imports_path(election),
+                               action: "change->survey-import#loadQuestions"
                              }
                            } %>
               <%= f.label :survey_id, t(".survey") %>

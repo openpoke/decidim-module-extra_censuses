@@ -170,8 +170,7 @@ module Decidim
               create(:questionnaire_question, questionnaire:, question_type: "single_option", body: { en: "Option" })
 
               expect(subject.available_questions).to include(dni_question, birth_date_question)
-              # Note: factory :survey creates questionnaire :with_questions which adds 2 more short/long_response questions
-              expect(subject.available_questions.where(question_type: %w[short_response long_response]).count).to be >= 2
+              expect(subject.available_questions.where(question_type: %w(short_response long_response)).count).to be >= 2
             end
           end
 
@@ -207,14 +206,14 @@ module Decidim
           context "when election has survey_import config" do
             before do
               election.update!(census_settings: election.census_settings.merge(
-                                 "survey_import" => {
-                                   "survey_component_id" => surveys_component.id,
-                                   "survey_id" => survey.id,
-                                   "field_mapping" => {
-                                     "dni" => dni_question.id.to_s
-                                   }
-                                 }
-                               ))
+                "survey_import" => {
+                  "survey_component_id" => surveys_component.id,
+                  "survey_id" => survey.id,
+                  "field_mapping" => {
+                    "dni" => dni_question.id.to_s
+                  }
+                }
+              ))
               form.with_context(election:)
               form.map_model(election)
             end

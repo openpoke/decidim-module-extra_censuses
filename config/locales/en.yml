@@ -95,11 +95,9 @@ en:
             error: Could not save configuration
             success: Survey import configuration saved successfully
           errors:
-            no_entries_selected: Please select at least one entry to import
             question_not_found: One or more mapped questions were not found
-            unmapped_column: "Column '%{column}' must be mapped to a question"
+            unmapped_column: Column '%{column}' must be mapped to a question
           import:
-            error: Could not import entries
             no_valid_entries: No valid entries to import
             success: Import of %{count} entries has been queued and will be processed
               in background
