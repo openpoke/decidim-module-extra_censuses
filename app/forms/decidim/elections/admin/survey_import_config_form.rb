@@ -83,11 +83,11 @@ module Decidim
         def questions_exist
           return if field_mapping.blank? || questionnaire.blank?
 
-          question_ids = questionnaire.questions.pluck(:id).map(&:to_s)
+          question_ids = questionnaire.questions.pluck(:id).to_set
 
           field_mapping.each_value do |question_id|
             next if question_id.blank?
-            next if question_ids.include?(question_id.to_s)
+            next if question_ids.include?(question_id.to_i)
 
             errors.add(:field_mapping, I18n.t("errors.question_not_found", scope: "decidim.elections.admin.survey_imports"))
           end

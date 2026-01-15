@@ -18,12 +18,11 @@ module Decidim
           return [] if survey_config.blank? || survey.blank?
 
           grouped_answers.filter_map do |session_token, answers|
-            census_data = build_census_data(answers)
+            census_data, raw_values = process_answers(answers)
 
-            # Skip entries that already exist in census
             next if duplicate?(census_data)
 
-            build_response_data(session_token, answers, census_data)
+            build_response_data(session_token, answers, census_data, raw_values)
           end
         end
 
@@ -44,7 +43,11 @@ module Decidim
         end
 
         def census_columns
-          election.census_settings&.dig("columns") || []
+          @census_columns ||= election.census_settings&.dig("columns") || []
+        end
+
+        def census_columns_index
+          @census_columns_index ||= census_columns.index_by { |c| c["name"] }
         end
 
         def grouped_answers
@@ -60,46 +63,40 @@ module Decidim
           answers.group_by(&:session_token)
         end
 
-        def build_response_data(session_token, answers, census_data)
-          status = determine_status(census_data)
-
+        def build_response_data(session_token, answers, census_data, raw_values)
           {
             session_token: session_token,
             answers: answers,
             census_data: census_data,
-            status: status,
-            raw_values: extract_raw_values(answers)
+            status: determine_status(census_data),
+            raw_values: raw_values
           }
         end
 
-        def build_census_data(answers)
-          result = {}
+        # Builds both census_data and raw_values in a single pass
+        def process_answers(answers)
+          answers_index = answers.index_by(&:decidim_question_id)
+          census_data = {}
+          raw_values = {}
 
           field_mapping.each do |column_name, question_id|
-            answer = answers.find { |a| a.decidim_question_id == question_id.to_i }
-            column_def = census_columns.find { |c| c["name"] == column_name }
-            next if answer.blank? || column_def.blank?
+            answer = answers_index[question_id.to_i]
+            next if answer.blank?
 
             raw_value = extract_answer_value(answer)
-            result[column_name] = CustomCsvCensus::Types.transform(column_def["column_type"], raw_value.to_s)
+            raw_values[column_name] = raw_value
+
+            column_def = census_columns_index[column_name]
+            next if column_def.blank?
+
+            census_data[column_name] = CustomCsvCensus::Types.transform(column_def["column_type"], raw_value.to_s)
           end
 
-          result
+          [census_data, raw_values]
         end
 
         def extract_answer_value(answer)
           answer.body.presence || answer.choices&.first&.body
-        end
-
-        def extract_raw_values(answers)
-          result = {}
-
-          field_mapping.each do |column_name, question_id|
-            answer = answers.find { |a| a.decidim_question_id == question_id.to_i }
-            result[column_name] = extract_answer_value(answer) if answer.present?
-          end
-
-          result
         end
 
         def determine_status(census_data)
