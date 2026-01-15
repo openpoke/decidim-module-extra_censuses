@@ -108,11 +108,9 @@ en:
             import_count:
               one: Import 1 entry
               other: Import %{count} entries
-            next: Next
             no_responses: No responses found in the selected survey
             no_valid_entries: No valid entries to import. All responses are either
               incomplete or already exist in the census.
-            previous: Previous
             ready_to_import: Ready to import
             skipped: Skipped
             title: Import from Survey
