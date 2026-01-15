@@ -54,7 +54,7 @@
             <% if census_columns.any? %>
               <div class="row column mb-4">
                 <h3 class="text-lg font-semibold mb-2"><%= t(".field_mapping") %></h3>
-                <p class="text-sm text-gray-600 mb-4"><%= t(".field_mapping_description") %></p>
+                <p class="text-sm text-gray mb-4"><%= t(".field_mapping_description") %></p>
 
                 <% field_mapping = @form.field_mapping.is_a?(Hash) ? @form.field_mapping.with_indifferent_access : {} %>
                 <div data-survey-import-target="mappingContainer">
@@ -70,7 +70,7 @@
                         <tr>
                           <td>
                             <strong><%= column["name"] %></strong>
-                            <span class="text-sm text-gray-500">(<%= column["column_type"] %>)</span>
+                            <span class="text-sm text-gray">(<%= column["column_type"] %>)</span>
                           </td>
                           <td>
                             <%= select_tag "survey_import[field_mapping][#{column["name"]}]",

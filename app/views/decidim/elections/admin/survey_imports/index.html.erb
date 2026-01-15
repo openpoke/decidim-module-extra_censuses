@@ -12,15 +12,12 @@
 
 <% if @responses.any? %>
   <div class="mb-4">
-    <% stats_content = capture do %>
-      <div class="flex gap-4 items-center flex-wrap">
-        <span class="badge badge--success"><%= t(".ready_to_import") %>: <%= all_valid_responses_count %></span>
-        <% if invalid_count > 0 %>
-          <span class="badge badge--muted"><%= t(".skipped") %>: <%= invalid_count %></span>
-        <% end %>
-      </div>
-    <% end %>
-    <%= cell("decidim/announcement", stats_content, callout_class: "secondary") %>
+    <div class="flex gap-4 items-center flex-wrap">
+      <span class="label success"><%= t(".ready_to_import") %>: <%= all_valid_responses_count %></span>
+      <% if invalid_count > 0 %>
+        <span class="label"><%= t(".skipped") %>: <%= invalid_count %></span>
+      <% end %>
+    </div>
   </div>
 
   <% if @valid_responses.any? %>
