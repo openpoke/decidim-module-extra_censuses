@@ -29,11 +29,7 @@ module Decidim
       private
 
       def duplicate_exists?(election, census_data)
-        query = election.voters
-        census_data.each do |name, value|
-          query = query.where("data->>? = ?", name, value)
-        end
-        query.exists?
+        Decidim::Elections::CustomCsvCensus::DuplicateChecker.exists?(election, census_data)
       end
     end
   end

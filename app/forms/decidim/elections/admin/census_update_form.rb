@@ -50,13 +50,9 @@ module Decidim
 
         def voter_not_exists
           return if transformed_data.blank?
+          return unless CustomCsvCensus::DuplicateChecker.exists?(election, transformed_data)
 
-          query = Decidim::Elections::Voter.where(election: election)
-          transformed_data.each do |name, value|
-            query = query.where("data->>? = ?", name, value)
-          end
-
-          errors.add(:base, I18n.t("errors.already_exists", scope: "decidim.elections.admin.census_updates")) if query.exists?
+          errors.add(:base, I18n.t("errors.already_exists", scope: "decidim.elections.admin.census_updates"))
         end
       end
     end

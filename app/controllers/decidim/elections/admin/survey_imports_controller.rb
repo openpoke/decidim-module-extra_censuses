@@ -60,9 +60,10 @@ module Decidim
           enforce_permission_to :update, :census, election: election
 
           component_id = params[:survey_component_id]
-          surveys_list = Decidim::Surveys::Survey.where(decidim_component_id: component_id).map do |survey|
-            { id: survey.id, title: translated_attribute(survey.questionnaire.title) }
-          end
+          surveys_list = Decidim::Surveys::Survey
+                         .includes(:questionnaire)
+                         .where(decidim_component_id: component_id)
+                         .map { |survey| { id: survey.id, title: translated_attribute(survey.questionnaire.title) } }
 
           render json: surveys_list
         end
@@ -70,14 +71,12 @@ module Decidim
         def questions
           enforce_permission_to :update, :census, election: election
 
-          survey = Decidim::Surveys::Survey.find_by(id: params[:survey_id])
+          survey = Decidim::Surveys::Survey.includes(questionnaire: :questions).find_by(id: params[:survey_id])
           return render json: [] if survey.blank?
 
           questions_list = survey.questionnaire.questions
-                                 .where(question_type: %w(short_response long_response))
-                                 .map do |question|
-            { id: question.id, body: translated_attribute(question.body) }
-          end
+                                 .select { |q| %w(short_response long_response).include?(q.question_type) }
+                                 .map { |question| { id: question.id, body: translated_attribute(question.body) } }
 
           render json: questions_list
         end

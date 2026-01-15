@@ -22,15 +22,19 @@ module Decidim
         end
 
         def available_survey_components
-          return [] if election.blank?
+          @available_survey_components ||= begin
+            return [] if election.blank?
 
-          election.component.participatory_space.components.where(manifest_name: "surveys")
+            election.component.participatory_space.components.where(manifest_name: "surveys")
+          end
         end
 
         def available_surveys
-          return [] if survey_component_id.blank?
+          @available_surveys ||= begin
+            return [] if survey_component_id.blank?
 
-          Decidim::Surveys::Survey.where(decidim_component_id: survey_component_id)
+            Decidim::Surveys::Survey.where(decidim_component_id: survey_component_id)
+          end
         end
 
         def survey
@@ -38,17 +42,19 @@ module Decidim
         end
 
         def questionnaire
-          survey&.questionnaire
+          @questionnaire ||= survey&.questionnaire
         end
 
         def available_questions
-          return [] if questionnaire.blank?
+          @available_questions ||= begin
+            return [] if questionnaire.blank?
 
-          questionnaire.questions.where(question_type: %w(short_response long_response))
+            questionnaire.questions.where(question_type: %w(short_response long_response))
+          end
         end
 
         def census_columns
-          election&.census_settings&.dig("columns") || []
+          @census_columns ||= election&.census_settings&.dig("columns") || []
         end
 
         def map_model(model)

@@ -121,13 +121,7 @@ module Decidim
         end
 
         def duplicate?(census_data)
-          return false if census_data.blank?
-
-          query = election.voters
-          census_data.each do |name, value|
-            query = query.where("data->>? = ?", name, value)
-          end
-          query.exists?
+          CustomCsvCensus::DuplicateChecker.exists?(election, census_data)
         end
       end
     end
