@@ -7,7 +7,9 @@ module Decidim
         # Strips leading and trailing spaces.
         class TextTrim < Base
           def self.transform(value)
-            value.strip
+            return nil if value.nil?
+
+            value.to_s.strip
           end
         end
       end

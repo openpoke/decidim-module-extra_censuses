@@ -7,7 +7,9 @@ module Decidim
         # Strips all characters except A-Z, a-z, 0-9.
         class Alphanumeric < Base
           def self.transform(value)
-            value.gsub(/[^A-Za-z0-9]/, "")
+            return nil if value.nil?
+
+            value.to_s.gsub(/[^A-Za-z0-9]/, "")
           end
         end
       end

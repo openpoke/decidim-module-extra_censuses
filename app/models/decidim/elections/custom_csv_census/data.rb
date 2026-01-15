@@ -70,8 +70,11 @@ module Decidim
           return rows if columns.empty?
 
           rows.each_with_index.filter_map do |row, idx|
-            errs = validate_row(row, idx)
-            errs.empty? ? row : (@errors.concat(errs) && nil)
+            row_errors = validate_row(row, idx)
+            next row if row_errors.empty?
+
+            @errors.concat(row_errors)
+            nil
           end
         end
 
@@ -89,7 +92,13 @@ module Decidim
           seen = Set.new
           rows.each_with_object([]) do |row, result|
             transformed = transform_row(row)
-            seen.add?(transformed.values.hash) ? result << transformed : @duplicates_removed += 1
+            row_hash = transformed.values.hash
+
+            if seen.add?(row_hash)
+              result << transformed
+            else
+              @duplicates_removed += 1
+            end
           end
         end
 
