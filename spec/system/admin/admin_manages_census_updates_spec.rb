@@ -56,9 +56,9 @@ describe "Admin manages census updates" do # rubocop:disable RSpec/DescribeClass
       end
     end
 
-    context "when there are more than 15 voters" do
+    context "when there are more voters than per_page" do
       before do
-        create_list(:election_voter, 20, election:)
+        create_list(:election_voter, Decidim::Paginable::OPTIONS.first + 1, election:)
         visit census_updates_path
       end
 

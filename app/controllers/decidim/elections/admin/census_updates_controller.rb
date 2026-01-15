@@ -5,12 +5,13 @@ module Decidim
     module Admin
       # Controller for managing census entries (voters) in custom CSV census.
       class CensusUpdatesController < Admin::ApplicationController
-        helper Decidim::PaginateHelper
+        include Decidim::Paginable
+
         helper_method :election, :identifier_column
 
         def index
           enforce_permission_to :edit, :census, election: election
-          @voters = filtered_voters.page(params[:page]).per(15)
+          @voters = paginate(filtered_voters)
         end
 
         def new
