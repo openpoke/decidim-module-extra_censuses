@@ -5,7 +5,10 @@ module Decidim
     module Admin
       # Controller for managing census imports from surveys.
       class SurveyImportsController < Admin::ApplicationController
-        helper_method :election, :survey_import_configured?, :census_columns, :configured_survey
+        include Decidim::Paginable
+
+        helper_method :election, :survey_import_configured?, :census_columns, :configured_survey,
+                      :invalid_count, :all_valid_responses_count
 
         def index
           enforce_permission_to :update, :census, election: election
@@ -13,6 +16,7 @@ module Decidim
           return redirect_to new_election_survey_import_path(election) unless survey_import_configured?
 
           @responses = SurveyResponsesForImport.new(election).query
+          @valid_responses = paginate(Kaminari.paginate_array(valid_responses))
         end
 
         def new
@@ -97,6 +101,18 @@ module Decidim
           return nil if survey_id.blank?
 
           @configured_survey ||= Decidim::Surveys::Survey.find_by(id: survey_id)
+        end
+
+        def valid_responses
+          @_valid_responses ||= @responses&.select { |r| r[:status] == :valid } || []
+        end
+
+        def invalid_count
+          @responses&.count { |r| r[:status] != :valid } || 0
+        end
+
+        def all_valid_responses_count
+          valid_responses.count
         end
       end
     end
