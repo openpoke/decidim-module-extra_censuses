@@ -6,9 +6,7 @@ module Decidim
       module Types
         # Base class for column types.
         class Base
-          def self.validate(value)
-            return nil if value.nil?
-
+          def self.validate(_value)
             nil
           end
 
