@@ -2,8 +2,10 @@ PATH
   remote: .
   specs:
     decidim-extra_censuses (0.1.0)
+      decidim-admin (>= 0.31.0, < 0.32)
       decidim-core (>= 0.31.0, < 0.32)
       decidim-elections (>= 0.31.0, < 0.32)
+      decidim-surveys (>= 0.31.0, < 0.32)
 
 GEM
   remote: https://rubygems.org/
