@@ -27,6 +27,8 @@ Gem::Specification.new do |s|
     end
   end
 
+  s.add_dependency "decidim-admin", Decidim::ExtraCensuses::COMPAT_DECIDIM_VERSION
   s.add_dependency "decidim-core", Decidim::ExtraCensuses::COMPAT_DECIDIM_VERSION
   s.add_dependency "decidim-elections", Decidim::ExtraCensuses::COMPAT_DECIDIM_VERSION
+  s.add_dependency "decidim-surveys", Decidim::ExtraCensuses::COMPAT_DECIDIM_VERSION
 end

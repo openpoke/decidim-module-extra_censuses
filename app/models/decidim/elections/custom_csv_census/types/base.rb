@@ -11,7 +11,9 @@ module Decidim
           end
 
           def self.transform(value)
-            value
+            return nil if value.nil?
+
+            value.to_s
           end
         end
       end

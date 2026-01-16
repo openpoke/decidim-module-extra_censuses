@@ -14,12 +14,10 @@
         data: { action: "change->custom-csv-census#updateHiddenFields" } %>
   </div>
 
-  <div class="flex items-center pb-1">
-    <%= button_tag type: "button",
-        class: "p-2 text-gray-2 hover:text-alert rounded",
-        title: t(".delete"),
-        data: { action: "click->custom-csv-census#removeColumn" } do %>
-      <%= icon "delete-bin-line", class: "w-4 h-4 fill-current" %>
-    <% end %>
-  </div>
+  <button type="button"
+          class="button button__xs button__transparent-secondary mb-2"
+          title="<%= t(".delete") %>"
+          data-action="click->custom-csv-census#removeColumn">
+    <%= icon "delete-bin-line" %>
+  </button>
 </div>

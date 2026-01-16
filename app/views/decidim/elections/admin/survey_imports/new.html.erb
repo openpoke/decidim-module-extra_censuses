@@ -1,0 +1,108 @@
+<% append_javascript_pack_tag "decidim_extra_censuses" %>
+<%= render partial: "decidim/elections/admin/elections/tabs_menu" %>
+
+<% add_decidim_page_title(t(".title")) %>
+
+<div class="item_show__header">
+  <h1 class="item_show__header-title"><%= t(".title") %></h1>
+</div>
+
+<div class="item__edit-form">
+  <%= decidim_form_for(@form, url: election_survey_imports_path(election), method: :post, html: { class: "form-defaults form", id: "survey_import_config_form", data: { controller: "survey-import" } }) do |f| %>
+    <div class="form__wrapper">
+      <div class="card pt-4">
+        <div class="card-section">
+          <% if @form.available_survey_components.empty? %>
+            <%= cell("decidim/announcement", t(".no_surveys_warning"), callout_class: "warning") %>
+          <% else %>
+            <div class="row column mb-4">
+              <%= f.select :survey_component_id,
+                           options_for_select(
+                             @form.available_survey_components.map { |c| [translated_attribute(c.name), c.id.to_s] },
+                             @form.survey_component_id.to_s
+                           ),
+                           { include_blank: t(".select_component") },
+                           {
+                             class: "w-full",
+                             data: {
+                               "survey-import-target": "componentSelect",
+                               "surveys-url": surveys_election_survey_imports_path(election),
+                               action: "change->survey-import#loadSurveys"
+                             }
+                           } %>
+              <%= f.label :survey_component_id, t(".survey_component") %>
+            </div>
+
+            <div class="row column mb-4">
+              <%= f.select :survey_id,
+                           options_for_select(
+                             @form.available_surveys.map { |s| [translated_attribute(s.questionnaire.title), s.id.to_s] },
+                             @form.survey_id.to_s
+                           ),
+                           { include_blank: t(".select_survey") },
+                           {
+                             class: "w-full",
+                             data: {
+                               "survey-import-target": "surveySelect",
+                               "questions-url": questions_election_survey_imports_path(election),
+                               action: "change->survey-import#loadQuestions"
+                             }
+                           } %>
+              <%= f.label :survey_id, t(".survey") %>
+            </div>
+
+            <% if census_columns.any? %>
+              <div class="row column mb-4">
+                <h3 class="text-lg font-semibold mb-2"><%= t(".field_mapping") %></h3>
+                <p class="text-sm text-gray mb-4"><%= t(".field_mapping_description") %></p>
+
+                <% field_mapping = @form.field_mapping.is_a?(Hash) ? @form.field_mapping.with_indifferent_access : {} %>
+                <div data-survey-import-target="mappingContainer">
+                  <table class="table-list">
+                    <thead>
+                      <tr>
+                        <th><%= t(".census_column") %></th>
+                        <th><%= t(".survey_question") %></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% census_columns.each do |column| %>
+                        <tr>
+                          <td>
+                            <strong><%= column["name"] %></strong>
+                            <span class="text-sm text-gray">(<%= column["column_type"] %>)</span>
+                          </td>
+                          <td>
+                            <%= select_tag "survey_import[field_mapping][#{column["name"]}]",
+                                           options_for_select(
+                                             @form.available_questions.map { |q| [translated_attribute(q.body), q.id.to_s] },
+                                             field_mapping[column["name"]].to_s
+                                           ),
+                                           include_blank: t(".select_question"),
+                                           class: "w-full question-select",
+                                           data: { "survey-import-target": "questionSelect" } %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <% else %>
+              <%= cell("decidim/announcement", t(".no_columns_warning"), callout_class: "warning") %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <% if @form.available_survey_components.any? && census_columns.any? %>
+      <div class="item__edit-sticky">
+        <div class="item__edit-sticky-container">
+          <%= f.submit t(".save_configuration"), class: "button button__sm button__secondary" %>
+          <%= link_to t(".cancel"), election_census_updates_path(election), class: "button button__sm button__transparent-secondary" %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

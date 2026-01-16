@@ -25,12 +25,44 @@ en:
               voters_exist: Cannot upload file while census data exists. Remove existing
                 data first.
   decidim:
+    admin:
+      menu:
+        elections_menu:
+          census_updates: Census updates
     elections:
       admin:
         census:
           update:
             success_config_only: Census configuration saved. Please upload a CSV file
               to complete the setup.
+        census_updates:
+          create:
+            error: There was an error creating the entry
+            success: Entry created successfully
+          destroy:
+            success: Entry deleted successfully
+          errors:
+            already_exists: An entry with this data already exists
+            blank_column: "%{column} cannot be blank"
+          index:
+            actions: Actions
+            clear: Clear
+            confirm_delete: Are you sure you want to delete this entry?
+            created_at: Created at
+            delete: Delete
+            entries_count:
+              one: 1 unique entry
+              other: "%{count} unique entries"
+            import_from_survey: Import from survey
+            new_entry: New entry
+            search: Search
+            search_placeholder: Search...
+            title: Census Status
+            user_identifier: User identifier
+          new:
+            cancel: Cancel
+            create: Create entry
+            title: New Census Entry
         censuses:
           column_row:
             column_name: 'Column name:'
@@ -58,6 +90,48 @@ en:
               defined above. It must be separated with a semicolon (;)
             upload_file: Upload file
             upload_title: Upload a CSV file
+        survey_imports:
+          create:
+            error: Could not save configuration
+            success: Survey import configuration saved successfully
+          errors:
+            question_not_found: One or more mapped questions were not found
+            unmapped_column: Column '%{column}' must be mapped to a question
+          import:
+            no_valid_entries: No valid entries to import
+            success: Import of %{count} entries has been queued and will be processed
+              in background
+          index:
+            back_to_census: Back to census
+            cancel: Cancel
+            change_survey: Change survey
+            import_count:
+              one: Import 1 entry
+              other: Import %{count} entries
+            no_responses: No responses found in the selected survey
+            no_valid_entries: No valid entries to import. All responses are either
+              incomplete or already exist in the census.
+            ready_to_import: Ready to import
+            skipped: Skipped
+            title: Import from Survey
+          new:
+            cancel: Cancel
+            census_column: Census column
+            field_mapping: Field mapping
+            field_mapping_description: Map each census column to a corresponding survey
+              question
+            no_columns_warning: Please configure census columns first before setting
+              up survey import
+            no_surveys_warning: No survey components found in this participatory space.
+              Please create a survey first.
+            save_configuration: Save configuration
+            select_component: Select a survey component
+            select_question: Select a question
+            select_survey: Select a survey
+            survey: Survey
+            survey_component: Survey component
+            survey_question: Survey question
+            title: Configure Survey Import
       censuses:
         custom_csv:
           label: Custom CSV

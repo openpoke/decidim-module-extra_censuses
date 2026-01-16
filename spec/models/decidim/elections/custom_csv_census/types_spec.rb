@@ -53,6 +53,10 @@ module Decidim
             expect(described_class.validate("")).to be_nil
             expect(described_class.validate("!@#$%")).to be_nil
           end
+
+          it "returns nil for nil value" do
+            expect(described_class.validate(nil)).to be_nil
+          end
         end
 
         describe ".transform" do
@@ -60,6 +64,10 @@ module Decidim
             expect(described_class.transform("hello")).to eq("hello")
             expect(described_class.transform("  spaces  ")).to eq("  spaces  ")
             expect(described_class.transform("123-abc")).to eq("123-abc")
+          end
+
+          it "returns nil for nil value" do
+            expect(described_class.transform(nil)).to be_nil
           end
         end
       end
@@ -69,6 +77,10 @@ module Decidim
           it "returns nil for any value (no validation)" do
             expect(described_class.validate("abc123")).to be_nil
             expect(described_class.validate("!@#")).to be_nil
+          end
+
+          it "returns nil for nil value" do
+            expect(described_class.validate(nil)).to be_nil
           end
         end
 
@@ -104,6 +116,10 @@ module Decidim
             expect(described_class.transform("!@#$%")).to eq("")
             expect(described_class.transform("---")).to eq("")
           end
+
+          it "returns nil for nil value" do
+            expect(described_class.transform(nil)).to be_nil
+          end
         end
       end
 
@@ -112,6 +128,10 @@ module Decidim
           it "returns nil for any value (no validation)" do
             expect(described_class.validate("hello")).to be_nil
             expect(described_class.validate("  spaces  ")).to be_nil
+          end
+
+          it "returns nil for nil value" do
+            expect(described_class.validate(nil)).to be_nil
           end
         end
 
@@ -151,6 +171,10 @@ module Decidim
             expect(described_class.transform("hello")).to eq("hello")
             expect(described_class.transform("test123")).to eq("test123")
           end
+
+          it "returns nil for nil value" do
+            expect(described_class.transform(nil)).to be_nil
+          end
         end
       end
 
@@ -178,15 +202,10 @@ module Decidim
               expect(described_class.validate("31.12.2000")).to be_nil
             end
 
-            it "accepts written month names" do
+            it "accepts written month names with day" do
               expect(described_class.validate("January 15, 2024")).to be_nil
               expect(described_class.validate("15 January 2024")).to be_nil
               expect(described_class.validate("Jan 15, 2024")).to be_nil
-            end
-
-            it "accepts month and year" do
-              expect(described_class.validate("January 2024")).to be_nil
-              expect(described_class.validate("01/2024")).to be_nil
             end
           end
 
@@ -194,6 +213,7 @@ module Decidim
             it "rejects random text" do
               expect(described_class.validate("not a date")).to eq("invalid_date")
               expect(described_class.validate("hello world")).to eq("invalid_date")
+              expect(described_class.validate("murr")).to eq("invalid_date")
             end
 
             it "rejects empty-like strings" do
@@ -201,13 +221,13 @@ module Decidim
               expect(described_class.validate("   ")).to eq("invalid_date")
             end
 
-            it "accepts numbers as years" do
-              expect(described_class.validate("2024")).to be_nil
-              expect(described_class.validate("12345")).to be_nil
+            it "rejects partial dates (year only)" do
+              expect(described_class.validate("2024")).to eq("invalid_date")
             end
 
-            it "rejects very large numbers" do
-              expect(described_class.validate("999999999")).to eq("invalid_date")
+            it "rejects partial dates (month and year only)" do
+              expect(described_class.validate("January 2024")).to eq("invalid_date")
+              expect(described_class.validate("01/2024")).to eq("invalid_date")
             end
 
             it "rejects special characters only" do
@@ -215,17 +235,44 @@ module Decidim
               expect(described_class.validate("---")).to eq("invalid_date")
             end
 
-            it "rejects malformed date strings" do
-              expect(described_class.validate("2024-13-45")).to be_nil
+            it "rejects non-date strings" do
               expect(described_class.validate("abc-def-ghi")).to eq("invalid_date")
             end
+          end
+
+          it "returns nil for nil value" do
+            expect(described_class.validate(nil)).to be_nil
           end
         end
 
         describe ".transform" do
-          it "returns value unchanged (no transformation)" do
+          it "normalizes ISO format dates" do
             expect(described_class.transform("2024-01-15")).to eq("2024-01-15")
-            expect(described_class.transform("15/01/2024")).to eq("15/01/2024")
+            expect(described_class.transform("2000-12-31")).to eq("2000-12-31")
+          end
+
+          it "normalizes European format DD/MM/YYYY to ISO" do
+            expect(described_class.transform("15/01/2024")).to eq("2024-01-15")
+            expect(described_class.transform("31/12/2000")).to eq("2000-12-31")
+          end
+
+          it "normalizes format with dots to ISO" do
+            expect(described_class.transform("15.01.2024")).to eq("2024-01-15")
+            expect(described_class.transform("01.09.2000")).to eq("2000-09-01")
+          end
+
+          it "normalizes written month names to ISO" do
+            expect(described_class.transform("January 15, 2024")).to eq("2024-01-15")
+            expect(described_class.transform("15 January 2024")).to eq("2024-01-15")
+          end
+
+          it "returns original value for incomplete dates" do
+            expect(described_class.transform("2024")).to eq("2024")
+            expect(described_class.transform("January 2024")).to eq("January 2024")
+          end
+
+          it "returns nil for nil value" do
+            expect(described_class.transform(nil)).to be_nil
           end
         end
       end
@@ -272,10 +319,14 @@ module Decidim
               expect(described_class.validate("123,456")).to eq("invalid_number")
             end
 
-            it "rejects numbers with spaces" do
+            it "rejects numbers with spaces inside" do
               expect(described_class.validate("123 456")).to eq("invalid_number")
-              expect(described_class.validate(" 123")).to eq("invalid_number")
-              expect(described_class.validate("123 ")).to eq("invalid_number")
+            end
+
+            it "accepts numbers with leading/trailing spaces (strips them)" do
+              expect(described_class.validate(" 123")).to be_nil
+              expect(described_class.validate("123 ")).to be_nil
+              expect(described_class.validate("  456  ")).to be_nil
             end
 
             it "rejects letters" do
@@ -303,12 +354,26 @@ module Decidim
               expect(described_class.validate("+123")).to eq("invalid_number")
             end
           end
+
+          it "returns nil for nil value" do
+            expect(described_class.validate(nil)).to be_nil
+          end
         end
 
         describe ".transform" do
-          it "returns value unchanged (no transformation)" do
+          it "strips leading and trailing spaces" do
+            expect(described_class.transform(" 123")).to eq("123")
+            expect(described_class.transform("123 ")).to eq("123")
+            expect(described_class.transform("  456  ")).to eq("456")
+          end
+
+          it "returns value unchanged when no spaces" do
             expect(described_class.transform("123")).to eq("123")
             expect(described_class.transform("007")).to eq("007")
+          end
+
+          it "returns nil for nil value" do
+            expect(described_class.transform(nil)).to be_nil
           end
         end
       end

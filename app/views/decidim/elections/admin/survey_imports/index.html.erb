@@ -1,0 +1,66 @@
+<%= render partial: "decidim/elections/admin/elections/tabs_menu" %>
+
+<% survey_title = configured_survey.present? ? translated_attribute(configured_survey.questionnaire.title) : "" %>
+<% add_decidim_page_title("#{t(".title")}: #{survey_title}") %>
+
+<div class="item_show__header">
+  <h1 class="item_show__header-title">
+    <%= t(".title") %><% if configured_survey.present? %>: <%= survey_title %><% end %>
+    <%= link_to t(".change_survey"), new_election_survey_import_path(election), class: "button button__sm button__transparent-secondary" %>
+  </h1>
+</div>
+
+<% if @responses.any? %>
+  <div class="mb-4">
+    <div class="flex gap-4 items-center flex-wrap">
+      <span class="label success"><%= t(".ready_to_import") %>: <%= all_valid_responses_count %></span>
+      <% if invalid_count > 0 %>
+        <span class="label"><%= t(".skipped") %>: <%= invalid_count %></span>
+      <% end %>
+    </div>
+  </div>
+
+  <% if @valid_responses.any? %>
+    <div class="table-stacked mb-6">
+      <table class="table-list">
+        <thead>
+          <tr>
+            <% census_columns.each do |column| %>
+              <th><%= column["name"] %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @valid_responses.each do |response| %>
+            <tr>
+              <% census_columns.each do |column| %>
+                <td><%= response[:census_data][column["name"]] || "-" %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= decidim_paginate @valid_responses %>
+
+    <%= form_tag import_election_survey_imports_path(election), method: :post do %>
+      <div class="item__edit-sticky">
+        <div class="item__edit-sticky-container">
+          <%= submit_tag t(".import_count", count: all_valid_responses_count), class: "button button__sm button__secondary" %>
+          <%= link_to t(".cancel"), election_census_updates_path(election), class: "button button__sm button__transparent-secondary" %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= cell("decidim/announcement", t(".no_valid_entries"), callout_class: "warning") %>
+    <div class="mt-4">
+      <%= link_to t(".back_to_census"), election_census_updates_path(election), class: "button button__sm button__secondary" %>
+    </div>
+  <% end %>
+<% else %>
+  <%= cell("decidim/announcement", t(".no_responses"), callout_class: "warning") %>
+  <div class="mt-4">
+    <%= link_to t(".back_to_census"), election_census_updates_path(election), class: "button button__sm button__secondary" %>
+  </div>
+<% end %>

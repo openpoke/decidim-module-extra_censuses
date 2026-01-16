@@ -7,7 +7,15 @@ module Decidim
         # Validates that value contains only digits.
         class Number < Base
           def self.validate(value)
-            "invalid_number" unless value.match?(/\A\d+\z/)
+            return nil if value.nil?
+
+            "invalid_number" unless value.to_s.strip.match?(/\A\d+\z/)
+          end
+
+          def self.transform(value)
+            return nil if value.nil?
+
+            value.to_s.strip
           end
         end
       end

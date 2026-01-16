@@ -2,7 +2,7 @@
 
 require "spec_helper"
 
-describe "Voter authentication with Custom CSV census" do # rubocop:disable RSpec/DescribeClass
+describe "Voter authentication with Custom CSV census" do
   include_context "with a component"
 
   let(:manifest_name) { "elections" }
