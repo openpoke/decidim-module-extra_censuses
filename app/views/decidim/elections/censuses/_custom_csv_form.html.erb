@@ -1,0 +1,21 @@
+<% form.object.column_definitions.each_with_index do |column, index| %>
+  <%= label_tag "census_data_#{column["name"]}", column["name"] %>
+  <% if column["column_type"] == "date" %>
+    <%= date_field_tag "census_data[#{column["name"]}]",
+                       nil,
+                       id: "census_data_#{column["name"]}",
+                       required: true,
+                       autofocus: index.zero?,
+                       autocomplete: "off",
+                       data: { controller: "date-picker" } %>
+  <% else %>
+    <%= text_field_tag "census_data[#{column["name"]}]",
+                       nil,
+                       id: "census_data_#{column["name"]}",
+                       required: true,
+                       autofocus: index.zero?,
+                       autocomplete: "off" %>
+  <% end %>
+<% end %>
+
+<%= render "decidim/elections/censuses/submit_button", form: form %>

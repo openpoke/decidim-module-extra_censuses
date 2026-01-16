@@ -5,7 +5,7 @@ $LOAD_PATH.push File.expand_path("lib", __dir__)
 require "decidim/extra_censuses/version"
 
 Gem::Specification.new do |s|
-  s.version = Decidim::ExtraCensuses.version
+  s.version = Decidim::ExtraCensuses::VERSION
   s.authors = ["Ivan Vergés"]
   s.email = ["ivan@pokecode.net"]
   s.license = "AGPL-3.0-or-later"
@@ -27,5 +27,6 @@ Gem::Specification.new do |s|
     end
   end
 
-  s.add_dependency "decidim-core", Decidim::ExtraCensuses.version
+  s.add_dependency "decidim-core", Decidim::ExtraCensuses::COMPAT_DECIDIM_VERSION
+  s.add_dependency "decidim-elections", Decidim::ExtraCensuses::COMPAT_DECIDIM_VERSION
 end

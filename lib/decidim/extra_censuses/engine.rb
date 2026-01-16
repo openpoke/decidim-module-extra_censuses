@@ -5,24 +5,33 @@ require "decidim/core"
 
 module Decidim
   module ExtraCensuses
-    # This is the engine that runs on the public interface of extra_censuses.
     class Engine < ::Rails::Engine
       isolate_namespace Decidim::ExtraCensuses
 
-      routes do
-        # Add engine routes here
-        # resources :extra_censuses
-        # root to: "extra_censuses#index"
+      initializer "decidim.extra_censuses.custom_csv_census", after: "decidim.elections.default_censuses" do
+        next unless Decidim.const_defined?(:Elections)
+
+        Decidim::Elections.census_registry.register(:custom_csv) do |manifest|
+          manifest.admin_form = "Decidim::Elections::Admin::Censuses::CustomCsvForm"
+          manifest.admin_form_partial = "decidim/elections/admin/censuses/custom_csv_form"
+          manifest.voter_form = "Decidim::Elections::Censuses::CustomCsvForm"
+          manifest.voter_form_partial = "decidim/elections/censuses/custom_csv_form"
+          manifest.after_update_command = "Decidim::Elections::Admin::Censuses::CustomCsv"
+
+          manifest.user_query do |election|
+            Decidim::Elections::Voter.where(election: election)
+          end
+        end
       end
 
-      initializer "ExtraCensuses.shakapacker.assets_path" do
+      initializer "decidim.extra_censuses.webpacker.assets_path" do
         Decidim.register_assets_path File.expand_path("app/packs", root)
       end
 
-      initializer "ExtraCensuses.data_migrate", after: "decidim_core.data_migrate" do
-        DataMigrate.configure do |config|
-          config.data_migrations_path << root.join("db/data").to_s
-        end
+      # Overrides and helpers
+      config.to_prepare do
+        Decidim::Elections::Admin::CensusController.include(Decidim::ExtraCensuses::CensusControllerOverride)
+        Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
       end
     end
   end

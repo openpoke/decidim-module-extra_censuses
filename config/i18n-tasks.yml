@@ -5,6 +5,10 @@ locales: [en]
 
 ignore_unused:
   - "decidim.components.extra_censuses.name"
+  - "decidim.elections.admin.censuses.custom_csv_form.*"
+  - "decidim.elections.censuses.custom_csv.*"
+  - "activemodel.attributes.custom_csv.*"
+  - "activemodel.errors.models.custom_csv.*"
 
 ignore_missing:
   - decidim.participatory_processes.scopes.global

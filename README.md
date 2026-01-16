@@ -1,18 +1,17 @@
 # Decidim::ExtraCensuses
 
-Extra Censuses For the Election Component.
+A new census type "Custom CSV" for Decidim Elections.
 
 ## Usage
 
-ExtraCensuses will be available as a Component for a Participatory
-Space.
+This module adds a new census type to Decidim Elections that allows administrators to upload custom CSV files with flexible column structures.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "decidim-decidim/extra_censuses"
+gem "decidim-extra_censuses"
 ```
 
 And then execute:
