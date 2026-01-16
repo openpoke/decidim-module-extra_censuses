@@ -8,6 +8,33 @@ module Decidim
     class Engine < ::Rails::Engine
       isolate_namespace Decidim::ExtraCensuses
 
+      initializer "decidim.extra_censuses.mount_routes" do
+        Decidim::Elections::AdminEngine.routes.prepend do
+          resources :elections, only: [] do
+            resources :census_updates, only: [:index, :new, :create, :destroy], controller: "/decidim/elections/admin/census_updates"
+          end
+        end
+      end
+
+      initializer "decidim.extra_censuses.menu", after: "decidim_elections_admin.menu" do
+        Decidim.menu :admin_elections_menu do |menu|
+          next if @election.blank?
+
+          show_tab = @election.census_manifest == "custom_csv" &&
+                     @election.census_settings&.dig("columns").present?
+
+          current_component_admin_proxy = Decidim::EngineRouter.admin_proxy(@election.component)
+
+          menu.add_item :census_updates,
+                        I18n.t("census_updates", scope: "decidim.admin.menu.elections_menu"),
+                        current_component_admin_proxy.election_census_updates_path(@election),
+                        position: 3.5,
+                        if: show_tab,
+                        active: is_active_link?(current_component_admin_proxy.election_census_updates_path(@election)),
+                        icon_name: "file-list-3-line"
+        end
+      end
+
       initializer "decidim.extra_censuses.custom_csv_census", after: "decidim.elections.default_censuses" do
         next unless Decidim.const_defined?(:Elections)
 
