@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails"
+require "deface"
 require "decidim/core"
 
 module Decidim
@@ -67,6 +68,13 @@ module Decidim
       config.to_prepare do
         Decidim::Elections::Admin::CensusController.include(Decidim::ExtraCensuses::CensusControllerOverride)
         Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
+
+        # min_choices feature overrides
+        Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
+        Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
+        Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::VotesControllerOverride)
+        Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::PerQuestionVotesControllerOverride)
+        Decidim::Elections::ApplicationHelper.include(Decidim::ExtraCensuses::ApplicationHelperOverride)
       end
     end
   end

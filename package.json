@@ -24,5 +24,9 @@
     "@decidim/browserslist-config": "^0.31.0",
     "@decidim/webpacker": "^0.31.0"
   },
+  "overrides": {
+    "webpack": "5.105.4",
+    "webpack-dev-server": "^4.15.2"
+  },
   "browserslist": ["extends @decidim/browserslist-config"]
 }

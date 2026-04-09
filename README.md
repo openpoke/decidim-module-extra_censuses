@@ -6,18 +6,25 @@ A new census type "Custom CSV" for Decidim Elections.
 
 This module adds a new census type to Decidim Elections that allows administrators to upload custom CSV files with flexible column structures.
 
+## Requirements
+
+This module requires the [openpoke/decidim](https://github.com/openpoke/decidim) fork, branch `0.31-backports`. The official Decidim 0.31 gem does not include the `max_choices` feature for elections questions that this module extends.
+
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "decidim-extra_censuses"
+gem "decidim", git: "https://github.com/openpoke/decidim", branch: "0.31-backports"
+gem "decidim-extra_censuses", path: "path/to/decidim-module-extra_censuses"
 ```
 
 And then execute:
 
 ```bash
 bundle
+bundle exec rake decidim_extra_censuses:install:migrations
+bundle exec rake db:migrate
 ```
 
 ## Contributing
