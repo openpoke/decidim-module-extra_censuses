@@ -8,6 +8,10 @@ ignore_unused:
   - "decidim.elections.admin.censuses.custom_csv_form.*"
   - "decidim.elections.admin.census_updates.*"
   - "decidim.elections.censuses.custom_csv.*"
+  - "decidim.elections.votes.question.choices_out_of_range"
+  - "decidim.elections.votes.question.choices_range"
+  - "decidim.elections.votes.question.min_choices"
+  - "decidim.elections.votes.question.min_choices_not_met"
   - "decidim.admin.menu.elections_menu.*"
   - "activemodel.attributes.custom_csv.*"
   - "activemodel.attributes.question.*"
@@ -17,4 +21,6 @@ ignore_missing:
   - decidim.participatory_processes.scopes.global
   - decidim.elections.admin.census.update.success
   - decidim.elections.admin.census.update.error
+  - decidim.elections.votes.cast.invalid
+  - decidim.elections.votes.cast.success
   - decidim.forms.admin.questionnaires.question.any
