@@ -12,19 +12,19 @@ This module requires the [openpoke/decidim](https://github.com/openpoke/decidim)
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Add these lines to your application's Gemfile:
 
 ```ruby
 gem "decidim", git: "https://github.com/openpoke/decidim", branch: "0.31-backports"
-gem "decidim-extra_censuses", path: "path/to/decidim-module-extra_censuses"
+gem "decidim-extra_censuses", git: "https://github.com/pokecode/decidim-module-extra_censuses"
 ```
 
 And then execute:
 
 ```bash
-bundle
-bundle exec rake decidim_extra_censuses:install:migrations
-bundle exec rake db:migrate
+bundle install
+bundle exec rails decidim_extra_censuses:install:migrations
+bundle exec rails db:migrate
 ```
 
 ## Contributing
