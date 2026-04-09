@@ -16,6 +16,7 @@ module Decidim
                     less_than_or_equal_to: ->(form) { form.max_choices.presence || form.number_of_options }
                   },
                   allow_blank: true
+        validates :min_choices, absence: true, unless: -> { question_type == "multiple_option" }
 
         def number_of_options
           response_options.reject(&:deleted?).size

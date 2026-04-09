@@ -8,12 +8,10 @@ module Decidim
 
       included do
         def question_title(question, tag = :h3, **options)
-          content_tag(tag, **options) do
-            title = translated_attribute(question.body)
-            hint = choices_hint(question)
-            title += " (#{hint})" if hint.present?
-            title.html_safe
-          end
+          title = decidim_sanitize_translated(question.body)
+          hint = choices_hint(question)
+          title = safe_join([title, " (", hint, ")"]) if hint.present?
+          content_tag(tag, title, **options)
         end
 
         private

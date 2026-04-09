@@ -14,7 +14,7 @@ module Decidim
         def update
           enforce_permission_to(:create, :vote, election:)
 
-          response_ids = Array(params.dig(:response, question.id.to_s)).compact
+          response_ids = Array(params.dig(:response, question.id.to_s)).compact_blank.uniq
 
           if out_of_choices_range?(response_ids.size)
             flash.now[:alert] = choices_range_alert_message
@@ -22,7 +22,7 @@ module Decidim
             return
           end
 
-          votes_buffer[question.id.to_s] = params.dig(:response, question.id.to_s)
+          votes_buffer[question.id.to_s] = response_ids
           redirect_to next_vote_step_path
         end
       end
