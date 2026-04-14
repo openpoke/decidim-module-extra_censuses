@@ -2,12 +2,25 @@
 
 module Decidim
   module ExtraCensuses
-    # Shared check for min_choices/max_choices range on election votes controllers.
-    # Used by both VotesController (normal voting) and PerQuestionVotesController (per_question voting).
+    # Enforces min_choices/max_choices range on the #update action of both
+    # voting controllers. Included directly into VotesController and
+    # PerQuestionVotesController — no wrapper override needed.
     module ChoicesRangeCheck
       extend ActiveSupport::Concern
 
+      included do
+        prepend_before_action :check_choices_range!, only: :update # rubocop:disable Rails/LexicallyScopedActionFilter
+      end
+
       private
+
+      def check_choices_range!
+        response_ids = params.dig(:response, question.id.to_s) || []
+        return unless out_of_choices_range?(response_ids.size)
+
+        flash.now[:alert] = choices_range_alert_message
+        render :show
+      end
 
       def out_of_choices_range?(count)
         min = question.min_choices.presence

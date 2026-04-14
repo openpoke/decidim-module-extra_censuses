@@ -75,8 +75,8 @@ module Decidim
         # min_choices feature overrides
         Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
-        Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::VotesControllerOverride)
-        Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::PerQuestionVotesControllerOverride)
+        Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
+        Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::ApplicationHelper.include(Decidim::ExtraCensuses::ApplicationHelperOverride)
       end
     end
