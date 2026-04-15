@@ -1,0 +1,78 @@
+<% group = form.object %>
+
+<div class="card questionnaire-question-group mx-4 my-8" data-controller="response-option-group" data-group-id="<%= group.id %>">
+  <div class="card-divider">
+    <h2 class="card-title flex items-center">
+      <span>
+        <% if editable %>
+          <span class="dragger hover:cursor-grab">
+            <%= icon("draggable") %>
+          </span>
+        <% end %>
+        <%= dynamic_title(
+              group.title,
+              class: "group-title-statement",
+              max_length: 50,
+              omission: "...",
+              placeholder: t("new_group", scope: "decidim.extra_censuses.elections.admin.questions")
+            ) %>
+        <span class="group-position-label"></span>
+      </span>
+
+      <span class="ml-auto flex flex-row-reverse items-center gap-2">
+        <button type="button" aria-expanded="true" data-action="click->response-option-group#toggleCollapse">
+          <span class="group-icon-collapse">
+            <%== icon "arrow-up-s-line", role: "img" %>
+          </span>
+          <span class="group-icon-expand hidden">
+            <%== icon "arrow-down-s-line", role: "img" %>
+          </span>
+        </button>
+
+        <% if editable %>
+          <button type="button" class="button button__xs button__transparent-secondary small alert button--title" data-action="click->response-option-groups#removeGroup">
+            <%= icon "delete-bin-line" %>
+            <span class="hidden md:block"><%= t("remove_group", scope: "decidim.extra_censuses.elections.admin.questions") %></span>
+          </button>
+        <% end %>
+      </span>
+    </h2>
+  </div>
+
+  <div class="card-section group-response-options">
+    <div class="row column">
+      <%=
+        form.translated(
+          :text_field,
+          :title,
+          label: t("group_title_placeholder", scope: "decidim.extra_censuses.elections.admin.questions"),
+          disabled: !editable
+        )
+      %>
+    </div>
+
+    <div class="group-response-options-list">
+      <% group_options.each do |response_option| %>
+        <%= fields_for "questions[#{question.to_param}][response_options][]", response_option do |response_option_form| %>
+          <%= render "decidim/extra_censuses/elections/admin/questions/response_option_in_group",
+                     form: response_option_form,
+                     question: question,
+                     group_id: group.id,
+                     editable: editable %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <% if editable %>
+      <div class="row column">
+        <button type="button" class="button--title button button__sm button__transparent-secondary mt-4" data-action="click->response-option-groups#addOptionInGroup">
+          <%= t("add_response_option", scope: "decidim.forms.admin.questionnaires.question") %>
+        </button>
+      </div>
+    <% end %>
+  </div>
+
+  <%= form.hidden_field :id %>
+  <%= form.hidden_field :position %>
+  <%= form.hidden_field :deleted %>
+</div>

@@ -1,4 +1,5 @@
-<!-- insert_before "div.questionnaire-question-max-choices" -->
+<!-- insert_after "div.questionnaire-question-grouped" -->
+<!-- sequence :after => "add_grouped_checkbox" -->
 <div class="row column questionnaire-question-min-choices">
   <%=
     form.select(

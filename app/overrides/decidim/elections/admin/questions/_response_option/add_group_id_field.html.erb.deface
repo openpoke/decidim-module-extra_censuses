@@ -1,0 +1,2 @@
+<!-- insert_after "erb[loud]:contains('form.hidden_field :deleted')" -->
+<%= form.hidden_field :group_id, value: response_option.group_id %>

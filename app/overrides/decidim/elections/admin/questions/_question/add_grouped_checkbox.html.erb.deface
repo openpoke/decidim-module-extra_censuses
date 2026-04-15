@@ -1,0 +1,8 @@
+<!-- insert_after "erb[loud]:contains('form.hidden_field :deleted')" -->
+<!-- sequence :after => "_remove_upstream_max_choices" -->
+<div class="row column questionnaire-question-grouped">
+  <%= form.check_box :grouped,
+                     label: t("grouped_label", scope: "decidim.extra_censuses.elections.admin.questions"),
+                     help_text: t("grouped_help_text", scope: "decidim.extra_censuses.elections.admin.questions"),
+                     disabled: !editable %>
+</div>

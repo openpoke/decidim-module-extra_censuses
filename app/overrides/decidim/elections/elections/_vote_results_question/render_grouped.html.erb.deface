@@ -1,0 +1,18 @@
+<!-- surround_contents "div[data-options-container]" -->
+<% if question.grouped? %>
+  <% grouped_response_options(question).each do |group, options| %>
+    <% if group %>
+      <h3 class="question-group-title h5 mt-4 mb-2"><%= translated_attribute(group.title) %></h3>
+    <% end %>
+    <% options.each do |option| %>
+      <%= render "decidim/elections/elections/vote_results_option", option: option %>
+    <% end %>
+  <% end %>
+
+  <div class="py-4 flex justify-between items-center">
+    <span><%= t("decidim.elections.elections.vote_results.total") %></span>
+    <span data-question-total-votes-text="<%= question.id %>"><%= t("total_votes", scope: "decidim.elections.elections.vote_results", count: question.total_votes) %></span>
+  </div>
+<% else %>
+  <%= render_original %>
+<% end %>
