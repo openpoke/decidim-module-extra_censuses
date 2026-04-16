@@ -24,3 +24,13 @@ ignore_missing:
   - decidim.elections.votes.cast.invalid
   - decidim.elections.votes.cast.success
   - decidim.forms.admin.questionnaires.question.any
+  # Upstream keys provided by decidim-elections / decidim-forms locale files.
+  - decidim.elections.admin.dashboard.questions_table.total
+  - decidim.elections.admin.dashboard.questions_table.votes_count
+  - decidim.elections.elections.vote_results.total
+  - decidim.elections.elections.vote_results.total_votes
+  - decidim.elections.votes.question.max_choices_alert
+  - decidim.forms.admin.questionnaires.question.add_response_option
+  - decidim.forms.admin.questionnaires.response_option.remove
+  - decidim.forms.admin.questionnaires.response_option.response_option
+  - decidim.forms.admin.questionnaires.response_option.statement

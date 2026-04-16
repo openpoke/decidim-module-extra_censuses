@@ -23,7 +23,9 @@ export default class extends Controller {
   }
 
   connect() {
-    if (!this.hasListTarget) return
+    if (!this.hasListTarget) {
+      return
+    }
 
     this.nextUid = 0
     this.flatList = this.findFlatList()
@@ -40,13 +42,17 @@ export default class extends Controller {
   disconnect() {
     this.listTarget?.removeEventListener("sortupdate", this.boundResyncPositions)
     this.element.removeEventListener(TOGGLE_EVENT, this.boundOnToggle)
-    if (this.hasListTarget) sortable(this.listTarget, "destroy")
+    if (this.hasListTarget) {
+      sortable(this.listTarget, "destroy")
+    }
   }
 
   addGroup(event) {
     event.preventDefault()
     const group = this.cloneGroup()
-    if (!group) return
+    if (!group) {
+      return
+    }
     this.listTarget.appendChild(group)
     this.appendOptionTo(group)
     this.enableSortable()
@@ -56,13 +62,17 @@ export default class extends Controller {
   addOptionInGroup(event) {
     event.preventDefault()
     const group = event.target.closest(GROUP)
-    if (group) this.appendOptionTo(group)
+    if (group) {
+      this.appendOptionTo(group)
+    }
   }
 
   removeGroup(event) {
     event.preventDefault()
     const group = event.target.closest(GROUP)
-    if (!group) return
+    if (!group) {
+      return
+    }
     group.querySelectorAll(OPTION).forEach((option) => this.destroyOrRemove(option))
     this.destroyOrRemove(group)
     this.runAutoLabel()
@@ -71,20 +81,29 @@ export default class extends Controller {
   removeOption(event) {
     event.preventDefault()
     const option = event.target.closest(OPTION)
-    if (option) this.destroyOrRemove(option)
+    if (option) {
+      this.destroyOrRemove(option)
+    }
   }
 
   onToggle(event) {
     const { grouped, wasGrouped } = event.detail
-    if (!wasGrouped && grouped) this.wrapFlatOptionsIntoAutoGroup()
-    else if (wasGrouped && !grouped) this.unwrapGroupedOptions()
+    if (!wasGrouped && grouped) {
+      this.wrapFlatOptionsIntoAutoGroup()
+    } else if (wasGrouped && !grouped) {
+      this.unwrapGroupedOptions()
+    }
   }
 
   wrapFlatOptionsIntoAutoGroup() {
-    if (!this.flatList) return
+    if (!this.flatList) {
+      return
+    }
     const flatOptions = Array.from(this.flatList.querySelectorAll(`:scope > ${OPTION}`))
     const group = this.cloneGroup()
-    if (!group) return
+    if (!group) {
+      return
+    }
     this.listTarget.appendChild(group)
 
     const optionsList = group.querySelector(GROUP_OPTIONS_LIST)
@@ -98,7 +117,9 @@ export default class extends Controller {
 
   // Backend zeroes settings["groups"] and group_id on grouped=false; mirror it.
   unwrapGroupedOptions() {
-    if (!this.flatList) return
+    if (!this.flatList) {
+      return
+    }
     this.element.querySelectorAll(OPTION).forEach((option) => {
       this.unstampGroupId(option)
       this.flatList.appendChild(option)
@@ -107,21 +128,33 @@ export default class extends Controller {
   }
 
   cloneGroup() {
-    const group = cloneTemplate(this.groupTemplateTarget, `new-${this.nextUid++}`)
-    if (!group) return null
+    const uid = `new-${this.nextUid}`
+    this.nextUid += 1
+    const group = cloneTemplate(this.groupTemplateTarget, uid)
+    if (!group) {
+      return null
+    }
     group.dataset.new = "true"
     const groupId = randomId()
     group.dataset.groupId = groupId
     const idInput = group.querySelector(ID_INPUT)
-    if (idInput) idInput.value = groupId
+    if (idInput) {
+      idInput.value = groupId
+    }
     const positionInput = group.querySelector(POSITION_INPUT)
-    if (positionInput) positionInput.value = this.listTarget.querySelectorAll(GROUP).length
+    if (positionInput) {
+      positionInput.value = this.listTarget.querySelectorAll(GROUP).length
+    }
     return group
   }
 
   appendOptionTo(group) {
-    const option = cloneTemplate(this.optionTemplateTarget, `new-${this.nextUid++}`)
-    if (!option) return
+    const uid = `new-${this.nextUid}`
+    this.nextUid += 1
+    const option = cloneTemplate(this.optionTemplateTarget, uid)
+    if (!option) {
+      return
+    }
     option.dataset.new = "true"
     this.stampGroupId(option, group.dataset.groupId)
     group.querySelector(GROUP_OPTIONS_LIST)?.appendChild(option)
@@ -129,12 +162,16 @@ export default class extends Controller {
 
   stampGroupId(option, groupId) {
     const input = option.querySelector(GROUP_ID_INPUT)
-    if (input) input.value = groupId
+    if (input) {
+      input.value = groupId
+    }
   }
 
   unstampGroupId(option) {
     const input = option.querySelector(GROUP_ID_INPUT)
-    if (input) input.value = ""
+    if (input) {
+      input.value = ""
+    }
   }
 
   // dataset.new = unsaved → hard remove. Persisted → soft-delete (deleted=true + hidden).
@@ -144,7 +181,9 @@ export default class extends Controller {
       return
     }
     const deletedInput = element.querySelector(DELETED_INPUT)
-    if (deletedInput) deletedInput.value = "true"
+    if (deletedInput) {
+      deletedInput.value = "true"
+    }
     element.classList.add("hidden")
   }
 
@@ -155,17 +194,21 @@ export default class extends Controller {
   resyncPositions() {
     this.listTarget.querySelectorAll(GROUP).forEach((group, idx) => {
       const input = group.querySelector(POSITION_INPUT)
-      if (input) input.value = idx
+      if (input) {
+        input.value = idx
+      }
     })
     this.runAutoLabel()
   }
 
   runAutoLabel() {
-    Array.from(this.listTarget.querySelectorAll(GROUP))
-      .filter((group) => !group.classList.contains("hidden"))
-      .forEach((group, idx) => {
+    Array.from(this.listTarget.querySelectorAll(GROUP)).
+      filter((group) => !group.classList.contains("hidden")).
+      forEach((group, idx) => {
         const label = group.querySelector(GROUP_POSITION_LABEL)
-        if (label) label.textContent = ` #${idx + 1}`
+        if (label) {
+          label.textContent = ` #${idx + 1}`
+        }
       })
   }
 

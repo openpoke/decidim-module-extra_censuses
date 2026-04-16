@@ -11,7 +11,9 @@ export default class extends Controller {
     this.maxSelect = this.element.querySelector(`${MAX_WRAPPER} select`)
     this.typeSelect = this.element.querySelector(QUESTION_TYPE)
     this.minWrapper = this.element.querySelector(MIN_WRAPPER)
-    if (!this.minSelect) return
+    if (!this.minSelect) {
+      return
+    }
 
     this.boundSyncMinOptions = this.syncMinOptions.bind(this)
     this.boundSyncVisibility = this.syncVisibility.bind(this)
@@ -38,7 +40,9 @@ export default class extends Controller {
     const upperBound = this.computeUpperBound()
     const currentValue = this.minSelect.value
     this.minSelect.querySelectorAll("option:not([value=''])").forEach((opt) => opt.remove())
-    if (upperBound < 1) return
+    if (upperBound < 1) {
+      return
+    }
 
     for (let idx = 1; idx <= upperBound; idx += 1) {
       const opt = document.createElement("option")
@@ -46,22 +50,37 @@ export default class extends Controller {
       opt.textContent = String(idx)
       this.minSelect.appendChild(opt)
     }
-    if (currentValue && Number(currentValue) <= upperBound) this.minSelect.value = currentValue
+    if (currentValue && Number(currentValue) <= upperBound) {
+      this.minSelect.value = currentValue
+    }
   }
 
   computeUpperBound() {
-    if (!this.maxSelect) return 0
+    if (!this.maxSelect) {
+      return 0
+    }
     const selected = Number(this.maxSelect.value)
-    if (selected > 0) return selected
-    const values = Array.from(this.maxSelect.options).map((opt) => Number(opt.value)).filter((num) => num > 0)
-    return values.length ? Math.max(...values) : 0
+    if (selected > 0) {
+      return selected
+    }
+    const values = Array.from(this.maxSelect.options).
+      map((opt) => Number(opt.value)).
+      filter((num) => num > 0)
+    if (values.length === 0) {
+      return 0
+    }
+    return Math.max(...values)
   }
 
   syncVisibility() {
-    if (!this.typeSelect || !this.minWrapper) return
+    if (!this.typeSelect || !this.minWrapper) {
+      return
+    }
     const isAllowed = this.typeSelect.value === ALLOWED_QUESTION_TYPE
     this.minWrapper.classList.toggle("hidden", !isAllowed)
     this.minSelect.disabled = !isAllowed
-    if (!isAllowed) this.minSelect.value = ""
+    if (!isAllowed) {
+      this.minSelect.value = ""
+    }
   }
 }

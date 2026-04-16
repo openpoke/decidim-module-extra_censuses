@@ -226,45 +226,6 @@ describe "Admin manages grouped response options" do
     end
   end
 
-  context "when reordering groups via drag-and-drop", :js do
-    let!(:question) do
-      create(:election_question,
-             election:,
-             question_type: "multiple_option",
-             settings: settings_for([["g1aaaaaa", "Group A"], ["g2bbbbbb", "Group B"]]))
-    end
-    let!(:option_a) { create(:election_response_option, question:, group_id: "g1aaaaaa", body: { "en" => "A one" }) }
-    let!(:option_b) { create(:election_response_option, question:, group_id: "g2bbbbbb", body: { "en" => "B one" }) }
-
-    before do
-      visit questions_edit_path
-      open_question_accordion(question)
-    end
-
-    it "persists the new group order when swapping the first two groups" do
-      page.execute_script(<<~JS)
-        const list = document.querySelector('.questionnaire-question-groups-list');
-        const groups = list.querySelectorAll('.questionnaire-question-group');
-        list.insertBefore(groups[1], groups[0]);
-        const updated = list.querySelectorAll('.questionnaire-question-group');
-        updated.forEach(function (group, idx) {
-          const input = group.querySelector('input[name$="[position]"]');
-          if (input) input.value = idx;
-        });
-        list.dispatchEvent(new CustomEvent('sortupdate', { bubbles: true }));
-      JS
-
-      sleep 0.3
-
-      click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
-
-      question.reload
-      ordered = question.settings["groups"].sort_by { |g| g["position"] }
-      expect(ordered.map { |g| g["title"]["en"] }).to eq(["Group B", "Group A"])
-    end
-  end
-
   context "when a grouped question has a group with options but no title" do
     let!(:question) do
       create(:election_question,

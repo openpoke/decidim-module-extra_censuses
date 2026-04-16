@@ -36,18 +36,24 @@ export default class extends Controller {
   }
 
   updateLabel() {
-    if (!this.titleStatement) return
+    if (!this.titleStatement) {
+      return
+    }
     const maxLength = parseInt(this.titleStatement.dataset.maxLength, 10) || 50
     const omission = this.titleStatement.dataset.omission || "..."
     const placeholder = this.titleStatement.dataset.placeholder || ""
     let text = (this.titleInput && this.titleInput.value) || placeholder
-    if (text.length > maxLength) text = text.substring(0, maxLength - omission.length) + omission
+    if (text.length > maxLength) {
+      text = text.substring(0, maxLength - omission.length) + omission
+    }
     this.titleStatement.textContent = text
   }
 
   findTitleInput() {
     const locale = this.titleStatement?.dataset.locale
-    if (!locale) return null
+    if (!locale) {
+      return null
+    }
     return this.element.querySelector(`input[name$='[title_${locale}]']`)
   }
 }

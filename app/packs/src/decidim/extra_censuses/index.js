@@ -6,7 +6,9 @@ import ResponseOptionGroupsController from "src/decidim/extra_censuses/controlle
 import ResponseOptionGroupController from "src/decidim/extra_censuses/controllers/response_option_group/controller"
 
 document.addEventListener("turbo:load", () => {
-  if (!window.Stimulus) return
+  if (!window.Stimulus) {
+    return
+  }
 
   window.Stimulus.register("custom-csv-census", CustomCsvCensusController)
   window.Stimulus.register("survey-import", SurveyImportController)

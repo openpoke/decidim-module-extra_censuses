@@ -125,6 +125,141 @@ module Decidim
           end
         end
 
+        describe "grouped persistence" do
+          context "when persisting a brand new grouped question" do
+            let(:params) do
+              {
+                "questions" => [
+                  {
+                    "body" => { en: "Grouped question" },
+                    "description" => { en: "Desc" },
+                    "question_type" => "multiple_option",
+                    "grouped" => "1",
+                    "groups" => {
+                      "0" => { "id" => "g1aaaaaa", "title_en" => "First", "position" => 0 },
+                      "1" => { "id" => "g2bbbbbb", "title_en" => "Second", "position" => 1 }
+                    },
+                    "response_options" => {
+                      "0" => { "body" => { en: "Opt 1" }, "group_id" => "g1aaaaaa" },
+                      "1" => { "body" => { en: "Opt 2" }, "group_id" => "g2bbbbbb" }
+                    }
+                  }
+                ]
+              }
+            end
+
+            let(:form) { QuestionsForm.from_params(params).with_context(context_params) }
+            let(:command) { described_class.new(form, election) }
+
+            it "stores grouped=true in settings" do
+              command.call
+              new_question = election.reload.questions.order(:position).last
+              expect(new_question.settings["grouped"]).to be true
+            end
+
+            it "stores groups in settings with id, title and position" do
+              command.call
+              new_question = election.reload.questions.order(:position).last
+              groups = new_question.settings["groups"]
+              expect(groups.size).to eq(2)
+              expect(groups.map { |g| g["id"] }).to contain_exactly("g1aaaaaa", "g2bbbbbb")
+              expect(groups.find { |g| g["id"] == "g1aaaaaa" }["title"]).to eq("en" => "First")
+            end
+
+            it "stores group_id on each response option" do
+              command.call
+              new_question = election.reload.questions.order(:position).last
+              by_body = new_question.response_options.index_by { |o| o.body["en"] }
+              expect(by_body["Opt 1"].group_id).to eq("g1aaaaaa")
+              expect(by_body["Opt 2"].group_id).to eq("g2bbbbbb")
+            end
+          end
+
+          context "when persisting groups in a custom order" do
+            let(:params) do
+              {
+                "questions" => [
+                  {
+                    "body" => { en: "Reordered" },
+                    "description" => { en: "Desc" },
+                    "question_type" => "multiple_option",
+                    "grouped" => "1",
+                    "groups" => {
+                      "0" => { "id" => "ga", "title_en" => "Alpha", "position" => 1 },
+                      "1" => { "id" => "gb", "title_en" => "Beta", "position" => 0 }
+                    },
+                    "response_options" => {
+                      "0" => { "body" => { en: "A" }, "group_id" => "ga" },
+                      "1" => { "body" => { en: "B" }, "group_id" => "gb" }
+                    }
+                  }
+                ]
+              }
+            end
+
+            let(:form) { QuestionsForm.from_params(params).with_context(context_params) }
+            let(:command) { described_class.new(form, election) }
+
+            it "preserves the submitted positions in settings[groups]" do
+              command.call
+              new_question = election.reload.questions.order(:position).last
+              ordered = new_question.settings["groups"].sort_by { |g| g["position"] }
+              expect(ordered.map { |g| g["title"]["en"] }).to eq(%w(Beta Alpha))
+            end
+          end
+
+          context "when toggling an existing grouped question back to flat" do
+            let!(:grouped_question) do
+              create(:election_question,
+                     election:,
+                     question_type: "multiple_option",
+                     settings: {
+                       "grouped" => true,
+                       "groups" => [{ "id" => "g1aaaaaa", "title" => { "en" => "G" }, "position" => 0 }]
+                     }).tap do |q|
+                create(:election_response_option, question: q, group_id: "g1aaaaaa", body: { en: "Opt" })
+              end
+            end
+
+            let(:params) do
+              {
+                "questions" => [
+                  {
+                    "id" => grouped_question.id,
+                    "body" => grouped_question.body,
+                    "description" => grouped_question.description,
+                    "question_type" => "multiple_option",
+                    "grouped" => "0",
+                    "response_options" => [
+                      { "id" => grouped_question.response_options.first.id,
+                        "body" => grouped_question.response_options.first.body,
+                        "group_id" => "g1aaaaaa" }
+                    ]
+                  }
+                ]
+              }
+            end
+
+            let(:form) { QuestionsForm.from_params(params).with_context(context_params) }
+            let(:command) { described_class.new(form, election) }
+
+            it "clears grouped flag in settings" do
+              command.call
+              expect(grouped_question.reload.settings["grouped"]).to be false
+            end
+
+            it "empties settings[groups]" do
+              command.call
+              expect(grouped_question.reload.settings["groups"]).to eq([])
+            end
+
+            it "nullifies group_id on existing options" do
+              command.call
+              expect(grouped_question.response_options.first.reload.group_id).to be_nil
+            end
+          end
+        end
+
         describe "original behavior is preserved" do
           context "when updating body and description" do
             let(:params) do

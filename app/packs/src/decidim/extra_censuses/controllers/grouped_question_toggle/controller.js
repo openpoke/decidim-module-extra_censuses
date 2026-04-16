@@ -13,7 +13,9 @@ export default class extends Controller {
   connect() {
     this.typeSelect = this.element.querySelector(QUESTION_TYPE_SELECT)
     this.checkbox = this.element.querySelector(GROUPED_CHECKBOX)
-    if (!this.typeSelect || !this.checkbox) return
+    if (!this.typeSelect || !this.checkbox) {
+      return
+    }
 
     this.checkboxWrapper = this.checkbox.closest(CHECKBOX_WRAPPER)
     this.groupsSection = this.element.querySelector(GROUPS_SECTION)
