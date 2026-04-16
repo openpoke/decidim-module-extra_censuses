@@ -28,7 +28,7 @@ module Decidim
 
         return false if min.nil? && max.nil?
 
-        count = question.responses.where(id: response_ids).count
+        count = question.response_options.where(id: response_ids).count
         return true if min && count < min
         return true if max && count > max
 

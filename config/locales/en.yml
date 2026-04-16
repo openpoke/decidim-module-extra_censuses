@@ -143,6 +143,5 @@ en:
         question:
           choices_out_of_range: You must select between %{min} and %{max} options.
           choices_range: Select between %{min} and %{max} options
-          max_choices_exceeded: You must select no more than %{max} options.
           min_choices: Select at least %{count} options
           min_choices_not_met: You must select at least %{min} options.
