@@ -16,17 +16,19 @@ module Decidim
 
       def check_choices_range!
         response_ids = params.dig(:response, question.id.to_s) || []
-        return unless out_of_choices_range?(response_ids.size)
+        return unless out_of_choices_range?(response_ids)
 
         flash.now[:alert] = choices_range_alert_message
         render :show
       end
 
-      def out_of_choices_range?(count)
+      def out_of_choices_range?(response_ids)
         min = question.min_choices.presence
         max = question.max_choices.presence
 
         return false if min.nil? && max.nil?
+
+        count = question.responses.where(id: response_ids).count
         return true if min && count < min
         return true if max && count > max
 

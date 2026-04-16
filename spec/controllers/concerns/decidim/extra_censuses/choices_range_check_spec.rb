@@ -11,13 +11,17 @@ describe Decidim::ExtraCensuses::ChoicesRangeCheck do
     end
   end
 
-  let(:question) { double(:question, min_choices:, max_choices:) }
+  let(:question) { double(:question, min_choices:, max_choices:, responses: responses_scope) }
+  let(:responses_scope) { double("responses", where: filtered_scope) }
+  let(:filtered_scope) { double("filtered_scope", count: count) }
   let(:instance) { dummy_class.new.tap { |o| o.question = question } }
   let(:min_choices) { nil }
   let(:max_choices) { nil }
+  let(:count) { 0 }
+  let(:response_ids) { Array.new(count) { |i| i + 1 } }
 
   describe "#out_of_choices_range?" do
-    subject { instance.send(:out_of_choices_range?, count) }
+    subject { instance.send(:out_of_choices_range?, response_ids) }
 
     context "when neither min nor max is set" do
       let(:count) { 5 }
