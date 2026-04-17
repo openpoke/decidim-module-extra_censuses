@@ -6,6 +6,8 @@ en:
         columns: Columns
         file: File
         remove_all: Remove all current census data
+      question:
+        min_choices: Minimum number of choices
     errors:
       models:
         custom_csv:
@@ -137,3 +139,9 @@ en:
           label: Custom CSV
         custom_csv_form:
           invalid: The provided data does not match any registered voter
+      votes:
+        question:
+          choices_out_of_range: You must select between %{min} and %{max} options.
+          choices_range: Select between %{min} and %{max} options
+          min_choices: Select at least %{count} options
+          min_choices_not_met: You must select at least %{min} options.

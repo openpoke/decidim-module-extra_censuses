@@ -10,8 +10,18 @@ module Decidim::ExtraCensuses
     {
       package: "decidim-elections",
       files: {
+        # forms
+        "/app/forms/decidim/elections/admin/question_form.rb" => "df808ddabd28c135e45b6fe4df0325a7",
+        # commands
+        "/app/commands/decidim/elections/admin/update_questions.rb" => "2b64fc68a96bbd352becb311a8415eb0",
         # controllers
-        "/app/controllers/decidim/elections/admin/census_controller.rb" => "f3a866fe5f69f378cf419a40304b97e0"
+        "/app/controllers/decidim/elections/admin/census_controller.rb" => "f3a866fe5f69f378cf419a40304b97e0",
+        "/app/controllers/decidim/elections/votes_controller.rb" => "53a611d2a456e2032b986a76cdcf6bf1",
+        "/app/controllers/decidim/elections/per_question_votes_controller.rb" => "fa6a7d89d010bbe8faa02d3e89c94d43",
+        # helpers
+        "/app/helpers/decidim/elections/application_helper.rb" => "c299bc5843e4c3c361756b5fdf602237",
+        # views
+        "/app/views/decidim/elections/admin/questions/_question.html.erb" => "c679c5aa57ed5307845c4ebb2737558d"
       }
     }
   ]

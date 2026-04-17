@@ -1,0 +1,2 @@
+<!-- insert_bottom "div.questionnaire-questions" -->
+<% append_javascript_pack_tag "decidim_extra_censuses" %>

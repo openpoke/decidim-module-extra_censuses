@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rails"
+require "deface"
 require "decidim/core"
 
 module Decidim
@@ -28,8 +29,11 @@ module Decidim
         Decidim.menu :admin_elections_menu do |menu|
           next if @election.blank?
 
+          # Requires Election#editable? from openpoke/decidim 0.31-backports (upstream PR #15687).
+          # On stock decidim 0.31.0 this method does not exist — replace with `!@election.published?`.
           show_tab = @election.census_manifest == "custom_csv" &&
-                     @election.census_settings&.dig("columns").present?
+                     @election.census_settings&.dig("columns").present? &&
+                     @election.editable?
 
           current_component_admin_proxy = Decidim::EngineRouter.admin_proxy(@election.component)
 
@@ -67,6 +71,13 @@ module Decidim
       config.to_prepare do
         Decidim::Elections::Admin::CensusController.include(Decidim::ExtraCensuses::CensusControllerOverride)
         Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
+
+        # min_choices feature overrides
+        Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
+        Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
+        Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
+        Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
+        Decidim::Elections::ApplicationHelper.include(Decidim::ExtraCensuses::ApplicationHelperOverride)
       end
     end
   end

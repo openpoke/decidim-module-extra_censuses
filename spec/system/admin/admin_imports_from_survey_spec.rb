@@ -82,9 +82,9 @@ describe "Admin imports from survey" do
       end
     end
 
-    context "when election is published" do
+    context "when election is ongoing" do
       let(:election) do
-        create(:election, :published, component: current_component, census_manifest: "custom_csv", census_settings: {
+        create(:election, :published, :ongoing, component: current_component, census_manifest: "custom_csv", census_settings: {
                  "columns" => [
                    { "name" => "dni", "column_type" => "alphanumeric" },
                    { "name" => "birth_date", "column_type" => "date" }

@@ -184,9 +184,9 @@ describe "Admin manages census updates" do
       end
     end
 
-    context "when election is published" do
+    context "when election is ongoing" do
       let(:election) do
-        create(:election, :published, component: current_component, census_manifest: "custom_csv", census_settings: {
+        create(:election, :published, :ongoing, component: current_component, census_manifest: "custom_csv", census_settings: {
                  "columns" => [
                    { "name" => "dni", "column_type" => "alphanumeric" },
                    { "name" => "birth_date", "column_type" => "date" }
@@ -228,9 +228,9 @@ describe "Admin manages census updates" do
       end
     end
 
-    context "when election is published" do
+    context "when election is ongoing" do
       let(:election) do
-        create(:election, :published, component: current_component, census_manifest: "custom_csv", census_settings: {
+        create(:election, :published, :ongoing, component: current_component, census_manifest: "custom_csv", census_settings: {
                  "columns" => [
                    { "name" => "dni", "column_type" => "alphanumeric" },
                    { "name" => "birth_date", "column_type" => "date" }
@@ -245,10 +245,6 @@ describe "Admin manages census updates" do
 
       it "does not show delete buttons" do
         expect(page).to have_no_link("Delete")
-      end
-
-      it "shows voter list in read-only mode" do
-        expect(page).to have_content("12345678A")
       end
     end
   end
