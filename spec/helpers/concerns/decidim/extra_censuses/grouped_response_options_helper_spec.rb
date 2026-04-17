@@ -7,6 +7,35 @@ module Decidim
     describe GroupedResponseOptionsHelper do
       let(:election) { create(:election) }
 
+      describe "#response_option_group_forms" do
+        let(:question) do
+          create(:election_question,
+                 election:,
+                 settings: {
+                   "grouped" => true,
+                   "groups" => [
+                     { "id" => "g1aaaaaa", "title" => { "en" => "First" }, "position" => 0 },
+                     { "id" => "g2bbbbbb", "title" => { "en" => "Second" }, "position" => 1 }
+                   ]
+                 })
+        end
+
+        it "returns ResponseOptionGroupForm instances populated from settings" do
+          forms = helper.response_option_group_forms(question)
+          expect(forms).to all(be_a(Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm))
+          expect(forms.map(&:id)).to eq(%w(g1aaaaaa g2bbbbbb))
+          expect(forms.map(&:position)).to eq([0, 1])
+          expect(forms.first.title).to eq("en" => "First")
+        end
+
+        it "exposes form-only attributes so fields_for works in the admin edit view" do
+          form = helper.response_option_group_forms(question).first
+          expect(form.deleted).to be(false)
+          expect(form).to respond_to(:persisted?)
+          expect(form).to respond_to(:to_model)
+        end
+      end
+
       describe "#grouped_response_options" do
         context "when the question has two groups with options each" do
           let(:question) do

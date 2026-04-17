@@ -5,8 +5,10 @@ import GroupedQuestionToggleController from "src/decidim/extra_censuses/controll
 import ResponseOptionGroupsController from "src/decidim/extra_censuses/controllers/response_option_groups/controller"
 import ResponseOptionGroupController from "src/decidim/extra_censuses/controllers/response_option_group/controller"
 
+let registered = false
+
 document.addEventListener("turbo:load", () => {
-  if (!window.Stimulus) {
+  if (registered || !window.Stimulus) {
     return
   }
 
@@ -16,4 +18,6 @@ document.addEventListener("turbo:load", () => {
   window.Stimulus.register("grouped-question-toggle", GroupedQuestionToggleController)
   window.Stimulus.register("response-option-groups", ResponseOptionGroupsController)
   window.Stimulus.register("response-option-group", ResponseOptionGroupController)
+
+  registered = true
 })

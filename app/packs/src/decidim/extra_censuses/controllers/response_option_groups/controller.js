@@ -120,7 +120,7 @@ export default class extends Controller {
     if (!this.flatList) {
       return
     }
-    this.element.querySelectorAll(OPTION).forEach((option) => {
+    this.element.querySelectorAll(`${OPTION}:not(.hidden)`).forEach((option) => {
       this.unstampGroupId(option)
       this.flatList.appendChild(option)
     })
@@ -192,7 +192,7 @@ export default class extends Controller {
   }
 
   resyncPositions() {
-    this.listTarget.querySelectorAll(GROUP).forEach((group, idx) => {
+    this.listTarget.querySelectorAll(`${GROUP}:not(.hidden)`).forEach((group, idx) => {
       const input = group.querySelector(POSITION_INPUT)
       if (input) {
         input.value = idx

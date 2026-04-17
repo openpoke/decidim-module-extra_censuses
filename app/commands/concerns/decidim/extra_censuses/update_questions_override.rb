@@ -52,11 +52,11 @@ module Decidim
           return base.merge("groups" => []) unless question_form.grouped?
 
           base.merge(
-            "groups" => question_form.groups_to_persist.each_with_index.map do |group_form, idx|
+            "groups" => question_form.groups_to_persist.map do |group_form|
               {
                 "id" => group_form.id,
                 "title" => group_form.title,
-                "position" => (group_form.position.presence || idx).to_i
+                "position" => group_form.position.to_i
               }
             end
           )

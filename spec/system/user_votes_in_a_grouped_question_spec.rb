@@ -36,7 +36,7 @@ describe "User votes in a grouped question" do
       click_on submit_label
       click_on "Cast vote" if page.has_button?("Cast vote")
 
-      expect(page).to have_content("successfully cast").or have_content("already voted")
+      expect(page).to have_content("successfully cast")
       voter_uid = user.to_global_id.to_s
       voted_option_ids = Decidim::Elections::Vote.where(voter_uid:, question:).pluck(:response_option_id)
       expect(voted_option_ids).to include(option_a1.id, option_b1.id)

@@ -8,7 +8,7 @@ module Decidim
       included do
         attribute :min_choices, Integer
         attribute :grouped, :boolean, default: false
-        attribute :groups, [Decidim::Elections::Admin::ResponseOptionGroupForm]
+        attribute :groups, [Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm]
 
         validates :min_choices,
                   numericality: {

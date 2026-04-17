@@ -6,6 +6,16 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
+        def response_option_group_forms(question)
+          question.groups.map do |group|
+            Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm.new(
+              id: group.id,
+              title: group.title,
+              position: group.position
+            )
+          end
+        end
+
         # Returns [group, options] pairs. Ungrouped options land under a nil group.
         def grouped_response_options(question)
           options_by_group = question.response_options.group_by(&:group_id)
