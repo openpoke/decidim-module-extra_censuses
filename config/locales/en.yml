@@ -151,6 +151,7 @@ en:
           questions:
             add_group: "+ Add group"
             collapse: Collapse
+            drag_group: Drag to reorder group
             expand: Expand
             group_title_placeholder: Group title
             grouped_help_text: Organize response options into named groups so voters
