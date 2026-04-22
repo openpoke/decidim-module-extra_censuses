@@ -1,7 +1,7 @@
 <% grouped_response_options(question).each do |group, options| %>
-  <div class="question-group mt-6">
+  <div class="question-group mt-6" role="group" aria-labelledby="<%= group ? "question-group-title-#{group.id}" : nil %>">
     <% if group %>
-      <h3 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h3>
+      <h3 id="question-group-title-<%= group.id %>" class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h3>
     <% end %>
     <div class="question-group-options flex flex-col gap-4">
       <% options.each do |option| %>
@@ -17,5 +17,5 @@
 <%# element's style.display when a voter exceeds max_choices. Required or the %>
 <%# upstream JS throws on null when voting on a grouped question with a cap.   %>
 <% if local_assigns[:wrapper_class] && question.max_choices.presence %>
-  <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
+  <small class="form-error max-choices-alert" role="alert" aria-live="assertive" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
 <% end %>

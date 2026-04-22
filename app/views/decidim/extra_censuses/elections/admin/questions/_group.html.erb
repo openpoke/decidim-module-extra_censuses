@@ -1,11 +1,12 @@
 <% group = form.object %>
+<% group_content_id = "group-content-#{group.id.presence || "new"}" %>
 
 <div class="card questionnaire-question-group mx-4 my-8" data-controller="response-option-group" data-group-id="<%= group.id %>">
   <div class="card-divider">
     <h2 class="card-title flex items-center">
       <span>
         <% if editable %>
-          <span class="dragger hover:cursor-grab">
+          <span class="dragger hover:cursor-grab" aria-hidden="true">
             <%= icon("draggable") %>
           </span>
         <% end %>
@@ -16,30 +17,39 @@
               omission: "...",
               placeholder: t("new_group", scope: "decidim.extra_censuses.elections.admin.questions")
             ) %>
-        <span class="group-position-label"></span>
+        <span class="group-position-label" aria-hidden="true"></span>
       </span>
 
       <span class="ml-auto flex flex-row-reverse items-center gap-2">
-        <button type="button" aria-expanded="true" data-action="click->response-option-group#toggleCollapse">
-          <span class="group-icon-collapse">
-            <%== icon("arrow-up-s-line", aria_label: t("collapse", scope: "decidim.extra_censuses.elections.admin.questions"), role: "img") %>
+        <button type="button"
+                aria-expanded="true"
+                aria-controls="<%= group_content_id %>"
+                aria-label="<%= t("collapse", scope: "decidim.extra_censuses.elections.admin.questions") %>"
+                data-collapse-label="<%= t("collapse", scope: "decidim.extra_censuses.elections.admin.questions") %>"
+                data-expand-label="<%= t("expand", scope: "decidim.extra_censuses.elections.admin.questions") %>"
+                data-action="click->response-option-group#toggleCollapse">
+          <span class="group-icon-collapse" aria-hidden="true">
+            <%== icon("arrow-up-s-line") %>
           </span>
-          <span class="group-icon-expand hidden">
-            <%== icon("arrow-down-s-line", aria_label: t("expand", scope: "decidim.extra_censuses.elections.admin.questions"), role: "img") %>
+          <span class="group-icon-expand hidden" aria-hidden="true">
+            <%== icon("arrow-down-s-line") %>
           </span>
         </button>
 
         <% if editable %>
-          <button type="button" class="button button__xs button__transparent-secondary small alert button--title" data-action="click->response-option-groups#removeGroup">
-            <%= icon "delete-bin-line" %>
-            <span class="hidden md:block"><%= t("remove_group", scope: "decidim.extra_censuses.elections.admin.questions") %></span>
+          <button type="button"
+                  class="button button__xs button__transparent-secondary small alert button--title"
+                  aria-label="<%= t("remove_group", scope: "decidim.extra_censuses.elections.admin.questions") %>"
+                  data-action="click->response-option-groups#removeGroup">
+            <%= icon "delete-bin-line", aria_hidden: true %>
+            <span class="hidden md:block" aria-hidden="true"><%= t("remove_group", scope: "decidim.extra_censuses.elections.admin.questions") %></span>
           </button>
         <% end %>
       </span>
     </h2>
   </div>
 
-  <div class="card-section group-response-options">
+  <div id="<%= group_content_id %>" class="card-section group-response-options">
     <div class="row column">
       <%=
         form.translated(

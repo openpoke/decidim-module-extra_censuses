@@ -55,12 +55,16 @@ export default class extends Controller {
   }
 
   syncCheckboxVisibility() {
-    this.checkboxWrapper?.classList.toggle("hidden", this.typeSelect.value !== MULTIPLE_OPTION)
+    const isMultiple = this.typeSelect.value === MULTIPLE_OPTION
+    this.checkboxWrapper?.classList.toggle("hidden", !isMultiple)
+    this.checkboxWrapper?.setAttribute("aria-hidden", (!isMultiple).toString())
   }
 
   syncSectionVisibility(grouped) {
     this.groupsSection?.classList.toggle("hidden", !grouped)
+    this.groupsSection?.setAttribute("aria-hidden", (!grouped).toString())
     this.flatSection?.classList.toggle("hidden", grouped)
+    this.flatSection?.setAttribute("aria-hidden", (grouped).toString())
     this.flatAddRow?.classList.toggle("hidden", grouped)
   }
 }

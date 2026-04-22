@@ -185,6 +185,7 @@ export default class extends Controller {
       deletedInput.value = "true"
     }
     element.classList.add("hidden")
+    element.setAttribute("aria-hidden", "true")
   }
 
   enableSortable() {

@@ -30,6 +30,10 @@ export default class extends Controller {
     const button = event.currentTarget
     const willExpand = button.getAttribute("aria-expanded") === "false"
     button.setAttribute("aria-expanded", willExpand.toString())
+    const newLabel = willExpand ? button.dataset.collapseLabel : button.dataset.expandLabel
+    if (newLabel) {
+      button.setAttribute("aria-label", newLabel)
+    }
     this.element.querySelector(CONTENT)?.classList.toggle("hidden", !willExpand)
     button.querySelector(ICON_COLLAPSE)?.classList.toggle("hidden", !willExpand)
     button.querySelector(ICON_EXPAND)?.classList.toggle("hidden", willExpand)
