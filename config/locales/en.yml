@@ -145,6 +145,7 @@ en:
           choices_range: Select between %{min} and %{max} options
           min_choices: Select at least %{count} options
           min_choices_not_met: You must select at least %{min} options.
+          must_select_one_per_group: You must select at least one option in each group.
     extra_censuses:
       elections:
         admin:
