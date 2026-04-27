@@ -50,6 +50,7 @@ module Decidim
         def serialized_settings(question, question_form)
           base = question.settings.merge(
             "grouped" => question_form.grouped?,
+            "force_one_answer_per_group" => question_form.grouped? && question_form.force_one_answer_per_group?,
             "voting_method" => question_form.voting_method
           ).merge(question_form.voting_method_settings)
           return base.merge("groups" => []) unless question_form.grouped?
