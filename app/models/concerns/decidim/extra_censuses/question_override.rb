@@ -13,6 +13,10 @@ module Decidim
         !!settings["grouped"]
       end
 
+      def force_one_answer_per_group?
+        !!settings["force_one_answer_per_group"]
+      end
+
       def groups
         settings.fetch("groups", []).map { |g| Decidim::ExtraCensuses::ResponseOptionGroup.from_settings_hash(g) }.sort_by(&:position)
       end

@@ -15,6 +15,17 @@
     <% end %>
   </div>
 
+  <div class="questionnaire-question-force-one-answer-per-group">
+    <label>
+      <%= check_box_tag "questions[#{question.to_param}][force_one_answer_per_group]",
+                        "1",
+                        question.force_one_answer_per_group?,
+                        disabled: !editable %>
+      <%= t("force_one_answer_per_group_label", scope: "decidim.extra_censuses.elections.admin.questions") %>
+    </label>
+    <span class="help-text"><%= t("force_one_answer_per_group_help_text", scope: "decidim.extra_censuses.elections.admin.questions") %></span>
+  </div>
+
   <% ungrouped_options = ungrouped_response_options(question).reject(&:deleted?) %>
   <% if ungrouped_options.any? %>
     <div class="card questionnaire-question-ungrouped-options mx-4 my-8">
