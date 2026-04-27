@@ -8,6 +8,7 @@ import ResponseOptionGroupsController from "src/decidim/extra_censuses/controlle
 import ResponseOptionGroupController from "src/decidim/extra_censuses/controllers/response_option_group/controller"
 import WinnersToggleController from "src/decidim/extra_censuses/controllers/winners_toggle/controller"
 import ResultsSorterController from "src/decidim/extra_censuses/controllers/results_sorter/controller"
+import GroupedVoteValidationController from "src/decidim/extra_censuses/controllers/grouped_vote_validation/controller"
 
 let registered = false
 
@@ -15,7 +16,7 @@ document.addEventListener("turbo:load", () => {
   if (registered || !window.Stimulus) {
     return
   }
-
+  
   window.Stimulus.register("custom-csv-census", CustomCsvCensusController)
   window.Stimulus.register("survey-import", SurveyImportController)
   window.Stimulus.register("admin-min-choices", AdminMinChoicesController)
@@ -26,6 +27,7 @@ document.addEventListener("turbo:load", () => {
   window.Stimulus.register("response-option-group", ResponseOptionGroupController)
   window.Stimulus.register("winners-toggle", WinnersToggleController)
   window.Stimulus.register("results-sorter", ResultsSorterController)
+  window.Stimulus.register("grouped-vote-validation", GroupedVoteValidationController)
 
   registered = true
 })
