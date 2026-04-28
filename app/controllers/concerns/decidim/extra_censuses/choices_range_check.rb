@@ -16,10 +16,15 @@ module Decidim
 
       def check_choices_range!
         response_ids = params.dig(:response, question.id.to_s) || []
-        return unless out_of_choices_range?(response_ids)
+        if out_of_choices_range?(response_ids)
+          flash.now[:alert] = choices_range_alert_message
+          return render :show
+        end
 
-        flash.now[:alert] = choices_range_alert_message
-        render :show
+        if missing_group_coverage?(response_ids)
+          flash.now[:alert] = I18n.t("must_select_one_per_group", scope: "decidim.elections.votes.question")
+          render :show
+        end
       end
 
       def out_of_choices_range?(response_ids)
@@ -44,6 +49,18 @@ module Decidim
         return I18n.t("min_choices_not_met", min:, scope:) if min
 
         I18n.t("max_choices_exceeded", max:, scope:)
+      end
+
+      def missing_group_coverage?(response_ids)
+        return false unless question.grouped? && question.force_one_answer_per_group?
+        return false if question.groups.empty?
+
+        selected_group_ids = question.response_options
+                                     .where(id: response_ids)
+                                     .pluck(:group_id)
+                                     .to_set
+
+        question.groups.any? { |group| selected_group_ids.exclude?(group.id) }
       end
     end
   end
