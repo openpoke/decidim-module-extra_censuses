@@ -16,10 +16,16 @@ module Decidim
 
       def check_choices_range!
         response_ids = params.dig(:response, question.id.to_s) || []
-        return unless out_of_choices_range?(response_ids)
+        if out_of_choices_range?(response_ids)
+          votes_buffer[question.id.to_s] = response_ids
+          flash.now[:alert] = choices_range_alert_message
+          return render :show
+        end
+
+        return unless missing_group_coverage?(response_ids)
 
         votes_buffer[question.id.to_s] = response_ids
-        flash.now[:alert] = choices_range_alert_message
+        flash.now[:alert] = I18n.t("must_select_one_per_group", scope: "decidim.elections.votes.question")
         render :show
       end
 
@@ -40,13 +46,14 @@ module Decidim
       # array of option ids. Both reduce to a set of chosen option ids; blank
       # (unranked) positions are ignored.
       def chosen_options_count(response_ids)
+        question.response_options.where(id: chosen_option_ids(response_ids)).count
+      end
+
+      def chosen_option_ids(response_ids)
         payload = response_ids.try(:to_unsafe_h) || response_ids
-        ids = if payload.is_a?(Hash)
-                payload.reject { |_option_id, position| position.to_s.strip.empty? }.keys
-              else
-                Array(payload)
-              end
-        question.response_options.where(id: ids).count
+        return Array(payload) unless payload.is_a?(Hash)
+
+        payload.reject { |_option_id, position| position.to_s.strip.empty? }.keys
       end
 
       def choices_range_alert_message
@@ -58,6 +65,18 @@ module Decidim
         return I18n.t("min_choices_not_met", min:, scope:) if min
 
         I18n.t("max_choices_exceeded", max:, scope:)
+      end
+
+      def missing_group_coverage?(response_ids)
+        return false unless question.grouped? && question.force_one_answer_per_group?
+        return false if question.groups.empty?
+
+        selected_group_ids = question.response_options
+                                     .where(id: chosen_option_ids(response_ids))
+                                     .pluck(:group_id)
+                                     .to_set
+
+        question.groups.any? { |group| selected_group_ids.exclude?(group.id) }
       end
     end
   end
