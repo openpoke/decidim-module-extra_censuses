@@ -145,6 +145,7 @@ en:
           choices_range: Select between %{min} and %{max} options
           min_choices: Select at least %{count} options
           min_choices_not_met: You must select at least %{min} options.
+          must_select_one_per_group: You must select at least one option in each group.
     extra_censuses:
       elections:
         admin:
@@ -152,6 +153,10 @@ en:
             add_group: "+ Add group"
             collapse: Collapse
             expand: Expand
+            force_one_answer_per_group_help_text: When enabled, voters must check
+              at least one response option in every group before they can advance.
+            force_one_answer_per_group_label: Force users to check at least one response
+              option per group
             group_title_placeholder: Group title
             grouped_help_text: Organize response options into named groups so voters
               see them under subheadings. Global min/max choices still apply to the

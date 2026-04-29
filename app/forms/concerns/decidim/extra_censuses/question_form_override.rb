@@ -9,6 +9,8 @@ module Decidim
         attribute :min_choices, Integer
         attribute :grouped, :boolean, default: false
         attribute :groups, [Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm]
+        attribute :force_one_answer_per_group, :boolean, default: false
+        validates :force_one_answer_per_group, absence: true, unless: :grouped?
 
         validates :min_choices,
                   numericality: {
@@ -44,6 +46,7 @@ module Decidim
 
         def map_model(model)
           self.grouped = model.grouped?
+          self.force_one_answer_per_group = model.force_one_answer_per_group?
         end
 
         private
