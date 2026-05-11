@@ -78,11 +78,9 @@ describe "Grouped question results and previews" do
       expect(page).to have_content("Cat")
       expect(page).to have_content("Oak")
 
-      # The preview renders options with alphabetic labels (a), b)...); use the
-      # prefixed form so "Cat" does not collide with "Català" in the language dropdown.
       html = page.html
-      expect(html.index("Animals group")).to be < html.index("a) Cat")
-      expect(html.index("Plants group")).to be < html.index("a) Oak")
+      expect(html.index("Animals group")).to be < html.index("<li>Cat</li>")
+      expect(html.index("Plants group")).to be < html.index("<li>Oak</li>")
     end
   end
 
