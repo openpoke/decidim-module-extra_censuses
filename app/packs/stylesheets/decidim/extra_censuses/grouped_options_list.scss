@@ -1,0 +1,8 @@
+.grouped-options-list {
+  list-style: lower-latin inside;
+  padding-left: 0;
+}
+
+.grouped-options-list > li::marker {
+  content: counter(list-item, lower-alpha) ") ";
+}

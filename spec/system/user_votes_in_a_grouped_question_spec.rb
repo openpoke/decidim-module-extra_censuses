@@ -30,6 +30,13 @@ describe "User votes in a grouped question" do
       expect(html.index("Animals")).to be < html.index("Plants")
     end
 
+    it "renders all four response options labelled by body" do
+      expect(page).to have_content("Cat")
+      expect(page).to have_content("Dog")
+      expect(page).to have_content("Oak")
+      expect(page).to have_content("Fern")
+    end
+
     it "records a vote for options picked from different groups" do
       check translated_attribute(option_a1.body)
       check translated_attribute(option_b1.body)
@@ -40,6 +47,23 @@ describe "User votes in a grouped question" do
       voter_uid = user.to_global_id.to_s
       voted_option_ids = Decidim::Elections::Vote.where(voter_uid:, question:).pluck(:response_option_id)
       expect(voted_option_ids).to include(option_a1.id, option_b1.id)
+    end
+  end
+
+  shared_examples "respects reversed group positions" do
+    let(:grouped_settings) do
+      {
+        "grouped" => true,
+        "groups" => [
+          { "id" => group_a_id, "title" => { "en" => "Animals" }, "position" => 1 },
+          { "id" => group_b_id, "title" => { "en" => "Plants" }, "position" => 0 }
+        ]
+      }
+    end
+
+    it "respects the new ordering on the voter page" do
+      html = page.html
+      expect(html.index("Plants")).to be < html.index("Animals")
     end
   end
 
@@ -67,11 +91,8 @@ describe "User votes in a grouped question" do
 
     it_behaves_like "renders groups and accepts a grouped vote"
 
-    it "renders all four response options labelled by body" do
-      expect(page).to have_content("Cat")
-      expect(page).to have_content("Dog")
-      expect(page).to have_content("Oak")
-      expect(page).to have_content("Fern")
+    context "when group positions are reversed" do
+      it_behaves_like "respects reversed group positions"
     end
 
     context "when a non-grouped question exists alongside the grouped one" do
@@ -89,23 +110,6 @@ describe "User votes in a grouped question" do
         click_on "Next"
         expect(page).to have_content("plain opt 1")
         expect(page).to have_no_css(".question-group-title", text: "plain opt 1")
-      end
-    end
-
-    context "when group positions are reversed" do
-      let(:grouped_settings) do
-        {
-          "grouped" => true,
-          "groups" => [
-            { "id" => group_a_id, "title" => { "en" => "Animals" }, "position" => 1 },
-            { "id" => group_b_id, "title" => { "en" => "Plants" }, "position" => 0 }
-          ]
-        }
-      end
-
-      it "respects the new ordering on the voter page" do
-        html = page.html
-        expect(html.index("Plants")).to be < html.index("Animals")
       end
     end
   end
@@ -133,5 +137,9 @@ describe "User votes in a grouped question" do
     end
 
     it_behaves_like "renders groups and accepts a grouped vote"
+
+    context "when group positions are reversed" do
+      it_behaves_like "respects reversed group positions"
+    end
   end
 end

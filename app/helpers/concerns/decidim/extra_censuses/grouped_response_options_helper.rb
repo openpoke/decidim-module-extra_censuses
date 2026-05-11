@@ -35,6 +35,19 @@ module Decidim
             opt.group_id.present? && known_ids.include?(opt.group_id)
           end
         end
+
+        # Returns [group_or_nil, [option, ...]] pairs for the confirm/summary
+        # screen. Non-grouped questions yield a single pair with `group: nil`,
+        # so the view treats both cases through the same loop.
+        def confirm_response_groups(question, selected_options)
+          return [[nil, selected_options]] unless question.grouped?
+
+          chosen_ids = selected_options.map(&:id)
+          grouped_response_options(question).filter_map do |group, options|
+            selected = options.select { |opt| chosen_ids.include?(opt.id) }
+            [group, selected] if selected.any?
+          end
+        end
       end
     end
   end

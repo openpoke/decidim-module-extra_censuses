@@ -4,11 +4,11 @@
     <% if group %>
       <h4 class="font-semibold mt-3 mb-1"><%= translated_attribute(group.title) %></h4>
     <% end %>
-    <ul class="mb-2">
-      <% options.each_with_index do |option, opt_index| %>
-        <li><%= "#{("a".ord + opt_index).chr})" %> <%= translated_attribute(option.body) %></li>
+    <ol class="mb-2 grouped-options-list">
+      <% options.each do |option| %>
+        <li><%= translated_attribute(option.body) %></li>
       <% end %>
-    </ul>
+    </ol>
   <% end %>
 <% else %>
   <%= render_original %>

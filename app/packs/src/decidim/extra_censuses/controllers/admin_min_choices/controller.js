@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 const MIN_WRAPPER = ".questionnaire-question-min-choices"
 const MAX_WRAPPER = ".questionnaire-question-max-choices"
+const RESPONSE_OPTION = ".questionnaire-question-response-option"
 const QUESTION_TYPE = "select[name$='[question_type]']"
 const ALLOWED_QUESTION_TYPE = "multiple_option"
 
@@ -15,25 +16,70 @@ export default class extends Controller {
       return
     }
 
-    this.boundSyncMinOptions = this.syncMinOptions.bind(this)
+    this.boundSyncAll = this.syncAll.bind(this)
     this.boundSyncVisibility = this.syncVisibility.bind(this)
+    this.boundCacheMaxValue = this.cacheMaxValue.bind(this)
 
     if (this.maxSelect) {
-      this.maxSelect.addEventListener("change", this.boundSyncMinOptions)
-      // Upstream rebuilds max_choices <option> when response options change.
-      this.maxOptionsObserver = new MutationObserver(this.boundSyncMinOptions)
-      this.maxOptionsObserver.observe(this.maxSelect, { childList: true })
+      this.lastMaxValue = this.maxSelect.value
+      this.maxSelect.addEventListener("change", this.boundCacheMaxValue)
     }
     this.typeSelect?.addEventListener("change", this.boundSyncVisibility)
 
-    this.syncMinOptions()
+    // Single source of truth: the count of live response options in the
+    // question card. Both upstream add/remove and our group-aware add/remove
+    // mutate the same subtree, so we react to that instead of the max_choices
+    // select itself.
+    this.optionsObserver = new MutationObserver(this.boundSyncAll)
+    this.startObservingOptions()
+
+    this.syncAll()
     this.syncVisibility()
   }
 
+  startObservingOptions() {
+    this.optionsObserver.observe(this.element, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["class"]
+    })
+  }
+
   disconnect() {
-    this.maxSelect?.removeEventListener("change", this.boundSyncMinOptions)
+    this.maxSelect?.removeEventListener("change", this.boundCacheMaxValue)
     this.typeSelect?.removeEventListener("change", this.boundSyncVisibility)
-    this.maxOptionsObserver?.disconnect()
+    this.optionsObserver?.disconnect()
+  }
+
+  cacheMaxValue() {
+    this.lastMaxValue = this.maxSelect.value
+    this.syncMinOptions()
+  }
+
+  syncAll() {
+    // Detach while we mutate the selects so we don't observe our own writes.
+    this.optionsObserver?.disconnect()
+    this.syncMaxOptions()
+    this.syncMinOptions()
+    this.startObservingOptions()
+  }
+
+  syncMaxOptions() {
+    if (!this.maxSelect) {
+      return
+    }
+    const liveCount = this.element.querySelectorAll(`${RESPONSE_OPTION}:not(.hidden)`).length
+    this.maxSelect.querySelectorAll("option:not([value=''])").forEach((opt) => opt.remove())
+    for (let idx = 2; idx <= liveCount; idx += 1) {
+      const opt = document.createElement("option")
+      opt.value = String(idx)
+      opt.textContent = String(idx)
+      this.maxSelect.appendChild(opt)
+    }
+    if (this.lastMaxValue && Number(this.lastMaxValue) <= liveCount) {
+      this.maxSelect.value = this.lastMaxValue
+    }
   }
 
   syncMinOptions() {
