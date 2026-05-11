@@ -5,6 +5,7 @@ const MAX_WRAPPER = ".questionnaire-question-max-choices"
 const RESPONSE_OPTION = ".questionnaire-question-response-option"
 const QUESTION_TYPE = "select[name$='[question_type]']"
 const ALLOWED_QUESTION_TYPE = "multiple_option"
+const OBSERVER_CONFIG = { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] }
 
 export default class extends Controller {
   connect() {
@@ -16,106 +17,77 @@ export default class extends Controller {
       return
     }
 
+    this.boundOnMaxChange = this.onMaxChange.bind(this)
     this.boundSyncAll = this.syncAll.bind(this)
     this.boundSyncVisibility = this.syncVisibility.bind(this)
-    this.boundCacheMaxValue = this.cacheMaxValue.bind(this)
 
-    if (this.maxSelect) {
-      this.lastMaxValue = this.maxSelect.value
-      this.maxSelect.addEventListener("change", this.boundCacheMaxValue)
-    }
+    this.lastMaxValue = this.maxSelect?.value || ""
+    this.maxSelect?.addEventListener("change", this.boundOnMaxChange)
     this.typeSelect?.addEventListener("change", this.boundSyncVisibility)
 
-    // Single source of truth: the count of live response options in the
-    // question card. Both upstream add/remove and our group-aware add/remove
-    // mutate the same subtree, so we react to that instead of the max_choices
-    // select itself.
-    this.optionsObserver = new MutationObserver(this.boundSyncAll)
-    this.startObservingOptions()
+    this.observer = new MutationObserver(this.boundSyncAll)
+    this.observer.observe(this.element, OBSERVER_CONFIG)
 
     this.syncAll()
     this.syncVisibility()
   }
 
-  startObservingOptions() {
-    this.optionsObserver.observe(this.element, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: ["class"]
-    })
-  }
-
   disconnect() {
-    this.maxSelect?.removeEventListener("change", this.boundCacheMaxValue)
+    this.maxSelect?.removeEventListener("change", this.boundOnMaxChange)
     this.typeSelect?.removeEventListener("change", this.boundSyncVisibility)
-    this.optionsObserver?.disconnect()
+    this.observer?.disconnect()
   }
 
-  cacheMaxValue() {
+  onMaxChange() {
     this.lastMaxValue = this.maxSelect.value
-    this.syncMinOptions()
+    this.populateMin()
   }
 
   syncAll() {
-    // Detach while we mutate the selects so we don't observe our own writes.
-    this.optionsObserver?.disconnect()
-    this.syncMaxOptions()
-    this.syncMinOptions()
-    this.startObservingOptions()
-  }
-
-  syncMaxOptions() {
-    if (!this.maxSelect) {
+    if (this.syncing) {
       return
     }
-    const liveCount = this.element.querySelectorAll(`${RESPONSE_OPTION}:not(.hidden)`).length
-    this.maxSelect.querySelectorAll("option:not([value=''])").forEach((opt) => opt.remove())
-    for (let idx = 2; idx <= liveCount; idx += 1) {
+    this.syncing = true
+    try {
+      this.populateMax()
+      this.populateMin()
+    } finally {
+      queueMicrotask(() => {
+        this.syncing = false
+      })
+    }
+  }
+
+  populateMax() {
+    this.populateRange(this.maxSelect, { from: 2, to: this.liveOptionsCount(), restore: this.lastMaxValue })
+  }
+
+  populateMin() {
+    const selected = Number(this.maxSelect?.value)
+    const upperBound = selected > 0
+      ? selected
+      : this.liveOptionsCount()
+    this.populateRange(this.minSelect, { from: 1, to: upperBound, restore: this.minSelect.value })
+  }
+
+  populateRange(select, { from, to, restore }) {
+    if (!select) {
+      return
+    }
+    select.querySelectorAll("option:not([value=''])").forEach((opt) => opt.remove())
+    for (let idx = from; idx <= to; idx += 1) {
       const opt = document.createElement("option")
       opt.value = String(idx)
       opt.textContent = String(idx)
-      this.maxSelect.appendChild(opt)
+      select.appendChild(opt)
     }
-    if (this.lastMaxValue && Number(this.lastMaxValue) <= liveCount) {
-      this.maxSelect.value = this.lastMaxValue
-    }
-  }
-
-  syncMinOptions() {
-    const upperBound = this.computeUpperBound()
-    const currentValue = this.minSelect.value
-    this.minSelect.querySelectorAll("option:not([value=''])").forEach((opt) => opt.remove())
-    if (upperBound < 1) {
-      return
-    }
-
-    for (let idx = 1; idx <= upperBound; idx += 1) {
-      const opt = document.createElement("option")
-      opt.value = String(idx)
-      opt.textContent = String(idx)
-      this.minSelect.appendChild(opt)
-    }
-    if (currentValue && Number(currentValue) <= upperBound) {
-      this.minSelect.value = currentValue
+    if (restore && Number(restore) <= to) {
+      select.value = restore
     }
   }
 
-  computeUpperBound() {
-    if (!this.maxSelect) {
-      return 0
-    }
-    const selected = Number(this.maxSelect.value)
-    if (selected > 0) {
-      return selected
-    }
-    const values = Array.from(this.maxSelect.options).
-      map((opt) => Number(opt.value)).
-      filter((num) => num > 0)
-    if (values.length === 0) {
-      return 0
-    }
-    return Math.max(...values)
+  liveOptionsCount() {
+    return this.element.querySelectorAll(`${RESPONSE_OPTION}:not(.hidden)`).length
   }
 
   syncVisibility() {
