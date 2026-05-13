@@ -5,9 +5,9 @@
     <% end %>
     <div class="question-group-options flex flex-col gap-4">
       <% options.each do |option| %>
-        <label class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
+        <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
           <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
-        </label>
+        </div>
       <% end %>
     </div>
   </div>

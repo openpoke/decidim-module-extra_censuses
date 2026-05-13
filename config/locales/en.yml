@@ -159,6 +159,7 @@ en:
             grouped_label: Group response options
             new_group: New group
             remove_group: Remove group
+            toggle_group: Toggle group
             ungrouped_options_hint: These response options reference a group that
               no longer exists. Delete them or reassign them by editing the question
               settings.

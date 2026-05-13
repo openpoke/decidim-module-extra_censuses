@@ -78,9 +78,9 @@ describe "Grouped question results and previews" do
       expect(page).to have_content("Cat")
       expect(page).to have_content("Oak")
 
-      html = page.html
-      expect(html.index("Animals group")).to be < html.index("<li>Cat</li>")
-      expect(html.index("Plants group")).to be < html.index("<li>Oak</li>")
+      items = page.all("h4, li").map(&:text)
+      expect(items.index("Animals group")).to be < items.index("Cat")
+      expect(items.index("Plants group")).to be < items.index("Oak")
     end
   end
 

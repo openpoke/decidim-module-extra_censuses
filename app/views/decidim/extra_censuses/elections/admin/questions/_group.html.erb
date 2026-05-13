@@ -20,7 +20,11 @@
       </span>
 
       <span class="ml-auto flex flex-row-reverse items-center gap-2">
-        <button type="button" aria-expanded="true" data-action="click->response-option-group#toggleCollapse">
+        <button type="button"
+                aria-expanded="true"
+                aria-controls="group-response-options-<%= group.id %>"
+                aria-label="<%= t("toggle_group", scope: "decidim.extra_censuses.elections.admin.questions") %>"
+                data-action="click->response-option-group#toggleCollapse">
           <span class="group-icon-collapse">
             <%== icon("arrow-up-s-line", aria_label: t("collapse", scope: "decidim.extra_censuses.elections.admin.questions"), role: "img") %>
           </span>
@@ -39,7 +43,7 @@
     </h2>
   </div>
 
-  <div class="card-section group-response-options">
+  <div class="card-section group-response-options" id="group-response-options-<%= group.id %>">
     <div class="row column">
       <%=
         form.translated(
