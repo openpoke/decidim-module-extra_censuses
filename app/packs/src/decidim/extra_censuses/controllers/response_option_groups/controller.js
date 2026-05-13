@@ -120,7 +120,7 @@ export default class extends Controller {
     if (!this.flatList) {
       return
     }
-    this.element.querySelectorAll(`${OPTION}:not(.hidden)`).forEach((option) => {
+    this.element.querySelectorAll(OPTION).forEach((option) => {
       this.unstampGroupId(option)
       this.flatList.appendChild(option)
     })
