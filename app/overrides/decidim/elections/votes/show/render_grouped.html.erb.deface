@@ -1,0 +1,8 @@
+<!-- surround_contents "div.question__response-options" -->
+<% if question.grouped? %>
+  <%= render "decidim/extra_censuses/elections/votes/grouped_question_response_options",
+             question: question,
+             wrapper_class: "js-check-box-collection" %>
+<% else %>
+  <%= render_original %>
+<% end %>

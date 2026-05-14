@@ -127,4 +127,99 @@ describe "Admin manages min choices for election questions" do
       end
     end
   end
+
+  context "when response options change after selecting max_choices", :js do
+    before do
+      visit questions_edit_path
+      open_question_accordion
+    end
+
+    it "keeps the selected max_choices after adding a response option" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        select "3", from: "Maximum number of choices"
+        click_on "Add response option"
+
+        expect(page).to have_select("Maximum number of choices", selected: "3")
+      end
+    end
+
+    it "keeps the selected max_choices after removing a response option" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        select "3", from: "Maximum number of choices"
+
+        find(".questionnaire-question-response-option .remove-response-option", match: :first).click
+
+        expect(page).to have_select("Maximum number of choices", selected: "3")
+      end
+    end
+
+    it "persists max_choices when an option is removed before saving" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        select "3", from: "Maximum number of choices"
+
+        find(".questionnaire-question-response-option .remove-response-option", match: :first).click
+      end
+
+      click_on "Save and continue"
+      expect(page).to have_admin_callout("successfully")
+
+      expect(question.reload.max_choices).to eq(3)
+    end
+  end
+
+  context "when response options change in a grouped question", :js do
+    let(:group_id) { "aaaa0001" }
+    let(:grouped_settings) do
+      {
+        "grouped" => true,
+        "groups" => [{ "id" => group_id, "title" => { "en" => "Group" }, "position" => 0 }]
+      }
+    end
+    let!(:question) do
+      create(:election_question, election:, question_type: "multiple_option", settings: grouped_settings).tap do |q|
+        create_list(:election_response_option, 4, question: q, group_id:)
+      end
+    end
+
+    before do
+      visit questions_edit_path
+      open_question_accordion
+    end
+
+    it "keeps the selected max_choices after adding an option inside a group" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        select "3", from: "Maximum number of choices"
+
+        within ".questionnaire-question-group" do
+          click_on "Add response option"
+        end
+
+        expect(page).to have_select("Maximum number of choices", selected: "3")
+      end
+    end
+
+    it "extends the max_choices range when an option is added inside a group" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        within ".questionnaire-question-group" do
+          click_on "Add response option"
+        end
+
+        max_select = find("select[name$='[max_choices]']")
+        values = max_select.all("option").map(&:value).reject(&:empty?)
+        expect(values).to eq(%w(2 3 4 5))
+      end
+    end
+
+    it "keeps the selected max_choices after removing an option inside a group" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        select "3", from: "Maximum number of choices"
+
+        within ".questionnaire-question-group" do
+          find(".remove-response-option", match: :first).click
+        end
+
+        expect(page).to have_select("Maximum number of choices", selected: "3")
+      end
+    end
+  end
 end

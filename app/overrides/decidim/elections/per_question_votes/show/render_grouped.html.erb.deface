@@ -1,0 +1,6 @@
+<!-- surround_contents "div.question__response-options" -->
+<% if question.grouped? %>
+  <%= render "decidim/extra_censuses/elections/votes/grouped_question_response_options", question: question %>
+<% else %>
+  <%= render_original %>
+<% end %>

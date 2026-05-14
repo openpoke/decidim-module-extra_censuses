@@ -13,6 +13,59 @@ describe "User votes with choices range constraints" do
     end
   end
 
+  def chosen_option_labels
+    response_options.map { |o| translated_attribute(o.body) }
+  end
+
+  shared_examples "preserves selections on validation failure" do
+    context "when the selection is above max" do
+      let(:min_choices) { nil }
+      let(:max_choices) { 3 }
+
+      it "keeps every checked option checked after the error" do
+        select_options(4)
+        click_on submit_label
+
+        chosen_option_labels.first(4).each do |label|
+          expect(page).to have_field(label, checked: true)
+        end
+      end
+    end
+
+    context "when the selection is below min" do
+      let(:min_choices) { 2 }
+      let(:max_choices) { nil }
+
+      it "keeps the single checked option checked after the error" do
+        select_options(1)
+        click_on submit_label
+
+        expect(page).to have_field(chosen_option_labels.first, checked: true)
+      end
+    end
+
+    context "with both min and max set" do
+      let(:min_choices) { 2 }
+      let(:max_choices) { 3 }
+
+      it "keeps the single checked option checked when below the range" do
+        select_options(1)
+        click_on submit_label
+
+        expect(page).to have_field(chosen_option_labels.first, checked: true)
+      end
+
+      it "keeps every checked option checked when above the range" do
+        select_options(4)
+        click_on submit_label
+
+        chosen_option_labels.first(4).each do |label|
+          expect(page).to have_field(label, checked: true)
+        end
+      end
+    end
+  end
+
   shared_examples "enforces choices range constraints" do
     context "with no range set" do
       let(:min_choices) { nil }
@@ -107,6 +160,7 @@ describe "User votes with choices range constraints" do
     end
 
     it_behaves_like "enforces choices range constraints"
+    it_behaves_like "preserves selections on validation failure"
   end
 
   context "when the election is per_question" do
@@ -132,5 +186,6 @@ describe "User votes with choices range constraints" do
     end
 
     it_behaves_like "enforces choices range constraints"
+    it_behaves_like "preserves selections on validation failure"
   end
 end

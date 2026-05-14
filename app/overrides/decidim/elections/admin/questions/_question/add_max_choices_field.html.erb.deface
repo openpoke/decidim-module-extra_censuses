@@ -1,0 +1,12 @@
+<!-- insert_after "div.questionnaire-question-min-choices" -->
+<!-- sequence :after => "add_min_choices_field" -->
+<div class="row column questionnaire-question-max-choices">
+  <%=
+    form.select(
+      :max_choices,
+      (2..question.number_of_options),
+      { include_blank: t("any", scope: "decidim.forms.admin.questionnaires.question") },
+      disabled: !editable
+    )
+  %>
+</div>

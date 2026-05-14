@@ -72,12 +72,19 @@ module Decidim
         Decidim::Elections::Admin::CensusController.include(Decidim::ExtraCensuses::CensusControllerOverride)
         Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
 
-        # min_choices feature overrides
+        Decidim::Elections::Question.include(Decidim::ExtraCensuses::QuestionOverride)
+        Decidim::Elections::Admin::ResponseOptionForm.include(Decidim::ExtraCensuses::ResponseOptionFormOverride)
         Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
         Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::ApplicationHelper.include(Decidim::ExtraCensuses::ApplicationHelperOverride)
+
+        Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::Admin::QuestionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
       end
     end
   end

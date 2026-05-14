@@ -1,0 +1,72 @@
+<% blank_group = Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm.new %>
+<% blank_response_option = Decidim::Elections::Admin::ResponseOptionForm.new %>
+<% options_by_group = question.response_options.group_by(&:group_id) %>
+
+<div class="questionnaire-question-groups <%= "hidden" unless question.grouped? %>" data-controller="response-option-groups">
+  <div class="questionnaire-question-groups-list" data-response-option-groups-target="list">
+    <% response_option_group_forms(question).each do |group| %>
+      <%= fields_for "questions[#{question.to_param}][groups][]", group do |group_form| %>
+        <%= render "decidim/extra_censuses/elections/admin/questions/group",
+                   form: group_form,
+                   question: question,
+                   group_options: options_by_group[group.id] || [],
+                   editable: editable %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% ungrouped_options = ungrouped_response_options(question).reject(&:deleted?) %>
+  <% if ungrouped_options.any? %>
+    <div class="card questionnaire-question-ungrouped-options mx-4 my-8">
+      <div class="card-divider">
+        <h2 class="card-title"><%= t("ungrouped_options_title", scope: "decidim.extra_censuses.elections.admin.questions") %></h2>
+      </div>
+      <div class="card-section">
+        <p class="help-text"><%= t("ungrouped_options_hint", scope: "decidim.extra_censuses.elections.admin.questions") %></p>
+        <div class="group-response-options-list">
+          <% ungrouped_options.each do |response_option| %>
+            <%= fields_for "questions[#{question.to_param}][response_options][]", response_option do |response_option_form| %>
+              <%= render "decidim/extra_censuses/elections/admin/questions/response_option_in_group",
+                         form: response_option_form,
+                         question: question,
+                         group_id: response_option.group_id,
+                         editable: editable %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% if editable %>
+    <div class="row column mb-2 mt-4">
+      <button type="button" class="button--title button button__sm button__transparent-secondary" data-action="click->response-option-groups#addGroup">
+        <%= t("add_group", scope: "decidim.extra_censuses.elections.admin.questions") %>
+      </button>
+    </div>
+
+    <%# Cloned by response_option_groups#addGroup. NEW_RECORD = form array
+        key (substituted on clone). id is filled in by JS. %>
+    <template data-response-option-groups-target="groupTemplate">
+      <%= fields_for "questions[#{question.to_param}][groups][NEW_RECORD]", blank_group do |group_form| %>
+        <%= render "decidim/extra_censuses/elections/admin/questions/group",
+                   form: group_form,
+                   question: question,
+                   group_options: [],
+                   editable: true %>
+      <% end %>
+    </template>
+
+    <%# Cloned by response_option_groups#appendOptionTo. group_id is stamped
+        by JS from the parent group's data-group-id. %>
+    <template data-response-option-groups-target="optionTemplate">
+      <%= fields_for "questions[#{question.to_param}][response_options][NEW_RECORD]", blank_response_option do |response_option_form| %>
+        <%= render "decidim/extra_censuses/elections/admin/questions/response_option_in_group",
+                   form: response_option_form,
+                   question: question,
+                   group_id: nil,
+                   editable: true %>
+      <% end %>
+    </template>
+  <% end %>
+</div>

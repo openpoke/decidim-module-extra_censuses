@@ -1,0 +1,3 @@
+<!-- insert_after "div.questionnaire-question-max-choices" -->
+<!-- sequence :after => "add_max_choices_field" -->
+<%= render "decidim/extra_censuses/elections/admin/questions/groups_section", question: question, editable: editable %>

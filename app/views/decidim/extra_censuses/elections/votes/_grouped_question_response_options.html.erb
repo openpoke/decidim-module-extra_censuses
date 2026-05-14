@@ -1,0 +1,21 @@
+<% grouped_response_options(question).each do |group, options| %>
+  <div class="question-group mt-6">
+    <% if group %>
+      <h3 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h3>
+    <% end %>
+    <div class="question-group-options flex flex-col gap-4">
+      <% options.each do |option| %>
+        <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
+          <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%# Upstream client-side contract: decidim-elections/elections.js toggles this %>
+<%# element's style.display when a voter exceeds max_choices. Required or the %>
+<%# upstream JS throws on null when voting on a grouped question with a cap.   %>
+<% if local_assigns[:wrapper_class] && question.max_choices.presence %>
+  <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
+<% end %>

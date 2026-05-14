@@ -4,7 +4,7 @@ require "spec_helper"
 
 describe Decidim::ExtraCensuses::ChoicesRangeCheck do
   let(:dummy_class) do
-    Class.new(ActionController::Base) do
+    Class.new(ApplicationController) do
       include Decidim::ExtraCensuses::ChoicesRangeCheck
 
       attr_accessor :question

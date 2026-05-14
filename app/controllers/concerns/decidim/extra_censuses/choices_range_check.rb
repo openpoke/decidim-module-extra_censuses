@@ -18,6 +18,7 @@ module Decidim
         response_ids = params.dig(:response, question.id.to_s) || []
         return unless out_of_choices_range?(response_ids)
 
+        votes_buffer[question.id.to_s] = response_ids
         flash.now[:alert] = choices_range_alert_message
         render :show
       end

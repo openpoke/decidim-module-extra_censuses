@@ -1,0 +1,6 @@
+<!-- replace_contents "div.questionnaire-question-response-options-list" -->
+<% (question.grouped? ? [] : question.response_options).each do |response_option| %>
+  <%= fields_for "questions[#{question.to_param}][response_options][]", response_option do |response_option_form| %>
+    <%= render "decidim/elections/admin/questions/response_option", form: response_option_form, question:, editable: question.editable? %>
+  <% end %>
+<% end %>

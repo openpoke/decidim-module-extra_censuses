@@ -1,0 +1,24 @@
+<!-- replace "div.selected_responses" -->
+<div class="selected_responses space-y-6 mt-8">
+  <% questions.each do |question| %>
+    <div>
+      <p class="font-semibold mb-2">
+        <%= translated_attribute(question.body) %>
+      </p>
+
+      <% list = question.safe_responses(votes_buffer[question.id.to_s]) %>
+      <% if list.present? %>
+        <% confirm_response_groups(question, list).each do |group, options| %>
+          <% if group %>
+            <p class="font-semibold"><%= translated_attribute(group.title) %></p>
+          <% end %>
+          <% options.each do |option| %>
+            <p><%= translated_attribute(option.body) %></p>
+          <% end %>
+        <% end %>
+      <% else %>
+        <p class="italic text-gray"><%= t("not_answered", scope: "decidim.elections.votes.confirm") %></p>
+      <% end %>
+    </div>
+  <% end %>
+</div>

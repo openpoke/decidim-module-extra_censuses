@@ -145,3 +145,22 @@ en:
           choices_range: Select between %{min} and %{max} options
           min_choices: Select at least %{count} options
           min_choices_not_met: You must select at least %{min} options.
+    extra_censuses:
+      elections:
+        admin:
+          questions:
+            add_group: "+ Add group"
+            collapse: Collapse
+            expand: Expand
+            group_title_placeholder: Group title
+            grouped_help_text: Organize response options into named groups so voters
+              see them under subheadings. Global min/max choices still apply to the
+              whole question.
+            grouped_label: Group response options
+            new_group: New group
+            remove_group: Remove group
+            toggle_group: Toggle group
+            ungrouped_options_hint: These response options reference a group that
+              no longer exists. Delete them or reassign them by editing the question
+              settings.
+            ungrouped_options_title: Ungrouped response options

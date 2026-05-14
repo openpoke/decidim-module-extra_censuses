@@ -1,0 +1,2 @@
+<!-- insert_before "div.item_show__header" -->
+<% append_stylesheet_pack_tag "decidim_extra_censuses" %>

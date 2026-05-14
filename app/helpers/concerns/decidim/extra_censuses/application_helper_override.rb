@@ -2,7 +2,6 @@
 
 module Decidim
   module ExtraCensuses
-    # Override for Decidim::Elections::ApplicationHelper.
     module ApplicationHelperOverride
       extend ActiveSupport::Concern
 

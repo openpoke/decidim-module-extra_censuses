@@ -1,0 +1,2 @@
+add_to_attributes "div.questionnaire-question-response-options-list"
+attributes "data-extra-censuses-flat-list" => "true"
