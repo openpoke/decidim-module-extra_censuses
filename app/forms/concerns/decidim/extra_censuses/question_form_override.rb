@@ -6,9 +6,12 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
+        include Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields
+
         attribute :min_choices, Integer
         attribute :grouped, :boolean, default: false
         attribute :groups, [Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm]
+        attribute :voting_method, String, default: "approval"
 
         validates :min_choices,
                   numericality: {
@@ -18,6 +21,8 @@ module Decidim
                   },
                   allow_blank: true
         validates :min_choices, absence: true, unless: :allows_min_choices?
+
+        validates :voting_method, inclusion: { in: Decidim::Elections::Question.voting_methods }
 
         validate :grouped_requires_multiple_option, if: :grouped?
         validate :must_have_at_least_one_non_empty_group, if: :grouped?
@@ -44,6 +49,8 @@ module Decidim
 
         def map_model(model)
           self.grouped = model.grouped?
+          self.voting_method = model.voting_method
+          self.scoring_scale = model.scoring_scale
         end
 
         private

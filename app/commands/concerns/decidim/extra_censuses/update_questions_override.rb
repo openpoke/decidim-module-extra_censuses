@@ -48,7 +48,11 @@ module Decidim
         end
 
         def serialized_settings(question, question_form)
-          base = question.settings.merge("grouped" => question_form.grouped?)
+          base = question.settings.merge(
+            "grouped" => question_form.grouped?,
+            "voting_method" => question_form.voting_method.presence || "approval",
+            "scoring_scale" => question_form.scoring_scale.presence || "start_from_max"
+          )
           return base.merge("groups" => []) unless question_form.grouped?
 
           base.merge(

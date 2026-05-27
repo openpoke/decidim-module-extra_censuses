@@ -150,6 +150,10 @@ en:
         admin:
           questions:
             add_group: "+ Add group"
+            borda_help_text: This will introduce a score (based on the maximum number
+              of options available) allowing users to choose the order of preferences
+              of the chosen options.
+            borda_label: Preferential voting - Rank response options (BORDA system)
             collapse: Collapse
             expand: Expand
             group_title_placeholder: Group title
@@ -159,6 +163,14 @@ en:
             grouped_label: Group response options
             new_group: New group
             remove_group: Remove group
+            scoring_scale_help_text: Choose how Borda points are distributed across
+              ranked response options.
+            scoring_scale_label: Scoring scale
+            scoring_scale_options:
+              start_from_max: Start from max - the highest score is fixed and always
+                awarded to the first-ranked option.
+              start_from_min: Start from min - the highest score depends on how many
+                options the voter ranks.
             toggle_group: Toggle group
             ungrouped_options_hint: These response options reference a group that
               no longer exists. Delete them or reassign them by editing the question

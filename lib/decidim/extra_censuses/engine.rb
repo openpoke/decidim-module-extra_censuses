@@ -76,6 +76,7 @@ module Decidim
         Decidim::Elections::Admin::ResponseOptionForm.include(Decidim::ExtraCensuses::ResponseOptionFormOverride)
         Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
+        Decidim::Elections::CastVotes.include(Decidim::ExtraCensuses::CastVotesOverride)
         Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::ApplicationHelper.include(Decidim::ExtraCensuses::ApplicationHelperOverride)
