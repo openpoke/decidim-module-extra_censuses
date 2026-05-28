@@ -6,16 +6,24 @@
     <div class="question-group-options flex flex-col gap-4">
       <% options.each do |option| %>
         <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
-          <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
+          <% if question.voting_method == "borda" %>
+            <%= render "decidim/extra_censuses/elections/votes/borda_option", option: option, question: question %>
+          <% else %>
+            <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
+          <% end %>
         </div>
       <% end %>
     </div>
   </div>
 <% end %>
 
+<% if question.voting_method == "borda" %>
+  <%= render "decidim/extra_censuses/elections/votes/borda_status", question: question %>
+<% end %>
+
 <%# Upstream client-side contract: decidim-elections/elections.js toggles this %>
 <%# element's style.display when a voter exceeds max_choices. Required or the %>
 <%# upstream JS throws on null when voting on a grouped question with a cap.   %>
-<% if local_assigns[:wrapper_class] && question.max_choices.presence %>
+<% if question.voting_method != "borda" && local_assigns[:wrapper_class] && question.max_choices.presence %>
   <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
 <% end %>

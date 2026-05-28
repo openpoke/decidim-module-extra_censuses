@@ -73,6 +73,8 @@ module Decidim
 
           pairs = payload.respond_to?(:to_unsafe_h) ? payload.to_unsafe_h : payload
           pairs.each_with_object({}) do |(option_id, position), memo|
+            next if position.to_s.strip.empty?
+
             int_position = Integer(position.to_s, 10)
             int_option_id = Integer(option_id.to_s, 10)
             memo[int_option_id] = int_position

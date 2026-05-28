@@ -29,11 +29,23 @@ module Decidim
 
         return false if min.nil? && max.nil?
 
-        count = question.response_options.where(id: response_ids).count
+        count = chosen_options_count(response_ids)
         return true if min && count < min
         return true if max && count > max
 
         false
+      end
+
+      # BORDA ballots arrive as { option_id => position }; standard ballots as an
+      # array of option ids. Both reduce to a set of chosen option ids; blank
+      # (unranked) positions are ignored.
+      def chosen_options_count(response_ids)
+        ids = if response_ids.respond_to?(:keys)
+                response_ids.reject { |_option_id, position| position.to_s.strip.empty? }.keys
+              else
+                Array(response_ids)
+              end
+        question.response_options.where(id: ids).count
       end
 
       def choices_range_alert_message

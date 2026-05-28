@@ -176,3 +176,15 @@ en:
               no longer exists. Delete them or reassign them by editing the question
               settings.
             ungrouped_options_title: Ungrouped response options
+        votes:
+          borda:
+            confirm_points:
+              one: "%{count} pt"
+              other: "%{count} pts"
+            limit_reached: You have reached the maximum number of ranked options.
+            position_label:
+              one: "%{ordinal} place (%{count} point)"
+              other: "%{ordinal} place (%{count} points)"
+            selected_counter:
+              one: 'selected %{count} / %{max}'
+              other: 'selected %{count} / %{max}'

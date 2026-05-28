@@ -1,0 +1,7 @@
+<% question.response_options.each do |option| %>
+  <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
+    <%= render "decidim/extra_censuses/elections/votes/borda_option", option: option, question: question %>
+  </div>
+<% end %>
+
+<%= render "decidim/extra_censuses/elections/votes/borda_status", question: question %>
