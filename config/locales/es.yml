@@ -1,0 +1,166 @@
+---
+es:
+  activemodel:
+    attributes:
+      custom_csv:
+        columns: Columnas
+        file: Archivo
+        remove_all: Eliminar todos los datos actuales del censo
+      question:
+        min_choices: Número mínimo de opciones
+    errors:
+      models:
+        custom_csv:
+          attributes:
+            columns:
+              blank_name: La columna %{index} debe tener un nombre
+              invalid_type: 'La columna %{index} tiene un tipo no válido: %{type}'
+              voters_exist: No se puede cambiar la configuración mientras existan
+                datos del censo. Elimina primero los datos existentes.
+            file:
+              columns_not_configured: Configura primero las columnas
+              extra_columns: 'Columnas inesperadas en el CSV: %{columns}. Usa solo
+                las columnas configuradas.'
+              malformed_csv: 'El archivo CSV tiene un formato incorrecto: %{message}'
+              missing_columns: 'Faltan columnas en el CSV: %{columns}'
+              validation_error: 'Fila %{row}, columna ''%{column}'': %{error}'
+              voters_exist: No se puede subir el archivo mientras existan datos del
+                censo. Elimina primero los datos existentes.
+  decidim:
+    admin:
+      menu:
+        elections_menu:
+          census_updates: Actualizaciones del censo
+    elections:
+      admin:
+        census:
+          update:
+            success_config_only: La configuración del censo se ha guardado. Sube un
+              archivo CSV para completar la configuración.
+        census_updates:
+          create:
+            error: Se produjo un error al crear la entrada
+            success: Entrada creada correctamente
+          destroy:
+            success: Entrada eliminada correctamente
+          errors:
+            already_exists: Ya existe una entrada con estos datos
+            blank_column: "%{column} no puede estar en blanco"
+          index:
+            actions: Acciones
+            clear: Limpiar
+            confirm_delete: "¿Seguro que quieres eliminar esta entrada?"
+            created_at: Creado el
+            delete: Eliminar
+            entries_count:
+              one: 1 entrada única
+              other: "%{count} entradas únicas"
+            import_from_survey: Importar desde encuesta
+            new_entry: Nueva entrada
+            search: Buscar
+            search_placeholder: Buscar...
+            title: Estado del censo
+            user_identifier: Identificador de usuario
+          new:
+            cancel: Cancelar
+            create: Crear entrada
+            title: Nueva entrada del censo
+        censuses:
+          column_row:
+            column_name: 'Nombre de la columna:'
+            column_type: 'Tipo de columna:'
+            delete: Eliminar
+          custom_csv_form:
+            cancel: Cancelar
+            census_attributes: Atributos del censo
+            column_types:
+              alphanumeric: Texto solo con A-Z 0-9
+              date: Fecha
+              free_text: Entrada de texto libre
+              number: Número
+              text_trim: Texto (recortar espacios)
+            current_configuration: Configuración actual
+            description: Crea tu propio censo con atributos personalizados. El requisito
+              principal es que la combinación de atributos sea única (no puede haber
+              2 filas con la combinación exacta)
+            edit_columns: Editar columnas
+            new_column: "+ Nueva columna"
+            remove_before_upload: Si quieres subir un censo nuevo o cambiar la configuración,
+              primero debes eliminar los datos existentes.
+            save_configuration: Guardar configuración
+            upload_description_html: Debe ser un archivo en formato CSV con las columnas
+              definidas arriba. Debe estar separado por punto y coma (;)
+            upload_file: Subir archivo
+            upload_title: Subir un archivo CSV
+        survey_imports:
+          create:
+            error: No se pudo guardar la configuración
+            success: La configuración de importación de la encuesta se guardó correctamente
+          errors:
+            question_not_found: No se encontraron una o más preguntas mapeadas
+            unmapped_column: La columna '%{column}' debe mapearse a una pregunta
+          import:
+            no_valid_entries: No hay entradas válidas para importar
+            success: La importación de %{count} entradas se ha encolado y se procesará
+              en segundo plano
+          index:
+            back_to_census: Volver al censo
+            cancel: Cancelar
+            change_survey: Cambiar encuesta
+            import_count:
+              one: Importar 1 entrada
+              other: Importar %{count} entradas
+            no_responses: No se encontraron respuestas en la encuesta seleccionada
+            no_valid_entries: No hay entradas válidas para importar. Todas las respuestas
+              están incompletas o ya existen en el censo.
+            ready_to_import: Listo para importar
+            skipped: Omitidas
+            title: Importar desde encuesta
+          new:
+            cancel: Cancelar
+            census_column: Columna del censo
+            field_mapping: Mapeo de campos
+            field_mapping_description: Mapea cada columna del censo a una pregunta
+              correspondiente de la encuesta
+            no_columns_warning: Configura primero las columnas del censo antes de
+              preparar la importación desde encuesta
+            no_surveys_warning: No se encontraron componentes de encuesta en este
+              espacio participativo. Crea primero una encuesta.
+            save_configuration: Guardar configuración
+            select_component: Selecciona un componente de encuesta
+            select_question: Selecciona una pregunta
+            select_survey: Selecciona una encuesta
+            survey: Encuesta
+            survey_component: Componente de encuesta
+            survey_question: Pregunta de la encuesta
+            title: Configurar importación de encuesta
+      censuses:
+        custom_csv:
+          label: CSV personalizado
+        custom_csv_form:
+          invalid: Los datos proporcionados no coinciden con ningún votante registrado
+      votes:
+        question:
+          choices_out_of_range: Debes seleccionar entre %{min} y %{max} opciones.
+          choices_range: Selecciona entre %{min} y %{max} opciones
+          min_choices: Selecciona al menos %{count} opciones
+          min_choices_not_met: Debes seleccionar al menos %{min} opciones.
+    extra_censuses:
+      elections:
+        admin:
+          questions:
+            add_group: "+ Añadir grupo"
+            collapse: Contraer
+            expand: Expandir
+            group_title_placeholder: Título del grupo
+            grouped_help_text: Organiza las opciones de respuesta en grupos con nombre
+              para que los votantes las vean bajo subtítulos. El mínimo/máximo global
+              de opciones sigue aplicándose a toda la pregunta.
+            grouped_label: Agrupar opciones de respuesta
+            new_group: Nuevo grupo
+            remove_group: Eliminar grupo
+            toggle_group: Alternar grupo
+            ungrouped_options_hint: Estas opciones de respuesta hacen referencia a
+              un grupo que ya no existe. Elimínalas o reasígnalas editando la configuración
+              de la pregunta.
+            ungrouped_options_title: Opciones de respuesta sin grupo

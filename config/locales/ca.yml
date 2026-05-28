@@ -1,0 +1,166 @@
+---
+ca:
+  activemodel:
+    attributes:
+      custom_csv:
+        columns: Columnes
+        file: Fitxer
+        remove_all: Elimina totes les dades actuals del cens
+      question:
+        min_choices: Nombre mínim d'opcions
+    errors:
+      models:
+        custom_csv:
+          attributes:
+            columns:
+              blank_name: La columna %{index} ha de tenir un nom
+              invalid_type: 'La columna %{index} té un tipus no vàlid: %{type}'
+              voters_exist: No es pot canviar la configuració mentre existeixin dades
+                del cens. Elimina primer les dades existents.
+            file:
+              columns_not_configured: Configura primer les columnes
+              extra_columns: 'Columnes inesperades al CSV: %{columns}. Utilitza només
+                les columnes configurades.'
+              malformed_csv: 'El fitxer CSV té un format incorrecte: %{message}'
+              missing_columns: 'Falten columnes al CSV: %{columns}'
+              validation_error: 'Fila %{row}, columna ''%{column}'': %{error}'
+              voters_exist: No es pot pujar el fitxer mentre existeixin dades del
+                cens. Elimina primer les dades existents.
+  decidim:
+    admin:
+      menu:
+        elections_menu:
+          census_updates: Actualitzacions del cens
+    elections:
+      admin:
+        census:
+          update:
+            success_config_only: La configuració del cens s'ha desat. Puja un fitxer
+              CSV per completar la configuració.
+        census_updates:
+          create:
+            error: S'ha produït un error en crear l'entrada
+            success: Entrada creada correctament
+          destroy:
+            success: Entrada eliminada correctament
+          errors:
+            already_exists: Ja existeix una entrada amb aquestes dades
+            blank_column: "%{column} no pot estar en blanc"
+          index:
+            actions: Accions
+            clear: Neteja
+            confirm_delete: Segur que vols eliminar aquesta entrada?
+            created_at: Creat el
+            delete: Elimina
+            entries_count:
+              one: 1 entrada única
+              other: "%{count} entrades úniques"
+            import_from_survey: Importa des d'una enquesta
+            new_entry: Nova entrada
+            search: Cerca
+            search_placeholder: Cerca...
+            title: Estat del cens
+            user_identifier: Identificador d'usuari
+          new:
+            cancel: Cancel·la
+            create: Crea entrada
+            title: Nova entrada del cens
+        censuses:
+          column_row:
+            column_name: 'Nom de la columna:'
+            column_type: 'Tipus de columna:'
+            delete: Elimina
+          custom_csv_form:
+            cancel: Cancel·la
+            census_attributes: Atributs del cens
+            column_types:
+              alphanumeric: Text només amb A-Z 0-9
+              date: Data
+              free_text: Entrada de text lliure
+              number: Número
+              text_trim: Text (retalla espais)
+            current_configuration: Configuració actual
+            description: Crea el teu propi cens amb atributs personalitzats. El requisit
+              principal és que la combinació d'atributs sigui única (no hi pot haver
+              2 files amb la combinació exacta)
+            edit_columns: Edita columnes
+            new_column: "+ Columna nova"
+            remove_before_upload: Si vols pujar un cens nou o canviar la configuració,
+              primer has d'eliminar les dades existents.
+            save_configuration: Desa la configuració
+            upload_description_html: Ha de ser un fitxer en format CSV amb les columnes
+              definides més amunt. Ha d'estar separat amb punt i coma (;)
+            upload_file: Puja fitxer
+            upload_title: Puja un fitxer CSV
+        survey_imports:
+          create:
+            error: No s'ha pogut desar la configuració
+            success: La configuració d'importació de l'enquesta s'ha desat correctament
+          errors:
+            question_not_found: No s'han trobat una o més preguntes mapejades
+            unmapped_column: La columna '%{column}' s'ha de mapar a una pregunta
+          import:
+            no_valid_entries: No hi ha entrades vàlides per importar
+            success: La importació de %{count} entrades s'ha posat a la cua i es processarà
+              en segon pla
+          index:
+            back_to_census: Torna al cens
+            cancel: Cancel·la
+            change_survey: Canvia l'enquesta
+            import_count:
+              one: Importa 1 entrada
+              other: Importa %{count} entrades
+            no_responses: No s'han trobat respostes a l'enquesta seleccionada
+            no_valid_entries: No hi ha entrades vàlides per importar. Totes les respostes
+              són incompletes o ja existeixen al cens.
+            ready_to_import: A punt per importar
+            skipped: Omeses
+            title: Importa des d'una enquesta
+          new:
+            cancel: Cancel·la
+            census_column: Columna del cens
+            field_mapping: Mapeig de camps
+            field_mapping_description: Mapeja cada columna del cens a una pregunta
+              corresponent de l'enquesta
+            no_columns_warning: Configura primer les columnes del cens abans de preparar
+              la importació des d'enquesta
+            no_surveys_warning: No s'han trobat components d'enquesta en aquest espai
+              participatiu. Crea primer una enquesta.
+            save_configuration: Desa la configuració
+            select_component: Selecciona un component d'enquesta
+            select_question: Selecciona una pregunta
+            select_survey: Selecciona una enquesta
+            survey: Enquesta
+            survey_component: Component d'enquesta
+            survey_question: Pregunta de l'enquesta
+            title: Configura la importació d'enquesta
+      censuses:
+        custom_csv:
+          label: CSV personalitzat
+        custom_csv_form:
+          invalid: Les dades proporcionades no coincideixen amb cap votant registrat
+      votes:
+        question:
+          choices_out_of_range: Has de seleccionar entre %{min} i %{max} opcions.
+          choices_range: Selecciona entre %{min} i %{max} opcions
+          min_choices: Selecciona com a mínim %{count} opcions
+          min_choices_not_met: Has de seleccionar com a mínim %{min} opcions.
+    extra_censuses:
+      elections:
+        admin:
+          questions:
+            add_group: "+ Afegeix grup"
+            collapse: Replega
+            expand: Desplega
+            group_title_placeholder: Títol del grup
+            grouped_help_text: Organitza les opcions de resposta en grups amb nom
+              perquè els votants les vegin sota subtítols. El mínim/màxim global d'opcions
+              continua aplicant-se a tota la pregunta.
+            grouped_label: Agrupa les opcions de resposta
+            new_group: Grup nou
+            remove_group: Elimina el grup
+            toggle_group: Commuta el grup
+            ungrouped_options_hint: Aquestes opcions de resposta fan referència a
+              un grup que ja no existeix. Elimina-les o reassigna-les editant la configuració
+              de la pregunta.
+            ungrouped_options_title: Opcions de resposta sense grup
