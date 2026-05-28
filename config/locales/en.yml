@@ -148,6 +148,9 @@ en:
     extra_censuses:
       elections:
         admin:
+          dashboard:
+            questions_table:
+              score: Score
           questions:
             add_group: "+ Add group"
             borda_help_text: This will introduce a score (based on the maximum number
@@ -186,5 +189,5 @@ en:
               one: "%{ordinal} place (%{count} point)"
               other: "%{ordinal} place (%{count} points)"
             selected_counter:
-              one: 'selected %{count} / %{max}'
-              other: 'selected %{count} / %{max}'
+              one: selected %{count} / %{max}
+              other: selected %{count} / %{max}
