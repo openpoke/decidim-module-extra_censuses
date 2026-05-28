@@ -22,12 +22,6 @@ module Decidim
         def borda_score_for(question, option)
           borda_scores(question).fetch(option.id, 0)
         end
-
-        # Options sorted by score descending, then by id ascending (tiebreak).
-        def borda_ordered_response_options(question, options)
-          scores = borda_scores(question)
-          options.sort_by { |option| [-scores.fetch(option.id, 0), option.id] }
-        end
       end
     end
   end

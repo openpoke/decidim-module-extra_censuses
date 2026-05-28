@@ -73,6 +73,7 @@ module Decidim
         Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
 
         Decidim::Elections::Question.include(Decidim::ExtraCensuses::QuestionOverride)
+        Decidim::Elections::ElectionPresenter.include(Decidim::ExtraCensuses::ElectionPresenterOverride)
         Decidim::Elections::Admin::ResponseOptionForm.include(Decidim::ExtraCensuses::ResponseOptionFormOverride)
         Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)

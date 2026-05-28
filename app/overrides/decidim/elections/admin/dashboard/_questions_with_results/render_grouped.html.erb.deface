@@ -10,7 +10,6 @@
           <td colspan="<%= group_colspan %>" class="font-semibold"><%= translated_attribute(group.title) %></td>
         </tr>
       <% end %>
-      <% options = borda_ordered_response_options(question, options) if borda %>
       <% options.each do |option| %>
         <tr>
           <td class="w-2/3"><%= translated_attribute option.body %></td>

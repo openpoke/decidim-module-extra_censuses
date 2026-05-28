@@ -54,16 +54,6 @@ module Decidim
         end
       end
 
-      describe "#borda_ordered_response_options" do
-        it "sorts by score descending, then by id ascending on ties" do
-          # Feed the options in a shuffled order to prove the helper, not input order, decides.
-          ordered = helper.borda_ordered_response_options(question, [option_d, option_c, option_b, option_a])
-          # A=7, B=7 (tie -> lower id first), C=2, D=0.
-          tie_winners = [option_a, option_b].sort_by(&:id)
-          expect(ordered).to eq([tie_winners.first, tie_winners.last, option_c, option_d])
-        end
-      end
-
       describe "#borda_scores" do
         it "calls BordaScorer once per question and memoizes" do
           allow(Decidim::ExtraCensuses::BordaScorer).to receive(:new).and_call_original

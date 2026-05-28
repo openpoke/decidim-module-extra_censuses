@@ -51,9 +51,8 @@ describe "Admin views BORDA results" do
       end
     end
 
-    it "orders rows by score descending, then by id ascending" do
+    it "renders rows in the question's natural option order (no score sorting)" do
       rows = page.all("#question_#{question.id} tbody tr td.w-2\\/3").map(&:text)
-      # Alpha (6), Beta (4), Gamma (1), then the Total row.
       expect(rows.first(3)).to eq(%w(Alpha Beta Gamma))
     end
 
