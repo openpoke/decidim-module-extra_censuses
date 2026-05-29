@@ -9,7 +9,7 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
-        prepend_before_action :check_choices_range!, only: :update # rubocop:disable Rails/LexicallyScopedActionFilter
+        before_action :check_choices_range!, only: :update # rubocop:disable Rails/LexicallyScopedActionFilter
       end
 
       private
