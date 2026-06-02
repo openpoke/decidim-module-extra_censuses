@@ -23,7 +23,7 @@ module Decidim
       let!(:s_opt_a) { create(:election_response_option, question: standard_question) }
       let!(:s_opt_b) { create(:election_response_option, question: standard_question) }
 
-      describe "borda payload happy path" do
+      context "when the borda payload is valid" do
         let(:data) do
           {
             borda_question.id.to_s => {
@@ -55,7 +55,7 @@ module Decidim
         end
       end
 
-      describe "contiguity violation" do
+      context "when borda positions are not contiguous" do
         let(:data) do
           {
             borda_question.id.to_s => {
@@ -73,7 +73,7 @@ module Decidim
         end
       end
 
-      describe "below min_choices" do
+      context "when the borda ballot is below min_choices" do
         let(:data) do
           {
             borda_question.id.to_s => { b_opt_a.id.to_s => 1 },
@@ -86,7 +86,7 @@ module Decidim
         end
       end
 
-      describe "above max_choices" do
+      context "when the borda ballot exceeds max_choices" do
         let(:borda_question) do
           create(:election_question, :borda, :voting_enabled, election:, max_choices: 2, min_choices: 1)
         end
@@ -107,7 +107,7 @@ module Decidim
         end
       end
 
-      describe "borda-shape payload sent to a standard question" do
+      context "when a borda-shape payload is sent to a standard question" do
         let(:data) do
           {
             borda_question.id.to_s => {
@@ -125,7 +125,7 @@ module Decidim
         end
       end
 
-      describe "standard-shape payload sent to a borda question" do
+      context "when a standard-shape payload is sent to a borda question" do
         let(:data) do
           {
             borda_question.id.to_s => [b_opt_a.id.to_s, b_opt_b.id.to_s],
@@ -138,7 +138,7 @@ module Decidim
         end
       end
 
-      describe "legacy standard ballot on per-question election" do
+      context "when casting a standard ballot on a per-question election" do
         let(:election) { create(:election, :ongoing, :per_question) }
         let(:data) do
           { standard_question.id.to_s => [s_opt_a.id.to_s, s_opt_b.id.to_s] }

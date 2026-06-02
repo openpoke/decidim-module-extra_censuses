@@ -154,6 +154,51 @@ module Decidim
           end
         end
       end
+
+      describe "#confirm_response_groups" do
+        context "when the question is not grouped" do
+          let(:question) { create(:election_question, election:, settings: { "grouped" => false }) }
+          let!(:option_a) { create(:election_response_option, question:) }
+          let!(:option_b) { create(:election_response_option, question:) }
+
+          it "returns a single nil-group pair with the given options" do
+            expect(helper.confirm_response_groups(question, [option_a, option_b])).to eq([[nil, [option_a, option_b]]])
+          end
+        end
+
+        context "when the question is grouped" do
+          let(:question) do
+            create(:election_question,
+                   election:,
+                   settings: {
+                     "grouped" => true,
+                     "groups" => [
+                       { "id" => "g1aaaaaa", "title" => { "en" => "First" }, "position" => 0 },
+                       { "id" => "g2bbbbbb", "title" => { "en" => "Second" }, "position" => 1 }
+                     ]
+                   })
+          end
+          let!(:option_a1) { create(:election_response_option, question:, group_id: "g1aaaaaa") }
+          let!(:option_a2) { create(:election_response_option, question:, group_id: "g1aaaaaa") }
+          let!(:option_b1) { create(:election_response_option, question:, group_id: "g2bbbbbb") }
+
+          it "keeps only the selected option within each group that has a selection" do
+            pairs = helper.confirm_response_groups(question, [option_a1, option_b1])
+            expect(pairs.size).to eq(2)
+            expect(pairs[0].first.id).to eq("g1aaaaaa")
+            expect(pairs[0].last).to contain_exactly(option_a1)
+            expect(pairs[1].first.id).to eq("g2bbbbbb")
+            expect(pairs[1].last).to contain_exactly(option_b1)
+          end
+
+          it "drops groups with no selected option" do
+            pairs = helper.confirm_response_groups(question, [option_a1])
+            expect(pairs.size).to eq(1)
+            expect(pairs[0].first.id).to eq("g1aaaaaa")
+            expect(pairs[0].last).to contain_exactly(option_a1)
+          end
+        end
+      end
     end
   end
 end
