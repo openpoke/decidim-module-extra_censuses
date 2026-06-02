@@ -74,11 +74,7 @@ module Decidim
         def borda_position_label(question, position, ballot_size)
           t("decidim.extra_censuses.elections.votes.borda.position_label",
             ordinal: ActiveSupport::Inflector.ordinalize(position),
-            count: borda_points(question, position, ballot_size))
-        end
-
-        def borda_points(question, position, ballot_size)
-          question.borda_points(position, ballot_size)
+            count: question.borda_points(position, ballot_size))
         end
 
         # [[option, rank, points], ...] for the confirm summary, sorted by rank.
@@ -89,7 +85,7 @@ module Decidim
           options
             .map { |option| [option, positions[option.id.to_s].to_i] }
             .sort_by { |_option, rank| rank }
-            .map { |option, rank| [option, rank, borda_points(question, rank, ballot_size)] }
+            .map { |option, rank| [option, rank, question.borda_points(rank, ballot_size)] }
         end
 
         private

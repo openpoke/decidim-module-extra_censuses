@@ -13,13 +13,6 @@ module Decidim
       let!(:option_b) { create(:election_response_option, question:) }
       let!(:option_c) { create(:election_response_option, question:) }
 
-      describe "#borda_points" do
-        it "delegates to Question#borda_points" do
-          expect(helper.borda_points(question, 1, 3)).to eq(question.borda_points(1, 3))
-          expect(helper.borda_points(question, 2, 3)).to eq(question.borda_points(2, 3))
-        end
-      end
-
       # The label is "%{ordinal} place (%{count} point[s])"; the point value is
       # the only thing inside the parentheses, so match that fragment to avoid a
       # collision with the ordinal digits.

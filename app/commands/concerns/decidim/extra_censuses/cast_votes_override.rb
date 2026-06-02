@@ -6,9 +6,6 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
-        alias_method :extra_censuses_original_voted_questions, :voted_questions
-        alias_method :extra_censuses_original_save_votes!, :save_votes!
-
         private
 
         def voted_questions
@@ -42,32 +39,26 @@ module Decidim
           voted_questions.each do |question, responses|
             raise StandardError, "No responses for question #{question.id}" if responses.blank?
 
-            if question.voting_method == "borda"
-              save_borda_votes!(question, responses)
-            else
-              question.votes.where(voter_uid: voter_uid).destroy_all
-              responses.each do |response_option|
-                question.votes.create!(
-                  voter_uid: voter_uid,
-                  response_option: response_option
-                )
-              end
+            positions = borda_positions_for(question)
+            question.votes.where(voter_uid: voter_uid).destroy_all
+            responses.each do |response_option|
+              question.votes.create!(
+                voter_uid: voter_uid,
+                response_option: response_option,
+                position: positions[response_option.id]
+              )
             end
           end
         end
 
-        def save_borda_votes!(question, responses)
+        # Validated { response_option_id => rank } for borda questions, {} otherwise
+        # (so the shared create! path leaves position nil for non-borda votes).
+        def borda_positions_for(question)
+          return {} unless question.voting_method == "borda"
+
           positions = borda_positions[question.id] || {}
           validate_borda_positions!(question, positions)
-
-          question.votes.where(voter_uid: voter_uid).destroy_all
-          responses.each do |response_option|
-            question.votes.create!(
-              voter_uid: voter_uid,
-              response_option: response_option,
-              position: positions[response_option.id]
-            )
-          end
+          positions
         end
 
         def borda_positions
