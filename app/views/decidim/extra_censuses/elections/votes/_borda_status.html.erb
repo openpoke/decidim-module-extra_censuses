@@ -1,9 +1,9 @@
 <div class="borda-status mt-2 text-sm" data-voter-borda-target="status">
-  <span data-voter-borda-target="counter">
+  <span data-voter-borda-target="counter" aria-live="polite" aria-atomic="true">
     <%= t("decidim.extra_censuses.elections.votes.borda.selected_counter",
           count: 0, max: question.max_votable_options) %>
   </span>
-  <small class="form-error borda-limit-hint" data-voter-borda-target="limitHint" style="display:none;">
+  <small class="form-error borda-limit-hint" data-voter-borda-target="limitHint" style="display:none;" aria-live="assertive" aria-atomic="true">
     <%= t("decidim.extra_censuses.elections.votes.borda.limit_reached") %>
   </small>
 </div>

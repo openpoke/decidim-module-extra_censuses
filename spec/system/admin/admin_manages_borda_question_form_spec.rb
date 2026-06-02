@@ -31,18 +31,6 @@ describe "Admin manages BORDA voting for election questions" do
     find("select[name$='[scoring_scale]']", visible: :all)
   end
 
-  def scoring_scale_wrapper
-    find(".questionnaire-question-scoring-scale", visible: :all)
-  end
-
-  def borda_wrapper
-    find(".questionnaire-question-borda", visible: :all)
-  end
-
-  def hidden?(node)
-    node[:class].to_s.split.include?("hidden")
-  end
-
   context "when persisting BORDA settings" do
     before do
       visit questions_edit_path
@@ -100,10 +88,10 @@ describe "Admin manages BORDA voting for election questions" do
 
     it "hides the scoring-scale select until the checkbox is checked" do
       within "#accordion-questionnaire_question_#{question.id}-field" do
-        expect(hidden?(scoring_scale_wrapper)).to be true
+        expect(page).to have_css(".questionnaire-question-scoring-scale.hidden", visible: :all)
 
         check I18n.t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions")
-        expect(hidden?(scoring_scale_wrapper)).to be false
+        expect(page).to have_no_css(".questionnaire-question-scoring-scale.hidden", visible: :all)
       end
     end
 
@@ -114,7 +102,7 @@ describe "Admin manages BORDA voting for election questions" do
                from: I18n.t("scoring_scale_label", scope: "decidim.extra_censuses.elections.admin.questions")
 
         uncheck I18n.t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions")
-        expect(hidden?(scoring_scale_wrapper)).to be true
+        expect(page).to have_css(".questionnaire-question-scoring-scale.hidden", visible: :all)
         expect(scoring_scale_select.value).to eq("start_from_max")
       end
     end
@@ -122,7 +110,7 @@ describe "Admin manages BORDA voting for election questions" do
     it "hides the BORDA wrapper when question type is single_option" do
       within "#accordion-questionnaire_question_#{question.id}-field" do
         select "Single option", from: "Type"
-        expect(hidden?(borda_wrapper)).to be true
+        expect(page).to have_css(".questionnaire-question-borda.hidden", visible: :all)
       end
     end
   end
