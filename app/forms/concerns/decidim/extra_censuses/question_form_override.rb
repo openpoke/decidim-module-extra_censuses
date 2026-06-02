@@ -33,7 +33,7 @@ module Decidim
         # Replaces upstream `response_options.size` so the min/max_choices
         # upper bound excludes options the admin has marked for deletion.
         def number_of_options
-          response_options.reject(&:deleted?).size
+          live_response_options.size
         end
 
         def allows_min_choices?
@@ -41,9 +41,8 @@ module Decidim
         end
 
         def groups_to_persist
-          live_options = response_options.reject(&:deleted?)
           groups.reject do |group|
-            group.deleted || live_options.none? { |opt| opt.group_id == group.id }
+            group.deleted || live_response_options.none? { |opt| opt.group_id == group.id }
           end
         end
 
@@ -54,6 +53,10 @@ module Decidim
         end
 
         private
+
+        def live_response_options
+          response_options.reject(&:deleted?)
+        end
 
         def grouped_requires_multiple_option
           return if question_type == "multiple_option"
@@ -84,12 +87,9 @@ module Decidim
 
         def response_options_have_valid_group_id
           known_ids = groups_to_persist.map(&:id)
-          response_options.reject(&:deleted?).each do |option|
-            next if option.group_id.present? && known_ids.include?(option.group_id)
+          return if live_response_options.all? { |option| option.group_id.present? && known_ids.include?(option.group_id) }
 
-            errors.add(:response_options, :invalid)
-            break
-          end
+          errors.add(:response_options, :invalid)
         end
       end
     end
