@@ -175,8 +175,9 @@ en:
             grouped_label: Group response options
             new_group: New group
             remove_group: Remove group
-            scoring_scale_help_text: Both are standard Borda variants; they differ
-              only for partial ballots, when a voter ranks fewer than the maximum.
+            scoring_scale_help_text: Both are recognised Borda count variants; they
+              differ only on partial ballots, when a voter ranks fewer options than
+              the maximum allowed.
             scoring_scale_label: Scoring scale
             scoring_scale_options:
               start_from_max: Standard Borda count (top choice always worth the maximum)
