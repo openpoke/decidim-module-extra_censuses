@@ -9,10 +9,13 @@
     <% end %>
   <% end %>
 
-  <div class="py-4 flex justify-between items-center">
-    <span><%= t("decidim.elections.elections.vote_results.total") %></span>
-    <span data-question-total-votes-text="<%= question.id %>"><%= t("total_votes", scope: "decidim.elections.elections.vote_results", count: question.total_votes) %></span>
-  </div>
+  <%= render "decidim/extra_censuses/elections/results/total_row", question: question %>
+<% elsif question.voting_method == "borda" %>
+  <% question.response_options.each do |option| %>
+    <%= render "decidim/elections/elections/vote_results_option", option: option %>
+  <% end %>
+
+  <%= render "decidim/extra_censuses/elections/results/total_row", question: question %>
 <% else %>
   <%= render_original %>
 <% end %>

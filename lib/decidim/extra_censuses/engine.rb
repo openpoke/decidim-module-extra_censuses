@@ -91,6 +91,7 @@ module Decidim
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::AdminResultsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::AdminQuestionMetaHelper)
         Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::BordaResultsHelper)
       end
     end
   end

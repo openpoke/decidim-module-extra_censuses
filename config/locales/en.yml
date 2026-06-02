@@ -187,6 +187,14 @@ en:
               no longer exists. Delete them or reassign them by editing the question
               settings.
             ungrouped_options_title: Ungrouped response options
+        results:
+          borda:
+            ballots:
+              one: "%{count} ballot"
+              other: "%{count} ballots"
+            points:
+              one: "%{count} point"
+              other: "%{count} points"
         votes:
           borda:
             confirm_points:

@@ -1,0 +1,8 @@
+<div class="py-4 flex justify-between items-center">
+  <span><%= t("decidim.elections.elections.vote_results.total") %></span>
+  <% if question.voting_method == "borda" %>
+    <span><%= t("decidim.extra_censuses.elections.results.borda.ballots", count: borda_ballots_count(question)) %></span>
+  <% else %>
+    <span data-question-total-votes-text="<%= question.id %>"><%= t("total_votes", scope: "decidim.elections.elections.vote_results", count: question.total_votes) %></span>
+  <% end %>
+</div>

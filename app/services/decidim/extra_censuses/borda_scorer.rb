@@ -25,6 +25,12 @@ module Decidim
         totals
       end
 
+      def ballots_count
+        return 0 unless question.voting_method == "borda"
+
+        votes_by_voter.size
+      end
+
       def per_voter_breakdown
         return [] unless question.voting_method == "borda"
 
