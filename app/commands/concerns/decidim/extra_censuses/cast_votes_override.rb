@@ -51,8 +51,7 @@ module Decidim
           end
         end
 
-        # Validated { response_option_id => rank } for borda questions, {} otherwise
-        # (so the shared create! path leaves position nil for non-borda votes).
+        # {} for non-borda, so the shared create! path leaves position nil.
         def borda_positions_for(question)
           return {} unless question.voting_method == "borda"
 

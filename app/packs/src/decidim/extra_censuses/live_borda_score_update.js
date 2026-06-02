@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
           animateText(el, val);
         }
       });
-      // repeat for ongoing elections only
       if (data.ongoing) {
         setTimeout(fetchResults, 4000);
       }

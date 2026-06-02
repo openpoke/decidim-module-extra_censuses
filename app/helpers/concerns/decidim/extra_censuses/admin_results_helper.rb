@@ -2,8 +2,8 @@
 
 module Decidim
   module ExtraCensuses
-    # View helpers for the admin results table. Adds the BORDA "Score" column,
-    # reading totals straight from BordaScorer (never recomputing them here).
+    # Admin results-table helpers for the BORDA Score column; totals come from
+    # BordaScorer.
     module AdminResultsHelper
       extend ActiveSupport::Concern
 
@@ -12,8 +12,7 @@ module Decidim
           question.voting_method == "borda"
         end
 
-        # response_option_id => total Borda points, memoized so the scorer runs
-        # once per question render.
+        # Memoized so the scorer runs once per question render.
         def borda_scores(question)
           @borda_scores ||= {}
           @borda_scores[question.id] ||= Decidim::ExtraCensuses::BordaScorer.new(question).totals_by_response_option
