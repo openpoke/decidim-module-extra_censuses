@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const url = watchingDiv.dataset.resultsLiveUpdate;
   const optionBordaScoreTexts = () => document.querySelectorAll("[data-option-borda-score-text]");
+  const optionBordaScoreWidths = () => document.querySelectorAll("[data-option-borda-score-width]");
+  const questionBordaBallotsTexts = () => document.querySelectorAll("[data-question-borda-ballots-text]");
 
   const animateText = (element, value) => {
     if (element.textContent === value) {
@@ -40,6 +42,31 @@ document.addEventListener("DOMContentLoaded", () => {
     return option[key];
   };
 
+  const digQuestionValue = (questionId, data, key) => {
+    const questions = data.questions || [];
+    const question = questions.find((item) => item.id === parseInt(questionId, 10));
+    if (!question || !(key in question)) {
+      return null;
+    }
+    return question[key];
+  };
+
+  const maxBordaScore = (questionId, data) => {
+    const questions = data.questions || [];
+    const question = questions.find((item) => item.id === parseInt(questionId, 10));
+    if (!question || !Array.isArray(question.response_options)) {
+      return 0;
+    }
+    return question.response_options.reduce((max, option) => {
+      const score = typeof option.borda_score === "number"
+        ? option.borda_score
+        : 0;
+      return score > max
+        ? score
+        : max;
+    }, 0);
+  };
+
   const fetchResults = async () => {
     try {
       const response = await fetch(url, {
@@ -57,6 +84,20 @@ document.addEventListener("DOMContentLoaded", () => {
       optionBordaScoreTexts().forEach((el) => {
         const [questionId, optionId] = el.dataset.optionBordaScoreText.split(",");
         const val = digOptionValue(questionId, optionId, data, "borda_score_text");
+        if (val !== null) {
+          animateText(el, val);
+        }
+      });
+      optionBordaScoreWidths().forEach((el) => {
+        const [questionId, optionId] = el.dataset.optionBordaScoreWidth.split(",");
+        const score = digOptionValue(questionId, optionId, data, "borda_score");
+        const max = maxBordaScore(questionId, data);
+        if (score !== null && max > 0) {
+          el.style.width = `${Math.round((score / max) * 1000) / 10}%`;
+        }
+      });
+      questionBordaBallotsTexts().forEach((el) => {
+        const val = digQuestionValue(el.dataset.questionBordaBallotsText, data, "borda_ballots_text");
         if (val !== null) {
           animateText(el, val);
         }

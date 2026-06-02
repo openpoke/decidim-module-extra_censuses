@@ -34,6 +34,7 @@ module Decidim::ExtraCensuses
         "/app/views/decidim/elections/admin/questions/_response_option.html.erb" => "58cf226fd79cd547a5d1cf87ea7a3c22",
         "/app/views/decidim/elections/admin/elections/dashboard.html.erb" => "277897a8f93152d0ac6e0786150b2266",
         # public views
+        "/app/views/decidim/elections/elections/show.html.erb" => "f08f1c9a72f0dc7b7c0e1acaa49841ca",
         "/app/views/decidim/elections/elections/_questions.html.erb" => "182f98be98b5f84d553978150507369c",
         "/app/views/decidim/elections/elections/_vote_results_option.html.erb" => "77e720856c3c8dc6beb709c97e7a1ad5",
         "/app/views/decidim/elections/elections/_vote_results_question.html.erb" => "449b5dcd8c2ea5a0d1d59d7cc5b315ae",

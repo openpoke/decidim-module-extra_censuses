@@ -125,7 +125,18 @@ module Decidim
           option_hash = option_hash_for(json, borda_question, option_a)
           # start_from_max, max_choices = 4, A ranked 1 => 4 - 1 + 1 = 4
           expect(option_hash).to have_key(:votes_count)
-          expect(option_hash).to include(borda_score: 4, borda_score_text: "4")
+          expect(option_hash).to include(
+            borda_score: 4,
+            borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: 4)
+          )
+        end
+
+        it "carries the ballots turnout on the question" do
+          question_hash = json[:questions].find { |question_data| question_data[:id] == borda_question.id }
+          expect(question_hash).to include(
+            borda_ballots: 1,
+            borda_ballots_text: I18n.t("decidim.extra_censuses.elections.results.borda.ballots", count: 1)
+          )
         end
       end
     end

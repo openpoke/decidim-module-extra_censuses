@@ -17,7 +17,14 @@ module Decidim
             question = questions_by_id[question_hash[:id]]
             next unless question&.voting_method == "borda"
 
-            totals = Decidim::ExtraCensuses::BordaScorer.new(question).totals_by_response_option
+            scorer = Decidim::ExtraCensuses::BordaScorer.new(question)
+            totals = scorer.totals_by_response_option
+
+            if !admin && question_hash.has_key?(:total_votes)
+              ballots = scorer.ballots_count
+              question_hash[:borda_ballots] = ballots
+              question_hash[:borda_ballots_text] = I18n.t("decidim.extra_censuses.elections.results.borda.ballots", count: ballots)
+            end
 
             Array(question_hash[:response_options]).each do |option_hash|
               # Only annotate options whose results the upstream gate already exposed
@@ -26,7 +33,9 @@ module Decidim
 
               score = totals.fetch(option_hash[:id], 0)
               option_hash[:borda_score] = score
-              option_hash[:borda_score_text] = score.to_s
+              # Admin Score column shows a bare number; the public page mirrors upstream
+              # by carrying the full localized "N points" string for the live poller.
+              option_hash[:borda_score_text] = admin ? score.to_s : I18n.t("decidim.extra_censuses.elections.results.borda.points", count: score)
             end
           end
 

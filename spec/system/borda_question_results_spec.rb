@@ -57,6 +57,14 @@ describe "BORDA question public results" do
     expect(page).to have_no_css(".percent-bar-width[data-option-votes-width]")
   end
 
+  it "renders borda live-update hooks so results refresh in place like upstream" do
+    within "#question-#{question.id}" do
+      expect(page).to have_css("[data-option-borda-score-text]", count: 3)
+      expect(page).to have_css(".percent-bar-width[data-option-borda-score-width]", count: 3)
+      expect(page).to have_css("[data-question-borda-ballots-text='#{question.id}']")
+    end
+  end
+
   it "replaces the TOTAL votes footer with a ballots turnout count" do
     expect(page).to have_content("2 ballots")
     expect(page).to have_no_css("[data-question-total-votes-text='#{question.id}']")
