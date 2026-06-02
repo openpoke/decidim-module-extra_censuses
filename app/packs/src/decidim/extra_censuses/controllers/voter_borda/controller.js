@@ -18,7 +18,8 @@ export default class extends Controller {
       scoringScale: String,
       ordinals: Array,
       labelOne: String,
-      labelOther: String
+      labelOther: String,
+      counterTemplate: String
     }
   }
 
@@ -176,7 +177,7 @@ export default class extends Controller {
     if (!this.hasCounterTarget) {
       return
     }
-    this.counterTarget.textContent = `selected ${count} / ${this.maxChoicesValue}`
+    this.counterTarget.textContent = this.counterTemplateValue.replace("%{count}", String(count)).replace("%{max}", String(this.maxChoicesValue))
     if (this.hasLimitHintTarget) {
       this.limitHintTarget.style.display = count >= this.maxChoicesValue
         ? "block"

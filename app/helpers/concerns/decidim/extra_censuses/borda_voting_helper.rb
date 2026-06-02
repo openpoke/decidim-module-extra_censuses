@@ -28,6 +28,10 @@ module Decidim
           t("decidim.extra_censuses.elections.votes.borda.position_label", ordinal: "%{ordinal}", count: "%{count}")
         end
 
+        def borda_counter_template
+          t("decidim.extra_censuses.elections.votes.borda.selected_counter", count: "%{count}", max: "%{max}")
+        end
+
         # Labels reflect the scoring scale at the maximum ballot size; under
         # start_from_min the Stimulus controller recomputes them per k.
         def borda_position_options(question)
