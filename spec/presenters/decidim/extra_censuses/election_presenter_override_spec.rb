@@ -66,6 +66,26 @@ module Decidim
         end
       end
 
+      describe "#to_json with multiple questions (borda + non-borda)" do
+        let(:standard_question) { create(:election_question, election:, question_type: "multiple_option") }
+        let!(:standard_option) { create(:election_response_option, question: standard_question) }
+        let(:json) { presenter.to_json(admin: true) }
+
+        before do
+          cast("voter-1", { option_a => 1, option_b => 2 })
+        end
+
+        it "attaches scores to the borda question only and leaves the non-borda one untouched" do
+          # start_from_max, max_choices = 4, A ranked 1 => 4, B ranked 2 => 3
+          expect(option_hash_for(json, borda_question, option_a)).to include(borda_score: 4, borda_score_text: "4")
+          expect(option_hash_for(json, borda_question, option_b)).to include(borda_score: 3, borda_score_text: "3")
+
+          standard_option_hash = option_hash_for(json, standard_question, standard_option)
+          expect(standard_option_hash).not_to have_key(:borda_score)
+          expect(standard_option_hash).not_to have_key(:borda_score_text)
+        end
+      end
+
       describe "#to_json with a non-borda question" do
         let(:standard_question) { create(:election_question, election:, question_type: "multiple_option") }
         let!(:standard_option) { create(:election_response_option, question: standard_question) }

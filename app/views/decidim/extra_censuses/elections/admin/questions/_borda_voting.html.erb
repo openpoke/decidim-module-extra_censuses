@@ -1,29 +1,32 @@
 <% disabled_by_votes = !editable %>
 
-<div class="row column questionnaire-question-borda">
-  <%= form.check_box :voting_method,
-                     {
-                       label: t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions"),
-                       help_text: t("borda_help_text", scope: "decidim.extra_censuses.elections.admin.questions"),
-                       disabled: disabled_by_votes,
-                       data: { "admin-borda-target": "checkbox", "admin-borda-frozen": disabled_by_votes.to_s }
-                     },
-                     "borda",
-                     "approval" %>
-
-  <div class="questionnaire-question-scoring-scale" data-admin-borda-target="scoringScaleWrapper">
-    <%=
-      form.select(
-        :scoring_scale,
-        [
-          [t("scoring_scale_options.start_from_max", scope: "decidim.extra_censuses.elections.admin.questions"), "start_from_max"],
-          [t("scoring_scale_options.start_from_min", scope: "decidim.extra_censuses.elections.admin.questions"), "start_from_min"]
-        ],
-        { label: t("scoring_scale_label", scope: "decidim.extra_censuses.elections.admin.questions") },
-        disabled: disabled_by_votes,
-        data: { "admin-borda-target": "scoringScale" }
-      )
-    %>
-    <p class="help-text"><%= t("scoring_scale_help_text", scope: "decidim.extra_censuses.elections.admin.questions") %></p>
+<div class="questionnaire-question-borda">
+  <div class="row column">
+    <%= form.check_box :voting_method,
+                       {
+                         label: t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions"),
+                         help_text: t("borda_help_text", scope: "decidim.extra_censuses.elections.admin.questions"),
+                         disabled: disabled_by_votes,
+                         data: { "admin-borda-target": "checkbox", "admin-borda-frozen": disabled_by_votes.to_s }
+                       },
+                       "borda",
+                       "approval" %>
+  </div>
+  <div class="row column">
+    <div class="questionnaire-question-scoring-scale" data-admin-borda-target="scoringScaleWrapper">
+      <%=
+        form.select(
+          :scoring_scale,
+          [
+            [t("scoring_scale_options.start_from_max", scope: "decidim.extra_censuses.elections.admin.questions"), "start_from_max"],
+            [t("scoring_scale_options.start_from_min", scope: "decidim.extra_censuses.elections.admin.questions"), "start_from_min"]
+          ],
+          { label: t("scoring_scale_label", scope: "decidim.extra_censuses.elections.admin.questions") },
+          disabled: disabled_by_votes,
+          data: { "admin-borda-target": "scoringScale" }
+        )
+      %>
+      <span class="help-text"><%= t("scoring_scale_help_text", scope: "decidim.extra_censuses.elections.admin.questions") %></span>
+    </div>
   </div>
 </div>

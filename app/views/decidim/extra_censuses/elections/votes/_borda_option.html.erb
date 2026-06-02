@@ -16,5 +16,6 @@
                  options_for_select(borda_position_options(question), current),
                  include_blank: true,
                  class: "borda-position-select",
+                 aria: { label: t("decidim.extra_censuses.elections.votes.borda.position_select_label", option: translated_attribute(option.body)) },
                  data: { "voter-borda-target": "position", "option-id": option.id } %>
 </div>

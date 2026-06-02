@@ -78,11 +78,7 @@ module Decidim
         end
 
         def borda_points(question, position, ballot_size)
-          if question.scoring_scale == "start_from_min"
-            ballot_size - position + 1
-          else
-            question.max_votable_options - position + 1
-          end
+          question.borda_points(position, ballot_size)
         end
 
         # [[option, rank, points], ...] for the confirm summary, sorted by rank.

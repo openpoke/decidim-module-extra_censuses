@@ -5,6 +5,7 @@ locales: [en]
 
 ignore_unused:
   - "decidim.components.extra_censuses.name"
+  - "decidim.extra_censuses.elections.admin.dashboard.questions.meta.*"
   - "decidim.elections.admin.censuses.custom_csv_form.*"
   - "decidim.elections.admin.census_updates.*"
   - "decidim.elections.censuses.custom_csv.*"

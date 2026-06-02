@@ -141,6 +141,47 @@ module Decidim
         end
       end
 
+      describe "#borda_points" do
+        # Rulebook §11: 3 ranked options, ballot size k = 3.
+        context "with start_from_max scoring" do
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_max") }
+
+          it "scores from max_votable_options regardless of ballot size" do
+            expect(question.max_votable_options).to eq(3)
+            expect(question.borda_points(1, 3)).to eq(3)
+            expect(question.borda_points(2, 3)).to eq(2)
+            expect(question.borda_points(3, 3)).to eq(1)
+          end
+
+          it "ignores ballot_size, using max_votable_options as the base" do
+            expect(question.borda_points(1, 99)).to eq(3)
+          end
+        end
+
+        context "with start_from_min scoring" do
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_min") }
+
+          it "scores from the ballot size" do
+            expect(question.borda_points(1, 3)).to eq(3)
+            expect(question.borda_points(2, 3)).to eq(2)
+            expect(question.borda_points(3, 3)).to eq(1)
+          end
+
+          it "uses ballot_size as the base, not max_votable_options" do
+            expect(question.borda_points(1, 2)).to eq(2)
+          end
+        end
+
+        context "when position is below 1" do
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_max") }
+
+          it "returns 0" do
+            expect(question.borda_points(0, 3)).to eq(0)
+            expect(question.borda_points(-1, 3)).to eq(0)
+          end
+        end
+      end
+
       describe "model-level validations" do
         let(:question) { build(:election_question, election:, settings:, question_type: "multiple_option", max_choices: 3) }
 

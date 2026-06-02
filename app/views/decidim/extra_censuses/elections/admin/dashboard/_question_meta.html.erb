@@ -1,0 +1,4 @@
+<% chips = question_meta_chips(question) %>
+<% if chips.any? %>
+  <small class="font-normal ml-4">(<%= chips.join(", ") %>)</small>
+<% end %>

@@ -11,8 +11,10 @@ module Decidim
         def to_json(admin: false)
           data = extra_censuses_original_to_json(admin:)
 
+          questions_by_id = questions.index_by(&:id)
+
           Array(data[:questions]).each do |question_hash|
-            question = election.questions.find { |q| q.id == question_hash[:id] }
+            question = questions_by_id[question_hash[:id]]
             next unless question&.voting_method == "borda"
 
             totals = Decidim::ExtraCensuses::BordaScorer.new(question).totals_by_response_option

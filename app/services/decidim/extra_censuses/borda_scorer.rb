@@ -19,7 +19,7 @@ module Decidim
             position = row.position.to_i
             next if position < 1
 
-            totals[row.response_option_id] += points_for(position, k)
+            totals[row.response_option_id] += question.borda_points(position, k)
           end
         end
         totals
@@ -42,12 +42,6 @@ module Decidim
 
       def votes_by_voter
         @votes_by_voter ||= question.votes.where.not(position: nil).group_by(&:voter_uid)
-      end
-
-      def points_for(position, k)
-        return question.max_choices - position + 1 if question.scoring_scale == "start_from_max"
-
-        k - position + 1
       end
     end
   end

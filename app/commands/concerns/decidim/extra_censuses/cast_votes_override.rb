@@ -13,23 +13,29 @@ module Decidim
 
         def voted_questions
           @voted_questions ||= election.available_questions.where(id: data.keys).filter_map do |question|
-            payload = data[question.id.to_s]
-            if question.voting_method == "borda"
-              positions = normalised_borda_positions(payload)
-              next if positions.nil?
+            responses = responses_for(question, data[question.id.to_s])
+            next if responses.nil?
 
-              responses = question.response_options.where(id: positions.keys).to_a
-              next if responses.size != positions.size
-
-              borda_positions[question.id] = positions
-              [question, responses]
-            else
-              next if payload.is_a?(Hash)
-
-              responses = question.safe_responses(payload)
-              [question, responses]
-            end
+            [question, responses]
           end.to_h
+        end
+
+        def responses_for(question, payload)
+          return borda_responses(question, payload) if question.voting_method == "borda"
+          return if payload.is_a?(Hash)
+
+          question.safe_responses(payload)
+        end
+
+        def borda_responses(question, payload)
+          positions = parse_borda_payload(payload)
+          return if positions.nil?
+
+          responses = question.response_options.where(id: positions.keys).to_a
+          return if responses.size != positions.size
+
+          borda_positions[question.id] = positions
+          responses
         end
 
         def save_votes!
@@ -68,16 +74,15 @@ module Decidim
           @borda_positions ||= {}
         end
 
-        def normalised_borda_positions(payload)
-          return nil unless payload.is_a?(Hash) || payload.is_a?(ActionController::Parameters)
+        # { option_id => rank }, a Hash (session buffer) or ActionController::Parameters (per-question); nil if invalid.
+        def parse_borda_payload(payload)
+          pairs = payload.try(:to_unsafe_h) || payload
+          return unless pairs.is_a?(Hash)
 
-          pairs = payload.respond_to?(:to_unsafe_h) ? payload.to_unsafe_h : payload
-          pairs.each_with_object({}) do |(option_id, position), memo|
-            next if position.to_s.strip.empty?
+          pairs.each_with_object({}) do |(option_id, rank), positions|
+            next if rank.to_s.strip.empty?
 
-            int_position = Integer(position.to_s, 10)
-            int_option_id = Integer(option_id.to_s, 10)
-            memo[int_option_id] = int_position
+            positions[Integer(option_id.to_s, 10)] = Integer(rank.to_s, 10)
           end
         rescue ArgumentError, TypeError
           nil
