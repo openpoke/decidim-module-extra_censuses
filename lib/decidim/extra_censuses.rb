@@ -9,10 +9,16 @@ module Decidim
   module ExtraCensuses
     include ActiveSupport::Configurable
 
+    autoload :VotingMethodManifest, "decidim/extra_censuses/voting_method_manifest"
+
     # Available column types for Custom CSV census.
     # Each type defines how values are transformed and validated.
     config_accessor :column_types do
       %w(alphanumeric free_text text_trim date number)
+    end
+
+    def self.voting_method_registry
+      @voting_method_registry ||= Decidim::ManifestRegistry.new("extra_censuses/voting_method")
     end
   end
 end

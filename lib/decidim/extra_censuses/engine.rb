@@ -63,6 +63,19 @@ module Decidim
         end
       end
 
+      initializer "decidim.extra_censuses.voting_methods", after: "decidim.elections.default_censuses" do
+        next unless Decidim.module_installed?(:elections)
+
+        Decidim::ExtraCensuses.voting_method_registry.register(:borda) do |manifest|
+          manifest.model_concern = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFields"
+          manifest.form_concern = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields"
+          manifest.responses_parser = "Decidim::ExtraCensuses::VotingMethods::Borda::ResponsesParser"
+          manifest.results_calculator = "Decidim::ExtraCensuses::BordaScorer"
+          manifest.response_options_partial = "decidim/extra_censuses/elections/votes/borda_response_options"
+          manifest.stimulus_controller = "voter-borda"
+        end
+      end
+
       initializer "decidim.extra_censuses.webpacker.assets_path" do
         Decidim.register_assets_path File.expand_path("app/packs", root)
       end
@@ -76,6 +89,12 @@ module Decidim
         Decidim::Elections::ElectionPresenter.include(Decidim::ExtraCensuses::ElectionPresenterOverride)
         Decidim::Elections::Admin::ResponseOptionForm.include(Decidim::ExtraCensuses::ResponseOptionFormOverride)
         Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
+
+        Decidim::ExtraCensuses.voting_method_registry.manifests.each do |manifest|
+          Decidim::Elections::Question.include(manifest.model_concern.constantize) if manifest.model_concern.present?
+          Decidim::Elections::Admin::QuestionForm.include(manifest.form_concern.constantize) if manifest.form_concern.present?
+        end
+
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
         Decidim::Elections::CastVotes.include(Decidim::ExtraCensuses::CastVotesOverride)
         Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)

@@ -8,8 +8,6 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
-        include Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFields
-
         validate :valid_voting_method
       end
 
@@ -29,6 +27,10 @@ module Decidim
 
       def voting_method
         settings.fetch("voting_method", "approval")
+      end
+
+      def voting_method_manifest
+        Decidim::ExtraCensuses.voting_method_registry.find(voting_method)
       end
 
       private

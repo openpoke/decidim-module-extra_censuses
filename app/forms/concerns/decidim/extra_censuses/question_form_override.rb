@@ -6,8 +6,6 @@ module Decidim
       extend ActiveSupport::Concern
 
       included do
-        include Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields
-
         attribute :min_choices, Integer
         attribute :grouped, :boolean, default: false
         attribute :groups, [Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm]
