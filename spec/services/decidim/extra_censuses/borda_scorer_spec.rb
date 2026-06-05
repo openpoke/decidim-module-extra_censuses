@@ -5,21 +5,9 @@ require "spec_helper"
 module Decidim
   module ExtraCensuses
     describe BordaScorer do
+      include_context "with a borda question"
+
       subject(:scorer) { described_class.new(question) }
-
-      let(:election) { create(:election, :ongoing) }
-      let(:question) { create(:election_question, :borda, election:, max_choices: 4, scoring_scale:) }
-      let(:scoring_scale) { "start_from_max" }
-      let!(:option_a) { create(:election_response_option, question:) }
-      let!(:option_b) { create(:election_response_option, question:) }
-      let!(:option_c) { create(:election_response_option, question:) }
-      let!(:option_d) { create(:election_response_option, question:) }
-
-      def cast(voter_uid, ranks)
-        ranks.each do |option, position|
-          create(:election_vote, question:, response_option: option, voter_uid:, position:)
-        end
-      end
 
       describe "#totals_by_response_option" do
         context "when the question is not borda" do
@@ -107,34 +95,6 @@ module Decidim
           it "returns equal totals (tiebreak is the caller's concern)" do
             totals = scorer.totals_by_response_option
             expect(totals[option_a.id]).to eq(totals[option_b.id])
-          end
-        end
-      end
-
-      describe "#per_voter_breakdown" do
-        let(:scoring_scale) { "start_from_max" }
-
-        context "when the question is not borda" do
-          let(:question) { create(:election_question, election:, question_type: "multiple_option") }
-
-          it "returns an empty array" do
-            expect(scorer.per_voter_breakdown).to eq([])
-          end
-        end
-
-        context "with two voters" do
-          before do
-            cast("voter-1", { option_a => 1, option_b => 2 })
-            cast("voter-2", { option_c => 1 })
-          end
-
-          it "returns one entry per voter with voter_uid and ranks hash" do
-            breakdown = scorer.per_voter_breakdown
-            expect(breakdown.size).to eq(2)
-            voter1 = breakdown.find { |b| b.voter_uid == "voter-1" }
-            voter2 = breakdown.find { |b| b.voter_uid == "voter-2" }
-            expect(voter1.ranks).to eq(option_a.id => 1, option_b.id => 2)
-            expect(voter2.ranks).to eq(option_c.id => 1)
           end
         end
       end

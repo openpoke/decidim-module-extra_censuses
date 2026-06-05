@@ -68,7 +68,8 @@ module Decidim
 
         Decidim::ExtraCensuses.voting_method_registry.register(:borda) do |manifest|
           manifest.model_concern = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFields"
-          manifest.form_concern = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields"
+          manifest.form_fields = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields"
+          manifest.question_validator = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionValidator"
           manifest.responses_parser = "Decidim::ExtraCensuses::VotingMethods::Borda::ResponsesParser"
           manifest.results_calculator = "Decidim::ExtraCensuses::BordaScorer"
           manifest.response_options_partial = "decidim/extra_censuses/elections/votes/borda_response_options"
@@ -92,7 +93,7 @@ module Decidim
 
         Decidim::ExtraCensuses.voting_method_registry.manifests.each do |manifest|
           Decidim::Elections::Question.include(manifest.model_concern.constantize) if manifest.model_concern.present?
-          Decidim::Elections::Admin::QuestionForm.include(manifest.form_concern.constantize) if manifest.form_concern.present?
+          Decidim::Elections::Admin::QuestionForm.include(manifest.form_fields.constantize) if manifest.form_fields.present?
         end
 
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
@@ -107,10 +108,10 @@ module Decidim
         Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
         Decidim::Elections::Admin::QuestionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
-        Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::AdminResultsHelper)
+        Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::AdminQuestionMetaHelper)
         Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
-        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::BordaResultsHelper)
+        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)
       end
     end
   end

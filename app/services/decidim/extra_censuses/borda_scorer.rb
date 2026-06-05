@@ -3,15 +3,11 @@
 module Decidim
   module ExtraCensuses
     class BordaScorer
-      VoterBreakdown = Struct.new(:voter_uid, :ranks)
-
       def initialize(question)
         @question = question
       end
 
       def totals_by_response_option
-        return {} unless question.voting_method == "borda"
-
         totals = Hash.new(0)
         votes_by_voter.each do |_voter_uid, rows|
           k = rows.size
@@ -26,20 +22,7 @@ module Decidim
       end
 
       def ballots_count
-        return 0 unless question.voting_method == "borda"
-
         votes_by_voter.size
-      end
-
-      def per_voter_breakdown
-        return [] unless question.voting_method == "borda"
-
-        votes_by_voter.map do |voter_uid, rows|
-          ranks = rows.each_with_object({}) do |row, memo|
-            memo[row.response_option_id] = row.position.to_i
-          end
-          VoterBreakdown.new(voter_uid, ranks)
-        end
       end
 
       private

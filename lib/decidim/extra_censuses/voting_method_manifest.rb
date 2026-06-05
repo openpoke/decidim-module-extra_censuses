@@ -8,7 +8,8 @@ module Decidim
 
       attribute :name, Symbol
       attribute :model_concern, String, default: nil
-      attribute :form_concern, String, default: nil
+      attribute :form_fields, String, default: nil
+      attribute :question_validator, String, default: nil
       attribute :responses_parser, String, default: nil
       attribute :results_calculator, String, default: nil
       attribute :response_options_partial, String, default: nil

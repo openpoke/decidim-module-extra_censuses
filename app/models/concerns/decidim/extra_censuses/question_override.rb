@@ -9,6 +9,8 @@ module Decidim
 
       included do
         validate :valid_voting_method
+        validate :valid_scoring_scale
+        validate :voting_method_config_valid
       end
 
       class_methods do
@@ -39,6 +41,19 @@ module Decidim
         return if self.class.voting_methods.include?(voting_method)
 
         errors.add(:voting_method, :invalid)
+      end
+
+      def valid_scoring_scale
+        return if self.class.scoring_scales.include?(scoring_scale)
+
+        errors.add(:scoring_scale, :invalid)
+      end
+
+      def voting_method_config_valid
+        validator = voting_method_manifest&.question_validator
+        return if validator.blank?
+
+        validator.constantize.new.validate(self)
       end
     end
   end
