@@ -106,6 +106,8 @@ module Decidim
         Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
         Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
+        Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::VotingMethodPartialsHelper)
+        Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::VotingMethodPartialsHelper)
         Decidim::Elections::Admin::QuestionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)

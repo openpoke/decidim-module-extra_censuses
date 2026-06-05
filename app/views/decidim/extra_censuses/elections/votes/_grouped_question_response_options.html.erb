@@ -7,7 +7,7 @@
       <% options.each do |option| %>
         <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
           <% if question.voting_method == "borda" %>
-            <%= render "decidim/extra_censuses/elections/votes/borda_option", option: option, question: question %>
+            <%= render "decidim/extra_censuses/voting_methods/borda/option", option: option, question: question %>
           <% else %>
             <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
           <% end %>
@@ -18,7 +18,7 @@
 <% end %>
 
 <% if question.voting_method == "borda" %>
-  <%= render "decidim/extra_censuses/elections/votes/borda_status", question: question %>
+  <%= render "decidim/extra_censuses/voting_methods/borda/status", question: question %>
 <% end %>
 
 <%# Upstream client-side contract: decidim-elections/elections.js toggles this %>

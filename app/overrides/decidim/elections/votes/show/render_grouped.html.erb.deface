@@ -3,8 +3,8 @@
   <%= render "decidim/extra_censuses/elections/votes/grouped_question_response_options",
              question: question,
              wrapper_class: "js-check-box-collection" %>
-<% elsif question.voting_method == "borda" %>
-  <%= render "decidim/extra_censuses/elections/votes/borda_response_options",
+<% elsif (p = voting_method_partial(question, "response_options")) %>
+  <%= render p,
              question: question,
              wrapper_class: "js-check-box-collection" %>
 <% else %>
