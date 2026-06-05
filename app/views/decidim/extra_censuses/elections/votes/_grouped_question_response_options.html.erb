@@ -1,3 +1,4 @@
+<% response_options_cell = voting_method_cell(question, "response_options", votes_buffer:, voter_uid:) %>
 <% grouped_response_options(question).each do |group, options| %>
   <div class="question-group mt-6">
     <% if group %>
@@ -6,8 +7,8 @@
     <div class="question-group-options flex flex-col gap-4">
       <% options.each do |option| %>
         <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
-          <% if question.voting_method == "borda" %>
-            <%= render "decidim/extra_censuses/voting_methods/borda/option", option: option, question: question %>
+          <% if response_options_cell %>
+            <%= response_options_cell.call(:option, option) %>
           <% else %>
             <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
           <% end %>
@@ -17,13 +18,13 @@
   </div>
 <% end %>
 
-<% if question.voting_method == "borda" %>
-  <%= render "decidim/extra_censuses/voting_methods/borda/status", question: question %>
+<% if response_options_cell %>
+  <%= response_options_cell.call(:status) %>
 <% end %>
 
 <%# Upstream client-side contract: decidim-elections/elections.js toggles this %>
 <%# element's style.display when a voter exceeds max_choices. Required or the %>
 <%# upstream JS throws on null when voting on a grouped question with a cap.   %>
-<% if question.voting_method != "borda" && local_assigns[:wrapper_class] && question.max_choices.presence %>
+<% if !response_options_cell && local_assigns[:wrapper_class] && question.max_choices.presence %>
   <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
 <% end %>

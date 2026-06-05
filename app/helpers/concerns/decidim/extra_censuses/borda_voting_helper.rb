@@ -32,26 +32,12 @@ module Decidim
           t("decidim.extra_censuses.elections.votes.borda.selected_counter", count: "%{count}", max: "%{max}")
         end
 
-        # Labels reflect the scoring scale at the maximum ballot size; under
-        # start_from_min the Stimulus controller recomputes them per k.
-        def borda_position_options(question)
-          max = question.max_votable_options
-          (1..max).map { |pos| [borda_position_label(question, pos, max), pos] }
-        end
-
-        def borda_response_position(question, option)
-          borda_buffered_positions(question)[option.id.to_s].presence&.to_i
-        end
-
         # response_option_id (String) => position (String), from the session
         # buffer when present, otherwise from the voter's persisted ballot.
         def borda_buffered_positions(question)
-          buffered = votes_buffer[question.id.to_s]
-          return stringify_positions(buffered) if buffered.is_a?(Hash) || buffered.is_a?(ActionController::Parameters)
-
-          question.votes.where(voter_uid:).where.not(position: nil).each_with_object({}) do |vote, memo|
-            memo[vote.response_option_id.to_s] = vote.position.to_s
-          end
+          Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.new(
+            votes_buffer:, voter_uid:, question:
+          ).to_h
         end
 
         # Selected options for the confirmation summary. BORDA buffers a
@@ -73,12 +59,6 @@ module Decidim
           (1..question.max_votable_options).map { |pos| ActiveSupport::Inflector.ordinalize(pos) }.to_json
         end
 
-        def borda_position_label(question, position, ballot_size)
-          t("decidim.extra_censuses.elections.votes.borda.position_label",
-            ordinal: ActiveSupport::Inflector.ordinalize(position),
-            count: question.borda_points(position, ballot_size))
-        end
-
         # `ballot_size` is the full ballot length k, so start_from_min points
         # match even when `options` is just one group.
         def borda_confirm_rows(question, options, ballot_size)
@@ -92,10 +72,7 @@ module Decidim
         private
 
         def stringify_positions(hash)
-          pairs = hash.respond_to?(:to_unsafe_h) ? hash.to_unsafe_h : hash
-          pairs.each_with_object({}) do |(option_id, position), memo|
-            memo[option_id.to_s] = position.to_s
-          end
+          Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.stringify(hash)
         end
       end
     end

@@ -1,0 +1,7 @@
+<% model.response_options.each do |option| %>
+  <div class="rounded-lg border border-gray p-4 <%= context[:wrapper_class] %>">
+    <%= option(option) %>
+  </div>
+<% end %>
+
+<%= status %>

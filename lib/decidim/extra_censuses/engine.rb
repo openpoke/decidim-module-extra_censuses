@@ -81,6 +81,10 @@ module Decidim
         Decidim.register_assets_path File.expand_path("app/packs", root)
       end
 
+      initializer "decidim.extra_censuses.add_cells_view_paths" do
+        Cell::ViewModel.view_paths << File.expand_path("app/cells", root)
+      end
+
       # Overrides and helpers
       config.to_prepare do
         Decidim::Elections::Admin::CensusController.include(Decidim::ExtraCensuses::CensusControllerOverride)
@@ -106,8 +110,8 @@ module Decidim
         Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
         Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
-        Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::VotingMethodPartialsHelper)
-        Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::VotingMethodPartialsHelper)
+        Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::VotingMethodCellHelper)
+        Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::VotingMethodCellHelper)
         Decidim::Elections::Admin::QuestionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)

@@ -13,47 +13,6 @@ module Decidim
       let!(:option_b) { create(:election_response_option, question:) }
       let!(:option_c) { create(:election_response_option, question:) }
 
-      # The label is "%{ordinal} place (%{count} point[s])"; the point value is
-      # the only thing inside the parentheses, so match that fragment to avoid a
-      # collision with the ordinal digits.
-      def points_in(label)
-        label[/\((\d+) point/, 1]&.to_i
-      end
-
-      describe "#borda_position_label" do
-        context "with start_from_max scoring" do
-          let(:scoring_scale) { "start_from_max" }
-
-          it "embeds the point value from Question#borda_points" do
-            (1..max_choices).each do |position|
-              label = helper.borda_position_label(question, position, max_choices)
-              expect(points_in(label)).to eq(question.borda_points(position, max_choices))
-            end
-          end
-        end
-
-        context "with start_from_min scoring" do
-          let(:scoring_scale) { "start_from_min" }
-          let(:ballot_size) { 2 }
-
-          it "embeds the point value from Question#borda_points for the given ballot size" do
-            (1..ballot_size).each do |position|
-              label = helper.borda_position_label(question, position, ballot_size)
-              expect(points_in(label)).to eq(question.borda_points(position, ballot_size))
-            end
-          end
-        end
-      end
-
-      describe "#borda_position_options" do
-        it "labels each option with the point value derived from Question#borda_points" do
-          options = helper.borda_position_options(question)
-          options.each do |label, position|
-            expect(points_in(label)).to eq(question.borda_points(position, question.max_votable_options))
-          end
-        end
-      end
-
       describe "#confirm_selected_options" do
         it "returns the ranked options ordered by rank, dropping blanks" do
           buffered = { option_a.id => 1, option_c.id => 2, option_b.id => "" }
@@ -70,6 +29,7 @@ module Decidim
           allow(helper).to receive(:votes_buffer).and_return(
             question.id.to_s => { option_a.id.to_s => "2", option_b.id.to_s => "1" }
           )
+          allow(helper).to receive(:voter_uid).and_return(nil)
         end
 
         it "yields [option, rank, points] sorted by rank" do
