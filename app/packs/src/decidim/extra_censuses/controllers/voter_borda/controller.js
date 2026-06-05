@@ -16,7 +16,6 @@ export default class extends Controller {
       minChoices: Number,
       maxChoices: Number,
       scoringScale: String,
-      ordinals: Array,
       labelOne: String,
       labelOther: String,
       counterTemplate: String
@@ -166,11 +165,10 @@ export default class extends Controller {
     const points = this.scoringScaleValue === "start_from_min"
       ? ballotSize - position + 1
       : this.maxChoicesValue - position + 1
-    const ordinal = this.ordinalsValue[position - 1] || String(position)
     const template = points === 1
       ? this.labelOneValue
       : this.labelOtherValue
-    return template.replace("%{ordinal}", ordinal).replace("%{count}", String(points))
+    return template.replace("%{position}", String(position)).replace("%{count}", String(points))
   }
 
   renderCounter(count) {

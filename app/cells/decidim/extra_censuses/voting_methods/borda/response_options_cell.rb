@@ -44,7 +44,7 @@ module Decidim
 
           def position_label(position, ballot_size)
             t("decidim.extra_censuses.elections.votes.borda.position_label",
-              ordinal: ActiveSupport::Inflector.ordinalize(position),
+              position:,
               count: model.borda_points(position, ballot_size))
           end
         end

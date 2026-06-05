@@ -36,6 +36,14 @@ module Decidim
               )
             end
 
+            it "labels positions with the localized rank wording and no English ordinal" do
+              expect(subject).to have_css(
+                "select[name='response[#{question.id}][#{option_a.id}]'] option",
+                text: "Rank 1 (3 points)"
+              )
+              expect(subject.to_s).not_to match(/\d(st|nd|rd|th)\b/)
+            end
+
             context "when the votes buffer holds a position" do
               let(:votes_buffer) { { question.id.to_s => { option_a.id.to_s => "1" } } }
 

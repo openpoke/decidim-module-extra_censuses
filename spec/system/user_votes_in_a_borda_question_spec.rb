@@ -207,7 +207,6 @@ describe "User votes in a BORDA question" do
 
   def option_label(position, ballot_size)
     points = scoring_scale == "start_from_min" ? ballot_size - position + 1 : max_choices - position + 1
-    ordinal = ActiveSupport::Inflector.ordinalize(position)
-    points == 1 ? "#{ordinal} place (1 point)" : "#{ordinal} place (#{points} points)"
+    points == 1 ? "Rank #{position} (1 point)" : "Rank #{position} (#{points} points)"
   end
 end

@@ -19,13 +19,13 @@ module Decidim
         end
 
         # Raw (uninterpolated) i18n templates fed to the Stimulus controller, which
-        # substitutes %{ordinal} / %{count} client-side as the ballot size changes.
+        # substitutes %{position} / %{count} client-side as the ballot size changes.
         def borda_label_one_template
-          t("decidim.extra_censuses.elections.votes.borda.position_label", ordinal: "%{ordinal}", count: 1)
+          t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: 1)
         end
 
         def borda_label_other_template
-          t("decidim.extra_censuses.elections.votes.borda.position_label", ordinal: "%{ordinal}", count: "%{count}")
+          t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: "%{count}")
         end
 
         def borda_counter_template
@@ -51,12 +51,6 @@ module Decidim
           ordered_ids = positions.sort_by { |_id, pos| pos.to_i }.map { |id, _pos| id.to_i }
           by_id = question.response_options.where(id: ordered_ids).index_by(&:id)
           ordered_ids.filter_map { |id| by_id[id] }
-        end
-
-        # JSON array of ordinal strings indexed by position - 1, consumed by the
-        # Stimulus controller to relabel selects under start_from_min.
-        def borda_ordinals_json(question)
-          (1..question.max_votable_options).map { |pos| ActiveSupport::Inflector.ordinalize(pos) }.to_json
         end
 
         # `ballot_size` is the full ballot length k, so start_from_min points

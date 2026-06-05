@@ -3,7 +3,6 @@ attributes "data-controller" => '<%= borda_controller_name(question) %>',
            "data-voter-borda-min-choices-value" => '<%= question.min_choices.to_i if borda?(question) %>',
            "data-voter-borda-max-choices-value" => '<%= question.max_votable_options if borda?(question) %>',
            "data-voter-borda-scoring-scale-value" => '<%= question.scoring_scale if borda?(question) %>',
-           "data-voter-borda-ordinals-value" => '<%= borda_ordinals_json(question) if borda?(question) %>',
            "data-voter-borda-label-one-value" => '<%= borda_label_one_template if borda?(question) %>',
            "data-voter-borda-label-other-value" => '<%= borda_label_other_template if borda?(question) %>',
            "data-voter-borda-counter-template-value" => '<%= borda_counter_template if borda?(question) %>'
