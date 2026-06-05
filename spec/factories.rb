@@ -31,4 +31,19 @@ FactoryBot.modify do
       position { rank }
     end
   end
+
+  factory :election_response_option do
+    trait :with_label do
+      settings do
+        {
+          "label" => {
+            "title" => { "en" => "Winner" },
+            "description" => { "en" => "The winning option" },
+            "position" => 1,
+            "color" => "#00b551"
+          }
+        }
+      end
+    end
+  end
 end
