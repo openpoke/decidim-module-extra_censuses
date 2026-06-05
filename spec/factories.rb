@@ -40,7 +40,7 @@ FactoryBot.modify do
             "title" => { "en" => "Winner" },
             "description" => { "en" => "The winning option" },
             "position" => 1,
-            "color" => "#00b551"
+            "color" => "green"
           }
         }
       end

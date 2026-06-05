@@ -21,7 +21,7 @@ module Decidim
             expect(response_option.label).to be_a(Decidim::ExtraCensuses::ResponseOptionLabel)
             expect(response_option.label.title).to eq("en" => "Winner")
             expect(response_option.label.position).to eq(1)
-            expect(response_option.label.color).to eq("#00b551")
+            expect(response_option.label.color).to eq("green")
           end
         end
 

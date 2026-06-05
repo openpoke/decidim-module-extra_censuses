@@ -20,5 +20,19 @@ module Decidim
     def self.voting_method_registry
       @voting_method_registry ||= Decidim::ManifestRegistry.new("extra_censuses/voting_method")
     end
+
+    # Palette for response option labels
+    def self.label_colors
+      {
+        gray: { background: "#F6F8FA", foreground: "#4B5058" },
+        blue: { background: "#EBF9FF", foreground: "#0851A6" },
+        green: { background: "#E3FCE9", foreground: "#15602C" },
+        yellow: { background: "#FFFCE5", foreground: "#9A6700" },
+        orange: { background: "#FFF1E5", foreground: "#BC4C00" },
+        red: { background: "#FFEBE9", foreground: "#D1242F" },
+        pink: { background: "#FFEFF7", foreground: "#BF3989" },
+        purple: { background: "#FBEFFF", foreground: "#8250DF" }
+      }
+    end
   end
 end

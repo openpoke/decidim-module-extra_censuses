@@ -10,7 +10,7 @@ module Decidim
           "title" => { "en" => "Winner" },
           "description" => { "en" => "The top option" },
           "position" => "2",
-          "color" => "#00b551"
+          "color" => "green"
         )
       end
 
@@ -20,7 +20,7 @@ module Decidim
             title: { "en" => "Winner" },
             description: { "en" => "The top option" },
             position: 2,
-            color: "#00b551"
+            color: "green"
           )
         end
 
@@ -36,7 +36,7 @@ module Decidim
         end
 
         it "exposes color" do
-          expect(subject.color).to eq("#00b551")
+          expect(subject.color).to eq("green")
         end
       end
 

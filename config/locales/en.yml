@@ -92,6 +92,15 @@ en:
               defined above. It must be separated with a semicolon (;)
             upload_file: Upload file
             upload_title: Upload a CSV file
+        response_option_labels:
+          fields:
+            color: Color
+            description: Description
+            position: Position
+            title: Title
+          update:
+            invalid: There was an error saving the label
+            success: Label saved successfully
         survey_imports:
           create:
             error: Could not save configuration

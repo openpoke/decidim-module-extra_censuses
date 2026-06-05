@@ -12,6 +12,8 @@ module Decidim
       initializer "decidim.extra_censuses.mount_routes" do
         Decidim::Elections::AdminEngine.routes.prepend do
           resources :elections, only: [] do
+            resources :response_option_labels, only: [:update], controller: "/decidim/elections/admin/response_option_labels"
+
             resources :census_updates, only: [:index, :new, :create, :destroy], controller: "/decidim/elections/admin/census_updates"
 
             resources :survey_imports, only: [:index, :new, :create], controller: "/decidim/elections/admin/survey_imports" do
