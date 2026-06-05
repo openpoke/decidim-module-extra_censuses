@@ -53,6 +53,27 @@ module Decidim
           end
         end
       end
+
+      describe "#config_chips_for" do
+        context "when the config_chips slot is blank" do
+          it "returns an empty array" do
+            expect(subject.config_chips_for(double, "scope")).to eq([])
+          end
+        end
+
+        context "when a config_chips class is present" do
+          let(:attributes) { { name: :borda, config_chips: "Decidim::ExtraCensuses::VotingMethods::Borda::ConfigChipsPresenter" } }
+
+          it "delegates to the constantized class" do
+            question = double("question")
+            chip_builder = instance_double(Decidim::ExtraCensuses::VotingMethods::Borda::ConfigChipsPresenter, chips: ["chip"])
+            allow(Decidim::ExtraCensuses::VotingMethods::Borda::ConfigChipsPresenter).to receive(:new).and_return(chip_builder)
+
+            expect(subject.config_chips_for(question, "scope")).to eq(["chip"])
+            expect(chip_builder).to have_received(:chips).with(question, "scope")
+          end
+        end
+      end
     end
   end
 end

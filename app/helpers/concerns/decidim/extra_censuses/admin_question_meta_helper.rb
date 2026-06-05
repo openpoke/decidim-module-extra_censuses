@@ -10,11 +10,8 @@ module Decidim
       included do
         def question_meta_chips(question)
           scope = "decidim.extra_censuses.elections.admin.dashboard.questions.meta"
-          chips = []
-
-          chips << t("scoring_scale.#{question.scoring_scale}", scope:) if question.voting_method == "borda"
+          chips = question.voting_method_manifest&.config_chips_for(question, scope) || []
           chips << question_meta_choices_chip(question, scope) if question_meta_choices?(question)
-
           chips
         end
 

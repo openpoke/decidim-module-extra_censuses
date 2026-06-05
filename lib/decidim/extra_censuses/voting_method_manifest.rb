@@ -12,10 +12,7 @@ module Decidim
       attribute :question_validator, String, default: nil
       attribute :responses_parser, String, default: nil
       attribute :results_calculator, String, default: nil
-      attribute :response_options_partial, String, default: nil
-      attribute :confirm_partial, String, default: nil
-      attribute :public_results_partial, String, default: nil
-      attribute :admin_results_partial, String, default: nil
+      attribute :config_chips, String, default: nil
       attribute :stimulus_controller, String, default: nil
       attribute :i18n_scope, String, default: nil
 
@@ -33,6 +30,12 @@ module Decidim
         return unless computes_results?
 
         results_calculator.constantize.new(question)
+      end
+
+      def config_chips_for(question, scope)
+        return [] if config_chips.blank?
+
+        config_chips.constantize.new.chips(question, scope)
       end
     end
   end
