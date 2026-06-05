@@ -9,20 +9,8 @@
       <% list = confirm_selected_options(question, votes_buffer[question.id.to_s]) %>
       <% if list.blank? %>
         <p class="italic text-gray"><%= t("not_answered", scope: "decidim.elections.votes.confirm") %></p>
-      <% elsif borda?(question) %>
-        <% ballot_size = list.size %>
-        <% confirm_response_groups(question, list).each do |group, options| %>
-          <% if group %>
-            <p class="font-semibold"><%= translated_attribute(group.title) %></p>
-          <% end %>
-          <% borda_confirm_rows(question, options, ballot_size).each do |option, rank, points| %>
-            <div class="flex items-center gap-2">
-              <span class="font-semibold">[<%= rank %>]</span>
-              <span class="flex-1"><%= translated_attribute(option.body) %></span>
-              <span class="text-gray"><%= t("decidim.extra_censuses.elections.votes.borda.confirm_points", count: points) %></span>
-            </div>
-          <% end %>
-        <% end %>
+      <% elsif (confirm_cell = voting_method_cell(question, "confirm", selected: list, votes_buffer:, voter_uid:)) %>
+        <%= confirm_cell %>
       <% else %>
         <% confirm_response_groups(question, list).each do |group, options| %>
           <% if group %>

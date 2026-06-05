@@ -32,14 +32,6 @@ module Decidim
           t("decidim.extra_censuses.elections.votes.borda.selected_counter", count: "%{count}", max: "%{max}")
         end
 
-        # response_option_id (String) => position (String), from the session
-        # buffer when present, otherwise from the voter's persisted ballot.
-        def borda_buffered_positions(question)
-          Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.new(
-            votes_buffer:, voter_uid:, question:
-          ).to_h
-        end
-
         # Selected options for the confirmation summary. BORDA buffers a
         # { option_id => position } hash ordered by rank; standard questions keep
         # the upstream array shape handled by Question#safe_responses.
@@ -47,26 +39,10 @@ module Decidim
           return question.safe_responses(buffered) unless question.voting_method == "borda"
           return [] if buffered.blank?
 
-          positions = stringify_positions(buffered).reject { |_id, pos| pos.to_s.strip.empty? }
+          positions = Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.stringify(buffered).reject { |_id, pos| pos.to_s.strip.empty? }
           ordered_ids = positions.sort_by { |_id, pos| pos.to_i }.map { |id, _pos| id.to_i }
           by_id = question.response_options.where(id: ordered_ids).index_by(&:id)
           ordered_ids.filter_map { |id| by_id[id] }
-        end
-
-        # `ballot_size` is the full ballot length k, so start_from_min points
-        # match even when `options` is just one group.
-        def borda_confirm_rows(question, options, ballot_size)
-          positions = borda_buffered_positions(question)
-          options
-            .map { |option| [option, positions[option.id.to_s].to_i] }
-            .sort_by { |_option, rank| rank }
-            .map { |option, rank| [option, rank, question.borda_points(rank, ballot_size)] }
-        end
-
-        private
-
-        def stringify_positions(hash)
-          Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.stringify(hash)
         end
       end
     end

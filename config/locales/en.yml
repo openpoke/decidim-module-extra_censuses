@@ -202,8 +202,8 @@ en:
               other: "%{count} pts"
             limit_reached: You have reached the maximum number of ranked options.
             position_label:
-              one: "Rank %{position} (%{count} point)"
-              other: "Rank %{position} (%{count} points)"
+              one: Rank %{position} (%{count} point)
+              other: Rank %{position} (%{count} points)
             position_select_label: Rank for %{option}
             selected_counter:
               one: selected %{count} / %{max}
