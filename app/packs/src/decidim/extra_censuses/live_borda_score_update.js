@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const url = watchingDiv.dataset.resultsLiveUpdate;
   const optionBordaScoreTexts = () => document.querySelectorAll("[data-option-borda-score-text]");
   const optionBordaScoreWidths = () => document.querySelectorAll("[data-option-borda-score-width]");
-  const questionBordaBallotsTexts = () => document.querySelectorAll("[data-question-borda-ballots-text]");
 
   const animateText = (element, value) => {
     if (element.textContent === value) {
@@ -40,15 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return null;
     }
     return option[key];
-  };
-
-  const digQuestionValue = (questionId, data, key) => {
-    const questions = data.questions || [];
-    const question = questions.find((item) => item.id === parseInt(questionId, 10));
-    if (!question || !(key in question)) {
-      return null;
-    }
-    return question[key];
   };
 
   const totalBordaScore = (questionId, data) => {
@@ -92,12 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = totalBordaScore(questionId, data);
         if (score !== null && total > 0) {
           el.style.width = `${Math.round((score / total) * 1000) / 10}%`;
-        }
-      });
-      questionBordaBallotsTexts().forEach((el) => {
-        const val = digQuestionValue(el.dataset.questionBordaBallotsText, data, "borda_ballots_text");
-        if (val !== null) {
-          animateText(el, val);
         }
       });
       if (data.ongoing) {

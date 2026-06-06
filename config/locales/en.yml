@@ -217,9 +217,6 @@ en:
             ungrouped_options_title: Ungrouped response options
         results:
           borda:
-            ballots:
-              one: "%{count} ballot"
-              other: "%{count} ballots"
             points:
               one: "%{count} point"
               other: "%{count} points"

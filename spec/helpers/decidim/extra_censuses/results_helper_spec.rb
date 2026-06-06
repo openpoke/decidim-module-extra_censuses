@@ -42,30 +42,6 @@ module Decidim
         end
       end
 
-      describe "#score_width" do
-        it "gives the highest-scoring option full width" do
-          expect(helper.score_width(question, option_a)).to eq(100.0)
-          expect(helper.score_width(question, option_b)).to eq(100.0)
-        end
-
-        it "scales lower scores proportionally to the max" do
-          # C scores 2 of a max of 7 => 28.6%
-          expect(helper.score_width(question, option_c)).to eq(28.6)
-        end
-
-        it "is 0 for an option nobody ranked" do
-          expect(helper.score_width(question, option_d)).to eq(0)
-        end
-
-        context "when no option has any points" do
-          before { question.votes.destroy_all }
-
-          it "is 0 for every option" do
-            expect(helper.score_width(question, option_a)).to eq(0)
-          end
-        end
-      end
-
       describe "#score_total" do
         it "sums the scores of every option" do
           # A=7, B=7, C=2, D=0
@@ -96,20 +72,6 @@ module Decidim
 
           it "is 0 instead of dividing by zero" do
             expect(helper.score_percentage(question, option_a)).to eq(0)
-          end
-        end
-      end
-
-      describe "#voters_count" do
-        it "counts distinct voters who ranked at least one option" do
-          expect(helper.voters_count(question)).to eq(2)
-        end
-
-        context "when there are no votes" do
-          before { question.votes.destroy_all }
-
-          it "is 0" do
-            expect(helper.voters_count(question)).to eq(0)
           end
         end
       end

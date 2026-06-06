@@ -29,12 +29,6 @@ module Decidim
         def extra_censuses_annotate_results(question_hash, scorer, admin:)
           totals = scorer.totals_by_response_option
 
-          if !admin && question_hash.has_key?(:total_votes)
-            ballots = scorer.ballots_count
-            question_hash[:borda_ballots] = ballots
-            question_hash[:borda_ballots_text] = I18n.t("decidim.extra_censuses.elections.results.borda.ballots", count: ballots)
-          end
-
           Array(question_hash[:response_options]).each do |option_hash|
             # Only annotate options whose results the upstream gate already exposed
             # (the option hash carries :votes_count only when admin || published).

@@ -108,14 +108,6 @@ module Decidim
             borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: 4)
           )
         end
-
-        it "carries the ballots turnout on the question" do
-          question_hash = json[:questions].find { |question_data| question_data[:id] == question.id }
-          expect(question_hash).to include(
-            borda_ballots: 1,
-            borda_ballots_text: I18n.t("decidim.extra_censuses.elections.results.borda.ballots", count: 1)
-          )
-        end
       end
     end
   end

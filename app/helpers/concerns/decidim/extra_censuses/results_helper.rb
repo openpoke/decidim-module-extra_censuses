@@ -21,13 +21,6 @@ module Decidim
           result_scores(question).fetch(option.id, 0)
         end
 
-        def score_width(question, option)
-          max = result_scores_max(question)
-          return 0 if max <= 0
-
-          (score_for(question, option).to_f / max * 100).round(1)
-        end
-
         def score_total(question)
           @score_total ||= {}
           @score_total[question.id] ||= result_scores(question).values.sum
@@ -40,20 +33,11 @@ module Decidim
           (score_for(question, option).to_f / total * 100).round(1)
         end
 
-        def voters_count(question)
-          results_calculator(question).ballots_count
-        end
-
         private
 
         def results_calculator(question)
           @results_calculators ||= {}
           @results_calculators[question.id] ||= question.voting_method_manifest.results_calculator_for(question)
-        end
-
-        def result_scores_max(question)
-          @result_scores_max ||= {}
-          @result_scores_max[question.id] ||= result_scores(question).values.max.to_i
         end
       end
     end
