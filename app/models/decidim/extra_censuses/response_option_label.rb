@@ -26,6 +26,10 @@ module Decidim
       def present?
         title.present? && title.values.any?(&:present?)
       end
+
+      def blank?
+        !present?
+      end
     end
   end
 end
