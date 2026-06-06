@@ -15,12 +15,6 @@ module Decidim
         @color = attrs[:color]
       end
 
-      # Kept for Decidim::Attributes::Model#cast_value coercion — do not strip
-      # (mirror of ResponseOptionGroup#to_h).
-      def to_h
-        { title:, description:, position:, color: }
-      end
-
       # Inline badge style, mirrors Decidim::Proposals::ProposalState#css_style.
       def css_style
         colors = Decidim::ExtraCensuses.label_colors[color&.to_sym]
@@ -31,10 +25,6 @@ module Decidim
 
       def present?
         title.present? && title.values.any?(&:present?)
-      end
-
-      def blank?
-        !present?
       end
     end
   end

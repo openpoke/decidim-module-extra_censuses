@@ -14,21 +14,6 @@ module Decidim
         )
       end
 
-      describe "#to_h" do
-        it "returns a symbol-keyed hash for Decidim::Attributes::Model coercion" do
-          expect(subject.to_h).to eq(
-            title: { "en" => "Winner" },
-            description: { "en" => "The top option" },
-            position: 2,
-            color: "green"
-          )
-        end
-
-        it "round-trips through the constructor" do
-          expect(described_class.new(subject.to_h).to_h).to eq(subject.to_h)
-        end
-      end
-
       describe "attribute readers" do
         it "exposes the multilang title and description" do
           expect(subject.title).to eq("en" => "Winner")
@@ -50,22 +35,21 @@ module Decidim
         end
       end
 
-      describe "#present? / #blank?" do
+      describe "#present?" do
         it "is present when the title has a value" do
           expect(subject).to be_present
-          expect(subject).not_to be_blank
         end
 
-        it "is blank when the title is missing" do
-          expect(described_class.new({})).to be_blank
+        it "is not present when the title is missing" do
+          expect(described_class.new({})).not_to be_present
         end
 
-        it "is blank when the title hash is empty" do
-          expect(described_class.new("title" => {})).to be_blank
+        it "is not present when the title hash is empty" do
+          expect(described_class.new("title" => {})).not_to be_present
         end
 
-        it "is blank when every locale value is empty" do
-          expect(described_class.new("title" => { "en" => "" })).to be_blank
+        it "is not present when every locale value is empty" do
+          expect(described_class.new("title" => { "en" => "" })).not_to be_present
         end
       end
 

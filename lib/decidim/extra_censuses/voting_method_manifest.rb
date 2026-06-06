@@ -13,14 +13,8 @@ module Decidim
       attribute :responses_parser, String, default: nil
       attribute :results_calculator, String, default: nil
       attribute :config_chips, String, default: nil
-      attribute :stimulus_controller, String, default: nil
-      attribute :i18n_scope, String, default: nil
 
       validates :name, presence: true
-
-      def label
-        I18n.t("#{i18n_scope || "decidim.extra_censuses.voting_methods.#{name}"}.label", default: name.to_s.humanize)
-      end
 
       def computes_results?
         results_calculator.present?

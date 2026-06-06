@@ -40,12 +40,6 @@ module Decidim
         end
       end
 
-      describe "#label" do
-        it "falls back to the humanized name" do
-          expect(subject.label).to eq("Borda")
-        end
-      end
-
       describe "#results_calculator_for" do
         context "when the results_calculator is blank" do
           it "returns nil" do

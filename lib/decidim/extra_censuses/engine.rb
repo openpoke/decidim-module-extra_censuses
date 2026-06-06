@@ -75,7 +75,6 @@ module Decidim
           manifest.responses_parser = "Decidim::ExtraCensuses::VotingMethods::Borda::ResponsesParser"
           manifest.results_calculator = "Decidim::ExtraCensuses::BordaScorer"
           manifest.config_chips = "Decidim::ExtraCensuses::VotingMethods::Borda::ConfigChipsPresenter"
-          manifest.stimulus_controller = "voter-borda"
         end
       end
 

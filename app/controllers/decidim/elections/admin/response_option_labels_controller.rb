@@ -4,8 +4,6 @@ module Decidim
   module Elections
     module Admin
       class ResponseOptionLabelsController < Admin::ApplicationController
-        helper_method :election
-
         def update
           enforce_permission_to(:update, :election, election:)
 
