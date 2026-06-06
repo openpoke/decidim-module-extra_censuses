@@ -1,0 +1,15 @@
+// Circular color swatches for the winner-label modal, mirrors the
+// decidim-proposals proposal_states color picker. Each radio carries its
+// palette colors as inline --swatch-fg / --swatch-bg custom properties; the
+// :checked rule wins over the global input[type="radio"]:checked accent.
+.response-option-label__colors {
+  input[type="radio"] {
+    accent-color: var(--swatch-fg);
+    box-shadow: 0 0 0 1.5px var(--swatch-fg), 0 0 0 6px var(--swatch-bg);
+
+    &:checked {
+      accent-color: var(--swatch-fg);
+      box-shadow: 0 0 0 6px var(--swatch-fg);
+    }
+  }
+}

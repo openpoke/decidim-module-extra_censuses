@@ -8,6 +8,20 @@ en:
         remove_all: Remove all current census data
       question:
         min_choices: Minimum number of choices
+      response_option_label:
+        color: Color
+        colors:
+          blue: Blue
+          gray: Gray
+          green: Green
+          orange: Orange
+          pink: Pink
+          purple: Purple
+          red: Red
+          yellow: Yellow
+        description: Description
+        position: Order position
+        title: Title
     errors:
       models:
         custom_csv:
@@ -93,11 +107,15 @@ en:
             upload_file: Upload file
             upload_title: Upload a CSV file
         response_option_labels:
-          fields:
-            color: Color
-            description: Description
-            position: Position
-            title: Title
+          edit_label: Set label
+          modal:
+            cancel: Cancel
+            help: Use label to let users easily identify who has win the election
+              and in which order. If you use some correction mechanism over the results
+              (for instance, applying parity), you can explain it here too.
+            preview: 'Preview:'
+            save: Save
+            title: Set label for "%{option}"
           update:
             invalid: There was an error saving the label
             success: Label saved successfully

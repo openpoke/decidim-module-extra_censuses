@@ -1,0 +1,6 @@
+<!-- insert_after "div.table-scroll" -->
+<% if computes_results?(question) %>
+  <% question.response_options.each do |option| %>
+    <%= render "decidim/extra_censuses/labels/modal", option: option, election: election %>
+  <% end %>
+<% end %>

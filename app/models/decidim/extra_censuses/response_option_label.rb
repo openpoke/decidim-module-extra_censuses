@@ -21,6 +21,14 @@ module Decidim
         { title:, description:, position:, color: }
       end
 
+      # Inline badge style, mirrors Decidim::Proposals::ProposalState#css_style.
+      def css_style
+        colors = Decidim::ExtraCensuses.label_colors[color&.to_sym]
+        return "" unless colors
+
+        "background-color: #{colors[:background]}; color: #{colors[:foreground]}; border-color: #{colors[:foreground]};"
+      end
+
       def present?
         title.present? && title.values.any?(&:present?)
       end

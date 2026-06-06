@@ -68,6 +68,18 @@ module Decidim
           expect(described_class.new("title" => { "en" => "" })).to be_blank
         end
       end
+
+      describe "#css_style" do
+        it "returns the inline badge style for a known token" do
+          expect(described_class.new("color" => "green").css_style).to eq("background-color: #E3FCE9; color: #15602C; border-color: #15602C;")
+        end
+
+        it "returns an empty string for a blank or unknown color" do
+          expect(described_class.new("color" => "").css_style).to eq("")
+          expect(described_class.new("color" => "turquoise").css_style).to eq("")
+          expect(described_class.new({}).css_style).to eq("")
+        end
+      end
     end
   end
 end

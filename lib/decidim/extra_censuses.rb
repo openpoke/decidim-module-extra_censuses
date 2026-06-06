@@ -24,14 +24,14 @@ module Decidim
     # Palette for response option labels
     def self.label_colors
       {
-        gray: { background: "#F6F8FA", foreground: "#4B5058" },
-        blue: { background: "#EBF9FF", foreground: "#0851A6" },
-        green: { background: "#E3FCE9", foreground: "#15602C" },
-        yellow: { background: "#FFFCE5", foreground: "#9A6700" },
-        orange: { background: "#FFF1E5", foreground: "#BC4C00" },
-        red: { background: "#FFEBE9", foreground: "#D1242F" },
-        pink: { background: "#FFEFF7", foreground: "#BF3989" },
-        purple: { background: "#FBEFFF", foreground: "#8250DF" }
+        gray: { background: "#F6F8FA", foreground: "#4B5058", name: I18n.t("gray", scope: "activemodel.attributes.response_option_label.colors") },
+        blue: { background: "#EBF9FF", foreground: "#0851A6", name: I18n.t("blue", scope: "activemodel.attributes.response_option_label.colors") },
+        green: { background: "#E3FCE9", foreground: "#15602C", name: I18n.t("green", scope: "activemodel.attributes.response_option_label.colors") },
+        yellow: { background: "#FFFCE5", foreground: "#9A6700", name: I18n.t("yellow", scope: "activemodel.attributes.response_option_label.colors") },
+        orange: { background: "#FFF1E5", foreground: "#BC4C00", name: I18n.t("orange", scope: "activemodel.attributes.response_option_label.colors") },
+        red: { background: "#FFEBE9", foreground: "#D1242F", name: I18n.t("red", scope: "activemodel.attributes.response_option_label.colors") },
+        pink: { background: "#FFEFF7", foreground: "#BF3989", name: I18n.t("pink", scope: "activemodel.attributes.response_option_label.colors") },
+        purple: { background: "#FBEFFF", foreground: "#8250DF", name: I18n.t("purple", scope: "activemodel.attributes.response_option_label.colors") }
       }
     end
   end
