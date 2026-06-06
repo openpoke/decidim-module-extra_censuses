@@ -1,6 +1,6 @@
 <!-- replace "tbody" -->
 <% results = computes_results?(question) %>
-<% group_colspan = results ? 4 : 3 %>
+<% group_colspan = results ? 5 : 3 %>
 <% groups = question.grouped? ? grouped_response_options(question) : [[nil, question.response_options.to_a]] %>
 <tbody>
   <% groups.each do |group, options| %>
@@ -21,16 +21,18 @@
         <td data-option-votes-count-text="<%= question.id %>,<%= option.id %>"><%= t("votes_count", scope: "decidim.elections.admin.dashboard.questions_table", count: option.votes_count) %></td>
         <td data-option-votes-percent-text="<%= question.id %>,<%= option.id %>"><%= number_to_percentage(option.votes_percent, precision: 1) %></td>
         <% if results %>
-          <td data-option-borda-score-text="<%= question.id %>,<%= option.id %>"><%= score_for(question, option) %></td>
+          <td data-option-borda-score-text="<%= question.id %>,<%= option.id %>"><%= t("decidim.extra_censuses.elections.results.borda.points", count: score_for(question, option)) %></td>
+          <td data-option-borda-score-percent-text="<%= question.id %>,<%= option.id %>"><%= number_to_percentage(score_percentage(question, option), precision: 1) %></td>
         <% end %>
       </tr>
     <% end %>
   <% end %>
   <tr>
     <td class="w-2/3 border-none"><%= t("decidim.elections.admin.dashboard.questions_table.total") %></td>
-    <td class="border-none"></td>
     <td class="border-none" data-question-total-votes-text="<%= question.id %>"><%= t("votes_count", scope: "decidim.elections.admin.dashboard.questions_table", count: question.total_votes) %></td>
+    <td class="border-none"></td>
     <% if results %>
+      <td class="border-none" data-question-total-score-text="<%= question.id %>"><%= t("decidim.extra_censuses.elections.results.borda.points", count: score_total(question)) %></td>
       <td class="border-none"></td>
     <% end %>
   </tr>

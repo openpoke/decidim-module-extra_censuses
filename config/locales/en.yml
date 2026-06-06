@@ -187,6 +187,7 @@ en:
                   start_from_min: Modified Borda count
             questions_table:
               score: Score
+              score_percentage: Score percentage
           questions:
             add_group: "+ Add group"
             borda_help_text: This will introduce a score (based on the maximum number

@@ -66,6 +66,40 @@ module Decidim
         end
       end
 
+      describe "#score_total" do
+        it "sums the scores of every option" do
+          # A=7, B=7, C=2, D=0
+          expect(helper.score_total(question)).to eq(16)
+        end
+
+        context "when there are no votes" do
+          before { question.votes.destroy_all }
+
+          it "is 0" do
+            expect(helper.score_total(question)).to eq(0)
+          end
+        end
+      end
+
+      describe "#score_percentage" do
+        it "gives each option its share of the total score" do
+          expect(helper.score_percentage(question, option_a)).to eq(43.8)
+          expect(helper.score_percentage(question, option_c)).to eq(12.5)
+        end
+
+        it "is 0 for an option nobody ranked" do
+          expect(helper.score_percentage(question, option_d)).to eq(0.0)
+        end
+
+        context "when there are no votes" do
+          before { question.votes.destroy_all }
+
+          it "is 0 instead of dividing by zero" do
+            expect(helper.score_percentage(question, option_a)).to eq(0)
+          end
+        end
+      end
+
       describe "#voters_count" do
         it "counts distinct voters who ranked at least one option" do
           expect(helper.voters_count(question)).to eq(2)

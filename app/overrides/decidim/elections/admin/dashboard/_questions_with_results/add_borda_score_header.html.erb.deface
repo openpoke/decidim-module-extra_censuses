@@ -1,4 +1,5 @@
 <!-- insert_bottom "thead tr" -->
 <% if computes_results?(question) %>
   <th><%= t("decidim.extra_censuses.elections.admin.dashboard.questions_table.score") %></th>
+  <th><%= t("decidim.extra_censuses.elections.admin.dashboard.questions_table.score_percentage") %></th>
 <% end %>

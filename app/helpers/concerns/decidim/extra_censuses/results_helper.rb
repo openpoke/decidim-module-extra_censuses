@@ -28,6 +28,18 @@ module Decidim
           (score_for(question, option).to_f / max * 100).round(1)
         end
 
+        def score_total(question)
+          @score_total ||= {}
+          @score_total[question.id] ||= result_scores(question).values.sum
+        end
+
+        def score_percentage(question, option)
+          total = score_total(question)
+          return 0 if total <= 0
+
+          (score_for(question, option).to_f / total * 100).round(1)
+        end
+
         def voters_count(question)
           results_calculator(question).ballots_count
         end
