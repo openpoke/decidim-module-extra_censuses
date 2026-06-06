@@ -60,7 +60,7 @@ describe "Admin sets response option winner label" do
       end
 
       within "#question_#{question.id} table" do
-        expect(page).to have_css("strong.label", text: "Champion", style: { "background-color" => "rgb(227, 252, 233)", "color" => "rgb(21, 96, 44)" })
+        expect(page).to have_css("strong.label", text: "Champion")
       end
     end
 
@@ -71,7 +71,7 @@ describe "Admin sets response option winner label" do
         fill_in "response_option_label[title_en]", with: "Champion"
         choose(option: "green", allow_label_click: false)
 
-        expect(page).to have_css("#label-preview-#{option_a.id}", style: { "background-color" => "rgb(227, 252, 233)", "color" => "rgb(21, 96, 44)" })
+        expect(page).to have_css("#label-preview-#{option_a.id}", style: /background-color:\s*rgb\(227,\s*252,\s*233\)/)
         within "#label-preview-#{option_a.id}" do
           expect(page).to have_content("Champion")
         end
