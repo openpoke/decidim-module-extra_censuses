@@ -51,19 +51,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return question[key];
   };
 
-  const maxBordaScore = (questionId, data) => {
+  const totalBordaScore = (questionId, data) => {
     const questions = data.questions || [];
     const question = questions.find((item) => item.id === parseInt(questionId, 10));
     if (!question || !Array.isArray(question.response_options)) {
       return 0;
     }
-    return question.response_options.reduce((max, option) => {
+    return question.response_options.reduce((sum, option) => {
       const score = typeof option.borda_score === "number"
         ? option.borda_score
         : 0;
-      return score > max
-        ? score
-        : max;
+      return sum + score;
     }, 0);
   };
 
@@ -91,9 +89,9 @@ document.addEventListener("DOMContentLoaded", () => {
       optionBordaScoreWidths().forEach((el) => {
         const [questionId, optionId] = el.dataset.optionBordaScoreWidth.split(",");
         const score = digOptionValue(questionId, optionId, data, "borda_score");
-        const max = maxBordaScore(questionId, data);
-        if (score !== null && max > 0) {
-          el.style.width = `${Math.round((score / max) * 1000) / 10}%`;
+        const total = totalBordaScore(questionId, data);
+        if (score !== null && total > 0) {
+          el.style.width = `${Math.round((score / total) * 1000) / 10}%`;
         }
       });
       questionBordaBallotsTexts().forEach((el) => {

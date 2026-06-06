@@ -120,6 +120,7 @@ module Decidim
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::AdminQuestionMetaHelper)
         Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)
+        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::VotingMethodCellHelper)
       end
     end
   end
