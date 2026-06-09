@@ -18,7 +18,7 @@ module Decidim
             manifest = question&.voting_method_manifest
             next unless manifest&.computes_results?
 
-            extra_censuses_annotate_results(question_hash, manifest.results_calculator_for(question), admin:)
+            extra_censuses_annotate_results(question_hash, manifest.results_calculator_for(question))
           end
 
           data
@@ -26,7 +26,7 @@ module Decidim
 
         private
 
-        def extra_censuses_annotate_results(question_hash, scorer, admin:)
+        def extra_censuses_annotate_results(question_hash, scorer)
           totals = scorer.totals_by_response_option
 
           Array(question_hash[:response_options]).each do |option_hash|
@@ -36,9 +36,7 @@ module Decidim
 
             score = totals.fetch(option_hash[:id], 0)
             option_hash[:borda_score] = score
-            # Admin Score column shows a bare number; the public page mirrors upstream
-            # by carrying the full localized "N points" string for the live poller.
-            option_hash[:borda_score_text] = admin ? score.to_s : I18n.t("decidim.extra_censuses.elections.results.borda.points", count: score)
+            option_hash[:borda_score_text] = I18n.t("decidim.extra_censuses.elections.results.borda.points", count: score)
           end
         end
       end

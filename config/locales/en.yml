@@ -220,6 +220,9 @@ en:
             points:
               one: "%{count} point"
               other: "%{count} points"
+            show_results: Show results
+            show_winners: Show winners
+            winner_summary: Has received %{votes}, totaling %{points} (%{percent})
         votes:
           borda:
             confirm_points:

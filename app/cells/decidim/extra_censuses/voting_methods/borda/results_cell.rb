@@ -46,6 +46,28 @@ module Decidim
               [option.labeled? ? 0 : 1, option.label&.position.to_i, index]
             end.map(&:first)
           end
+
+          # The "Show winners" toggle only makes sense once labels are public and
+          # at least one option carries one; otherwise the winners panel is empty.
+          def show_winners_toggle?
+            label_shown? && model.response_options.any?(&:labeled?)
+          end
+
+          # Labeled options only, ordered by label position; the index tiebreaker
+          # mirrors `ordered_options`. The winners panel hides everything else.
+          def winner_options
+            model.response_options.each_with_index
+                 .select { |option, _index| option.labeled? }
+                 .sort_by { |option, index| [option.label.position, index] }
+                 .map(&:first)
+          end
+
+          def winner_summary(option)
+            t("decidim.extra_censuses.elections.results.borda.winner_summary",
+              votes: t("votes_count", scope: "decidim.elections.elections.show", count: option.votes_count),
+              points: t("decidim.extra_censuses.elections.results.borda.points", count: score_for(model, option)),
+              percent: number_to_percentage(score_percentage(model, option), precision: 1))
+          end
         end
       end
     end

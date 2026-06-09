@@ -86,6 +86,53 @@ module Decidim
             end
           end
 
+          describe "winners toggle" do
+            context "when the gate is open and at least one option is labeled" do
+              let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }, settings: label_settings("First", 1, "Top pick")) }
+              let!(:option_c) { create(:election_response_option, question:, body: { "en" => "Gamma" }, settings: label_settings("Second", 2)) }
+
+              it "renders the toggle button carrying both labels" do
+                expect(subject).to have_css("[data-controller='winners-toggle']")
+                expect(subject).to have_css("button[data-winners-toggle-target='button']", text: "Show winners")
+                expect(subject).to have_css("button[data-show-winners='Show winners'][data-show-results='Show results']")
+              end
+
+              it "renders the winners panel hidden, the results panel shown" do
+                expect(subject).to have_css("[data-winners-toggle-target='results']")
+                expect(subject).to have_css("[data-winners-toggle-target='winners'].hidden", visible: :all)
+              end
+
+              it "lists only labeled options, by position, with badge + summary + description" do
+                panel = subject.find("[data-winners-toggle-target='winners']", visible: :all)
+                expect(panel).to have_css("strong.label", text: "First", visible: :all)
+                expect(panel).to have_css("strong.label", text: "Second", visible: :all)
+                expect(panel).to have_text("Has received 2 votes, totaling 6 points (54.5%)", normalize_ws: true)
+                expect(panel).to have_text("Top pick")
+                expect(panel).to have_no_css("[data-option-body]", text: "Beta", visible: :all)
+                text = panel.text(:all)
+                expect(text.index("Alpha")).to be < text.index("Gamma")
+              end
+            end
+
+            context "when no option is labeled" do
+              it "renders the normal view without the toggle" do
+                expect(subject).to have_no_css("[data-controller='winners-toggle']")
+                expect(subject).to have_no_css("button[data-winners-toggle-target='button']")
+                expect(subject).to have_no_css("[data-winners-toggle-target='winners']", visible: :all)
+              end
+            end
+
+            context "when options are labeled but results are not public yet (ongoing real_time)" do
+              let(:election) { create(:election, :real_time, :ongoing) }
+              let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }, settings: label_settings("First", 1)) }
+
+              it "does not render the toggle" do
+                expect(subject).to have_no_css("[data-controller='winners-toggle']")
+                expect(subject).to have_no_css("button[data-winners-toggle-target='button']")
+              end
+            end
+          end
+
           describe "grouped rendering" do
             let(:group_a) { "aaaa0001" }
             let(:group_b) { "bbbb0002" }
@@ -116,8 +163,10 @@ module Decidim
             end
           end
 
-          def label_settings(title, position)
-            { "label" => { "title" => { "en" => title }, "position" => position, "color" => "green" } }
+          def label_settings(title, position, description = nil)
+            label = { "title" => { "en" => title }, "position" => position, "color" => "green" }
+            label["description"] = { "en" => description } if description
+            { "label" => label }
           end
         end
       end

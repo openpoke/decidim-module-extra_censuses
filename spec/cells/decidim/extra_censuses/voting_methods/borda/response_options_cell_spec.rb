@@ -25,7 +25,7 @@ module Decidim
             it "renders a row, checkbox and position select per option plus the status counter" do
               expect(subject).to have_css("[data-voter-borda-target='row']", count: 3)
               expect(subject).to have_css("input[type=checkbox][data-voter-borda-target='checkbox']", count: 3)
-              expect(subject).to have_css("select.borda-position-select", count: 3)
+              expect(subject).to have_select(class: "borda-position-select", count: 3)
               expect(subject).to have_css("[data-voter-borda-target='status'] [data-voter-borda-target='counter']")
             end
 
