@@ -22,7 +22,7 @@ describe "Admin views BORDA results" do
     page.find("[data-option-borda-score-percent-text='#{option.question.id},#{option.id}']")
   end
 
-  context "with a borda question and cast ballots" do
+  context "with a borda question and cast votes" do
     let!(:question) do
       create(:election_question, :borda, :published_results,
              election:,

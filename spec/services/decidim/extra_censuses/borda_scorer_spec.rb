@@ -28,9 +28,9 @@ module Decidim
           let(:scoring_scale) { "start_from_max" }
 
           before do
-            # voter 1: A=1, B=2, C=3 (full ballot of 3 of 4)
+            # voter 1: A=1, B=2, C=3 (full vote of 3 of 4)
             cast("voter-1", { option_a => 1, option_b => 2, option_c => 3 })
-            # voter 2: B=1, A=2 (partial ballot of 2 of 4)
+            # voter 2: B=1, A=2 (partial vote of 2 of 4)
             cast("voter-2", { option_b => 1, option_a => 2 })
           end
 
@@ -47,11 +47,11 @@ module Decidim
           end
         end
 
-        context "with start_from_max and a partial ballot shorter than max_choices" do
+        context "with start_from_max and a partial vote shorter than max_choices" do
           let(:question) { create(:election_question, :borda, election:, max_choices: 5, scoring_scale: "start_from_max") }
 
           before do
-            # base = max_votable_options = max_choices = 5 (not the ballot size of 2)
+            # base = max_votable_options = max_choices = 5 (not the ranked_options_count of 2)
             cast("voter-1", { option_a => 1, option_b => 2 })
           end
 

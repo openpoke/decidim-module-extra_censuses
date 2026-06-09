@@ -16,7 +16,7 @@ RSpec.shared_context "with a borda question" do
   end
 end
 
-RSpec.shared_context "with a ranked borda ballot" do
+RSpec.shared_context "with a ranked borda vote" do
   include_context "with a borda question"
 
   before do
@@ -24,5 +24,24 @@ RSpec.shared_context "with a ranked borda ballot" do
     # voter 1: A=1 (4), B=2 (3), C=3 (2); voter 2: B=1 (4), A=2 (3) => A=7, B=7, C=2, D=0
     cast("voter-1", { option_a => 1, option_b => 2, option_c => 3 })
     cast("voter-2", { option_b => 1, option_a => 2 })
+  end
+end
+
+RSpec.shared_context "with a grouped borda question" do
+  let(:group_a_id) { "aaaa0001" }
+  let(:group_b_id) { "bbbb0002" }
+  let(:question) do
+    create(:election_question, election:, question_type: "multiple_option",
+                               min_choices: 1, max_choices: 3,
+                               settings: {
+                                 "voting_method" => "borda",
+                                 "scoring_scale" => "start_from_max",
+                                 "grouped" => true,
+                                 "groups" => [
+                                   { "id" => group_a_id, "title" => { "en" => "Animals" }, "position" => 0 },
+                                   { "id" => group_b_id, "title" => { "en" => "Plants" }, "position" => 1 }
+                                 ]
+                               },
+                               skip_injection: true)
   end
 end

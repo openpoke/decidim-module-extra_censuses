@@ -142,18 +142,17 @@ module Decidim
       end
 
       describe "#borda_points" do
-        # Rulebook §11: 3 ranked options, ballot size k = 3.
         context "with start_from_max scoring" do
           let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_max") }
 
-          it "scores from max_votable_options regardless of ballot size" do
+          it "scores from max_votable_options regardless of ranked_options_count" do
             expect(question.max_votable_options).to eq(3)
             expect(question.borda_points(1, 3)).to eq(3)
             expect(question.borda_points(2, 3)).to eq(2)
             expect(question.borda_points(3, 3)).to eq(1)
           end
 
-          it "ignores ballot_size, using max_votable_options as the base" do
+          it "ignores ranked_options_count, using max_votable_options as the base" do
             expect(question.borda_points(1, 99)).to eq(3)
           end
         end
@@ -161,13 +160,13 @@ module Decidim
         context "with start_from_min scoring" do
           let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_min") }
 
-          it "scores from the ballot size" do
+          it "scores from ranked_options_count" do
             expect(question.borda_points(1, 3)).to eq(3)
             expect(question.borda_points(2, 3)).to eq(2)
             expect(question.borda_points(3, 3)).to eq(1)
           end
 
-          it "uses ballot_size as the base, not max_votable_options" do
+          it "uses ranked_options_count as the base, not max_votable_options" do
             expect(question.borda_points(1, 2)).to eq(2)
           end
         end

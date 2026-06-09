@@ -15,7 +15,7 @@ module Decidim
       end
 
       describe "#to_json with admin: true" do
-        include_context "with a ranked borda ballot"
+        include_context "with a ranked borda vote"
 
         let(:json) { presenter.to_json(admin: true) }
         let(:totals) { Decidim::ExtraCensuses::BordaScorer.new(question).totals_by_response_option }

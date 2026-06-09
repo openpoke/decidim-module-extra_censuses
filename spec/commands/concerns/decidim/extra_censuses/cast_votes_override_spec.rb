@@ -73,7 +73,7 @@ module Decidim
         end
       end
 
-      context "when the borda ballot is below min_choices" do
+      context "when the borda vote is below min_choices" do
         let(:data) do
           {
             borda_question.id.to_s => { b_opt_a.id.to_s => 1 },
@@ -86,7 +86,7 @@ module Decidim
         end
       end
 
-      context "when the borda ballot exceeds max_choices" do
+      context "when the borda vote exceeds max_choices" do
         let(:borda_question) do
           create(:election_question, :borda, :voting_enabled, election:, max_choices: 2, min_choices: 1)
         end
@@ -138,7 +138,7 @@ module Decidim
         end
       end
 
-      context "when casting a standard ballot on a per-question election" do
+      context "when casting a standard vote on a per-question election" do
         let(:election) { create(:election, :ongoing, :per_question) }
         let(:data) do
           { standard_question.id.to_s => [s_opt_a.id.to_s, s_opt_b.id.to_s] }

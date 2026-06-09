@@ -404,9 +404,7 @@ module Decidim
 
         describe "voting_method attribute" do
           it "defaults to 'approval' when missing" do
-            form = described_class.from_params(question: attributes)
-                                  .with_context(current_organization: questionable.organization)
-            expect(form.voting_method).to eq("approval")
+            expect(subject.voting_method).to eq("approval")
           end
 
           it "exposes the attribute" do
@@ -418,9 +416,7 @@ module Decidim
 
         describe "scoring_scale attribute" do
           it "defaults to 'start_from_max' when missing" do
-            form = described_class.from_params(question: attributes)
-                                  .with_context(current_organization: questionable.organization)
-            expect(form.scoring_scale).to eq("start_from_max")
+            expect(subject.scoring_scale).to eq("start_from_max")
           end
         end
 

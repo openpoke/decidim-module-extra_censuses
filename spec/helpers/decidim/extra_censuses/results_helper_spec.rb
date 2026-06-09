@@ -5,7 +5,7 @@ require "spec_helper"
 module Decidim
   module ExtraCensuses
     describe ResultsHelper do
-      include_context "with a ranked borda ballot"
+      include_context "with a ranked borda vote"
 
       describe "#computes_results?" do
         it "is true for a question whose voting method computes results" do

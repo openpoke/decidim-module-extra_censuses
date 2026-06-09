@@ -41,25 +41,8 @@ module Decidim
           end
 
           describe "grouped render" do
-            let(:group_a_id) { "aaaa0001" }
-            let(:group_b_id) { "bbbb0002" }
-            let(:question) do
-              create(:election_question,
-                     election:,
-                     question_type: "multiple_option",
-                     min_choices: 1,
-                     max_choices: 3,
-                     settings: {
-                       "voting_method" => "borda",
-                       "scoring_scale" => "start_from_max",
-                       "grouped" => true,
-                       "groups" => [
-                         { "id" => group_a_id, "title" => { "en" => "Animals" }, "position" => 0 },
-                         { "id" => group_b_id, "title" => { "en" => "Plants" }, "position" => 1 }
-                       ]
-                     },
-                     skip_injection: true)
-            end
+            include_context "with a grouped borda question"
+
             let!(:option_a) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "Cat" }) }
             let!(:option_b) { create(:election_response_option, question:, group_id: group_b_id, body: { "en" => "Oak" }) }
             let(:selected) { [option_a, option_b] }

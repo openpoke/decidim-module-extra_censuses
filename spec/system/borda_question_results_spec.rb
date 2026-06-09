@@ -61,12 +61,11 @@ describe "BORDA question public results", driver: :rack_test do
     end
   end
 
-  it "shows a votes-and-points TOTAL footer instead of a ballots count" do
+  it "shows a votes-and-points TOTAL footer" do
     within "#question-#{question.id}" do
       expect(page).to have_content("5 votes, 11 points")
       expect(page).to have_css("[data-question-total-votes-text='#{question.id}']")
       expect(page).to have_css("[data-question-total-score-text='#{question.id}']")
-      expect(page).to have_no_css("[data-question-borda-ballots-text]")
     end
   end
 

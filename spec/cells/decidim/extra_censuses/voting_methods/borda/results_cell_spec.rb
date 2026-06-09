@@ -51,11 +51,10 @@ module Decidim
           end
 
           describe "TOTAL footer" do
-            it "totals votes and points and drops the ballots hook" do
+            it "totals votes and points" do
               expect(subject).to have_text("5 votes, 11 points", normalize_ws: true)
               expect(subject).to have_css("[data-question-total-votes-text='#{question.id}']")
               expect(subject).to have_css("[data-question-total-score-text='#{question.id}']")
-              expect(subject).to have_no_css("[data-question-borda-ballots-text]")
             end
           end
 
@@ -167,25 +166,11 @@ module Decidim
           end
 
           describe "grouped rendering" do
-            let(:group_a) { "aaaa0001" }
-            let(:group_b) { "bbbb0002" }
-            let(:question) do
-              create(:election_question, election:, question_type: "multiple_option",
-                                         min_choices: 1, max_choices: 3,
-                                         settings: {
-                                           "voting_method" => "borda",
-                                           "scoring_scale" => "start_from_max",
-                                           "grouped" => true,
-                                           "groups" => [
-                                             { "id" => group_a, "title" => { "en" => "Animals" }, "position" => 0 },
-                                             { "id" => group_b, "title" => { "en" => "Plants" }, "position" => 1 }
-                                           ]
-                                         },
-                                         skip_injection: true)
-            end
-            let!(:option_a) { create(:election_response_option, question:, group_id: group_a, body: { "en" => "Cat" }) }
-            let!(:option_b) { create(:election_response_option, question:, group_id: group_a, body: { "en" => "Dog" }) }
-            let!(:option_c) { create(:election_response_option, question:, group_id: group_b, body: { "en" => "Oak" }) }
+            include_context "with a grouped borda question"
+
+            let!(:option_a) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "Cat" }) }
+            let!(:option_b) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "Dog" }) }
+            let!(:option_c) { create(:election_response_option, question:, group_id: group_b_id, body: { "en" => "Oak" }) }
 
             it "renders group subheadings with their option rows" do
               expect(subject).to have_css("h3.question-group-title", text: "Animals")

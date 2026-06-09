@@ -146,7 +146,7 @@ describe "User votes in a BORDA question" do
   end
 
   context "without JavaScript", driver: :rack_test do
-    it "renders a position select for every option and accepts a valid ballot" do
+    it "renders a position select for every option and accepts a valid vote" do
       response_options.each do |option|
         expect(page).to have_css("select[data-option-id='#{option.id}']")
       end
@@ -205,8 +205,8 @@ describe "User votes in a BORDA question" do
     end
   end
 
-  def option_label(position, ballot_size)
-    points = scoring_scale == "start_from_min" ? ballot_size - position + 1 : max_choices - position + 1
+  def option_label(position, ranked_options_count)
+    points = scoring_scale == "start_from_min" ? ranked_options_count - position + 1 : max_choices - position + 1
     points == 1 ? "Rank #{position} (1 point)" : "Rank #{position} (#{points} points)"
   end
 end
