@@ -36,7 +36,7 @@ module Decidim
         false
       end
 
-      # BORDA ballots arrive as { option_id => position }; standard ballots as an
+      # Borda votes arrive as { option_id => position }; standard votes as an
       # array of option ids. Both reduce to a set of chosen option ids; blank
       # (unranked) positions are ignored.
       def chosen_options_count(response_ids)

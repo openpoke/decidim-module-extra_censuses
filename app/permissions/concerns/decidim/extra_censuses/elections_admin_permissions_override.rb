@@ -2,6 +2,7 @@
 
 module Decidim
   module ExtraCensuses
+    # Admin permission cases added by this module.
     module ElectionsAdminPermissionsOverride
       def permissions
         toggle_allow(label_editable?) if updating_response_option_label?

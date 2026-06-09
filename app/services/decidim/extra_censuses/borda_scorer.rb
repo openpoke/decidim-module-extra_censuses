@@ -10,19 +10,15 @@ module Decidim
       def totals_by_response_option
         totals = Hash.new(0)
         votes_by_voter.each do |_voter_uid, rows|
-          k = rows.size
+          ranked_options_count = rows.size
           rows.each do |row|
             position = row.position.to_i
             next if position < 1
 
-            totals[row.response_option_id] += question.borda_points(position, k)
+            totals[row.response_option_id] += question.borda_points(position, ranked_options_count)
           end
         end
         totals
-      end
-
-      def ballots_count
-        votes_by_voter.size
       end
 
       private

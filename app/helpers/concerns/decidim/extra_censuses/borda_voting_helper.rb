@@ -2,7 +2,7 @@
 
 module Decidim
   module ExtraCensuses
-    # View helpers for the voter-facing ranked (BORDA) ballot. Mounted on the
+    # View helpers for the voter-facing ranked (BORDA) vote. Mounted on the
     # public voting controllers from the engine.
     module BordaVotingHelper
       extend ActiveSupport::Concern
@@ -19,7 +19,7 @@ module Decidim
         end
 
         # Raw (uninterpolated) i18n templates fed to the Stimulus controller, which
-        # substitutes %{position} / %{count} client-side as the ballot size changes.
+        # substitutes %{position} / %{count} client-side as the number of ranked options changes.
         def borda_label_one_template
           t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: 1)
         end

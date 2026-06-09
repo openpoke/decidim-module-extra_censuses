@@ -11,8 +11,7 @@ module Decidim
             attribute :scoring_scale, String, default: "start_from_max"
 
             validates :scoring_scale, inclusion: { in: Decidim::Elections::Question.scoring_scales }
-            validate :borda_requires_multiple_option
-            validate :borda_requires_max_choices
+            validate :borda_voting_method_valid
 
             def allows_borda?
               question_type == "multiple_option"
@@ -20,18 +19,8 @@ module Decidim
 
             private
 
-            def borda_requires_multiple_option
-              return unless voting_method == "borda"
-              return if allows_borda?
-
-              errors.add(:voting_method, :invalid)
-            end
-
-            def borda_requires_max_choices
-              return unless voting_method == "borda"
-              return if max_choices.present? && max_choices > 1
-
-              errors.add(:voting_method, :invalid)
+            def borda_voting_method_valid
+              Decidim::ExtraCensuses::VotingMethods::Borda::QuestionValidator.new.validate(self)
             end
           end
         end

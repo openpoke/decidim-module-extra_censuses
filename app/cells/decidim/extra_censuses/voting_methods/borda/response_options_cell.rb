@@ -4,9 +4,6 @@ module Decidim
   module ExtraCensuses
     module VotingMethods
       module Borda
-        # Voter-facing ranked (BORDA) response options. The flat `show` state
-        # renders every option plus the status counter; `option` and `status` are
-        # exposed so the grouped ballot reuses the same per-option/status rendering.
         class ResponseOptionsCell < Decidim::ViewModel
           def show
             render
@@ -35,17 +32,17 @@ module Decidim
             positions[option.id.to_s].presence&.to_i
           end
 
-          # Labels reflect the scoring scale at the maximum ballot size; under
-          # start_from_min the Stimulus controller recomputes them per k.
+          # Labels reflect the scoring scale at the maximum number of selectable options;
+          # under start_from_min the Stimulus controller recomputes them as the voter ranks.
           def position_options
             max = model.max_votable_options
             (1..max).map { |pos| [position_label(pos, max), pos] }
           end
 
-          def position_label(position, ballot_size)
+          def position_label(position, ranked_options_count)
             t("decidim.extra_censuses.elections.votes.borda.position_label",
               position:,
-              count: model.borda_points(position, ballot_size))
+              count: model.borda_points(position, ranked_options_count))
           end
         end
       end

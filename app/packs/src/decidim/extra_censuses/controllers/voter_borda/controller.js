@@ -1,10 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Voter-facing ranked (BORDA) ballot. Maintains a client-side
+// Voter-facing ranked (BORDA) vote. Maintains a client-side
 // { optionId => position } map that is always contiguous {1..count}, mirrors it
 // into the per-option position <select>, and derives the submit button and the
 // limit hint purely from the selection count. No `required` attributes, so a
-// no-JS ballot still submits and relies on the server-side contiguity/range
+// no-JS vote still submits and relies on the server-side contiguity/range
 // validation.
 export default class extends Controller {
   static get targets() {
@@ -108,7 +108,7 @@ export default class extends Controller {
     })
   }
 
-  // Repairs any non-contiguous state inherited from a pre-rendered ballot.
+  // Repairs any non-contiguous state inherited from a pre-rendered vote.
   normalize() {
     const ordered = Object.keys(this.ranks).sort((first, second) => this.ranks[first] - this.ranks[second])
     ordered.forEach((id, index) => {
@@ -161,9 +161,9 @@ export default class extends Controller {
     select.value = previous
   }
 
-  labelFor(position, ballotSize) {
+  labelFor(position, rankedCount) {
     const points = this.scoringScaleValue === "start_from_min"
-      ? ballotSize - position + 1
+      ? rankedCount - position + 1
       : this.maxChoicesValue - position + 1
     const template = points === 1
       ? this.labelOneValue

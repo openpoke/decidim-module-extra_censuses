@@ -4,10 +4,6 @@ module Decidim
   module ExtraCensuses
     module VotingMethods
       module Borda
-        # Voter-facing ranked (BORDA) vote summary on the confirm page. Renders the
-        # selected options as ranked rows ([n] badge, body, points), grouped under
-        # subheadings when the question is grouped - the same flat/grouped split the
-        # ballot cell follows.
         class ConfirmCell < Decidim::ViewModel
           include Decidim::ExtraCensuses::GroupedResponseOptionsHelper
 
@@ -25,7 +21,7 @@ module Decidim
             confirm_response_groups(model, selected_options)
           end
 
-          # `selected_options.size` is the full ballot length k, so start_from_min
+          # `selected_options.size` is the full ranked count, so start_from_min
           # points match even when `options` is just one group.
           def confirm_rows(options)
             options

@@ -23,10 +23,10 @@ module Decidim
             question_type == "multiple_option"
           end
 
-          def borda_points(position, ballot_size)
+          def borda_points(position, ranked_options_count)
             return 0 if position.to_i < 1
 
-            base = scoring_scale == "start_from_min" ? ballot_size.to_i : max_votable_options
+            base = scoring_scale == "start_from_min" ? ranked_options_count.to_i : max_votable_options
             base - position.to_i + 1
           end
         end

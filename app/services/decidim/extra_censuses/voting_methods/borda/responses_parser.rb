@@ -21,19 +21,19 @@ module Decidim
 
           def validate!(parsed)
             positions = parsed.positions
-            k = positions.size
+            ranked_options_count = positions.size
             min = @question.min_choices.to_i
-            max = (@question.max_choices || @question.response_options.size).to_i
+            max = @question.max_votable_options
 
-            raise StandardError, "Borda ballot has no positions for question #{@question.id}" if k.zero?
-            raise StandardError, "Borda ballot below min_choices for question #{@question.id}" if min.positive? && k < min
-            raise StandardError, "Borda ballot above max_choices for question #{@question.id}" if max.positive? && k > max
+            raise StandardError, "Borda vote has no positions for question #{@question.id}" if ranked_options_count.zero?
+            raise StandardError, "Borda vote below min_choices for question #{@question.id}" if min.positive? && ranked_options_count < min
+            raise StandardError, "Borda vote above max_choices for question #{@question.id}" if max.positive? && ranked_options_count > max
 
             values = positions.values.sort
-            expected = (1..k).to_a
+            expected = (1..ranked_options_count).to_a
             return if values == expected
 
-            raise StandardError, "Borda ballot positions are not contiguous for question #{@question.id}"
+            raise StandardError, "Borda vote positions are not contiguous for question #{@question.id}"
           end
 
           private

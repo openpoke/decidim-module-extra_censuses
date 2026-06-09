@@ -9,7 +9,7 @@
 </div>
 
 <%# Upstream elections.js scans .response[data-max-choices] for a .max-choices-alert %>
-<%# child and dereferences it unconditionally. The BORDA ballot replaces the upstream %>
+<%# child and dereferences it unconditionally. The Borda vote replaces the upstream %>
 <%# options markup, so re-supply the element to avoid a null crash in JS mode. %>
 <% if model.max_choices.presence %>
   <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>

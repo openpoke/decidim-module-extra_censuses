@@ -15,7 +15,7 @@ module Decidim
 
       class_methods do
         def voting_methods
-          %w(approval borda).freeze
+          ["approval", *Decidim::ExtraCensuses.voting_method_registry.manifests.map { |manifest| manifest.name.to_s }]
         end
       end
 

@@ -5,7 +5,7 @@ module Decidim
     module VotingMethods
       module Borda
         # response_option_id (String) => position (String) for a voter's ranked
-        # ballot: the session buffer when present, otherwise the persisted ballot.
+        # vote: the session buffer when present, otherwise the persisted vote.
         # Single source shared by the response-options cell and the confirm helper.
         class BufferedPositions
           def self.stringify(hash)
