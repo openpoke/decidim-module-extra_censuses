@@ -42,6 +42,13 @@ module Decidim
           expect(option_hash_for(json, question, option_c)[:borda_score]).to eq(2)
         end
 
+        it "annotates each borda option with its score percentage text" do
+          # total score = 7 + 7 + 2 = 16 -> A,B = 43.8%, C = 12.5%
+          expect(option_hash_for(json, question, option_a)[:borda_score_percent_text]).to eq("43.8%")
+          expect(option_hash_for(json, question, option_b)[:borda_score_percent_text]).to eq("43.8%")
+          expect(option_hash_for(json, question, option_c)[:borda_score_percent_text]).to eq("12.5%")
+        end
+
         it "reports score 0 for an unvoted borda option" do
           expect(option_hash_for(json, question, option_d)).to include(
             borda_score: 0,
@@ -65,6 +72,7 @@ module Decidim
           standard_option_hash = option_hash_for(json, standard_question, standard_option)
           expect(standard_option_hash).not_to have_key(:borda_score)
           expect(standard_option_hash).not_to have_key(:borda_score_text)
+          expect(standard_option_hash).not_to have_key(:borda_score_percent_text)
         end
       end
 
@@ -77,6 +85,7 @@ module Decidim
           option_hash = option_hash_for(json, standard_question, standard_option)
           expect(option_hash).not_to have_key(:borda_score)
           expect(option_hash).not_to have_key(:borda_score_text)
+          expect(option_hash).not_to have_key(:borda_score_percent_text)
         end
       end
 
@@ -90,6 +99,7 @@ module Decidim
           expect(option_hash).not_to have_key(:votes_count)
           expect(option_hash).not_to have_key(:borda_score)
           expect(option_hash).not_to have_key(:borda_score_text)
+          expect(option_hash).not_to have_key(:borda_score_percent_text)
         end
       end
 

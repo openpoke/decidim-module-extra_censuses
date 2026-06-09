@@ -28,6 +28,7 @@ module Decidim
 
         def extra_censuses_annotate_results(question_hash, scorer)
           totals = scorer.totals_by_response_option
+          total = totals.values.sum
 
           Array(question_hash[:response_options]).each do |option_hash|
             # Only annotate options whose results the upstream gate already exposed
@@ -37,6 +38,7 @@ module Decidim
             score = totals.fetch(option_hash[:id], 0)
             option_hash[:borda_score] = score
             option_hash[:borda_score_text] = I18n.t("decidim.extra_censuses.elections.results.borda.points", count: score)
+            option_hash[:borda_score_percent_text] = number_to_percentage(total.positive? ? (score.to_f / total * 100).round(1) : 0, precision: 1)
           end
         end
       end

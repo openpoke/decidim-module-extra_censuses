@@ -5,12 +5,13 @@
 // stop-condition are kept identical to upstream (4s, stop when !data.ongoing).
 document.addEventListener("DOMContentLoaded", () => {
   const watchingDiv = document.querySelector("[data-results-live-update]");
-  if (!watchingDiv) {
+  if (!watchingDiv || !document.querySelector("[data-option-borda-score-text]")) {
     return;
   }
 
   const url = watchingDiv.dataset.resultsLiveUpdate;
   const optionBordaScoreTexts = () => document.querySelectorAll("[data-option-borda-score-text]");
+  const optionBordaScorePercentTexts = () => document.querySelectorAll("[data-option-borda-score-percent-text]");
   const optionBordaScoreWidths = () => document.querySelectorAll("[data-option-borda-score-width]");
 
   const animateText = (element, value) => {
@@ -72,6 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
       optionBordaScoreTexts().forEach((el) => {
         const [questionId, optionId] = el.dataset.optionBordaScoreText.split(",");
         const val = digOptionValue(questionId, optionId, data, "borda_score_text");
+        if (val !== null) {
+          animateText(el, val);
+        }
+      });
+      optionBordaScorePercentTexts().forEach((el) => {
+        const [questionId, optionId] = el.dataset.optionBordaScorePercentText.split(",");
+        const val = digOptionValue(questionId, optionId, data, "borda_score_percent_text");
         if (val !== null) {
           animateText(el, val);
         }
