@@ -14,7 +14,7 @@
 
       <%= form.translated :text_field, :title, aria: { label: :title }, data: { "text-copy" => true, "target" => "##{preview_id} span" } %>
       <%= form.translated :text_area, :description, aria: { label: :description } %>
-      <%= form.number_field :position %>
+      <%= form.number_field :position, required: false, help_text: t("decidim.elections.admin.response_option_labels.modal.position_help") %>
 
       <div class="response-option-label__colors">
         <% Decidim::ExtraCensuses.label_colors.each do |token, values| %>

@@ -113,6 +113,8 @@ en:
             help: Use label to let users easily identify who has win the election
               and in which order. If you use some correction mechanism over the results
               (for instance, applying parity), you can explain it here too.
+            position_help: Optional. Set 1, 2, 3… to order winners in the expanded
+              view. Leave empty to keep the default order.
             preview: 'Preview:'
             save: Save
             title: Set label for "%{option}"

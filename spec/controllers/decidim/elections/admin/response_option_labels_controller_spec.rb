@@ -52,6 +52,16 @@ module Decidim
               expect { put :update, params: params }.not_to(change { response_option.reload.settings })
             end
           end
+
+          context "when the results are published" do
+            let(:election) { create(:election, :after_end, :published_results, component:) }
+
+            before { sign_in current_user }
+
+            it "does not save the label" do
+              expect { put :update, params: params }.not_to(change { response_option.reload.settings })
+            end
+          end
         end
       end
     end

@@ -11,11 +11,11 @@ module Decidim
         attrs = (attributes || {}).symbolize_keys
         @title = attrs[:title] || {}
         @description = attrs[:description] || {}
-        @position = attrs[:position].to_i
+        @position = attrs[:position].presence&.to_i
         @color = attrs[:color]
       end
 
-      # Inline badge style, mirrors Decidim::Proposals::ProposalState#css_style.
+      # Inline badge style
       def css_style
         colors = Decidim::ExtraCensuses.label_colors[color&.to_sym]
         return "" unless colors

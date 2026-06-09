@@ -36,14 +36,14 @@ module Decidim
             grouped_response_options(model)
           end
 
-          # Labeled options first by label position, unlabeled after in their
-          # default order; the index tiebreaker keeps the unstable sort_by
-          # deterministic for equal positions.
+          # Labeled options first, unlabeled after; within labeled, those with a
+          # position set come first (by value), then the position-less ones keep
+          # their default order. The index tiebreaker keeps the sort deterministic.
           def ordered_options(options)
             return options unless label_shown?
 
             options.each_with_index.sort_by do |option, index|
-              [option.labeled? ? 0 : 1, option.label&.position.to_i, index]
+              [option.labeled? ? 0 : 1, position_present?(option) ? 0 : 1, option.label&.position.to_i, index]
             end.map(&:first)
           end
 
@@ -53,13 +53,18 @@ module Decidim
             label_shown? && model.response_options.any?(&:labeled?)
           end
 
-          # Labeled options only, ordered by label position; the index tiebreaker
-          # mirrors `ordered_options`. The winners panel hides everything else.
+          # Labeled options only; those with a position set first (by value), then
+          # the position-less ones in default order. The index tiebreaker mirrors
+          # `ordered_options`. The winners panel hides everything else.
           def winner_options
             model.response_options.each_with_index
                  .select { |option, _index| option.labeled? }
-                 .sort_by { |option, index| [option.label.position, index] }
+                 .sort_by { |option, index| [position_present?(option) ? 0 : 1, option.label&.position.to_i, index] }
                  .map(&:first)
+          end
+
+          def position_present?(option)
+            option.label&.position.present?
           end
 
           def winner_summary(option)

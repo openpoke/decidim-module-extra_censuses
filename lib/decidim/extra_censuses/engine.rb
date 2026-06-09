@@ -102,6 +102,7 @@ module Decidim
           Decidim::Elections::Admin::QuestionForm.include(manifest.form_fields.constantize) if manifest.form_fields.present?
         end
 
+        Decidim::Elections::Admin::Permissions.prepend(Decidim::ExtraCensuses::ElectionsAdminPermissionsOverride)
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
         Decidim::Elections::CastVotes.include(Decidim::ExtraCensuses::CastVotesOverride)
         Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)

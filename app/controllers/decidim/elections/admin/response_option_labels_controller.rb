@@ -5,9 +5,8 @@ module Decidim
     module Admin
       class ResponseOptionLabelsController < Admin::ApplicationController
         def update
-          enforce_permission_to(:update, :election, election:)
+          enforce_permission_to(:update, :response_option_label, resource: response_option.question)
 
-          response_option = response_options.find(params[:id])
           @form = form(ResponseOptionLabelForm).from_params(params)
 
           UpdateResponseOptionLabel.call(@form, response_option) do
@@ -23,6 +22,10 @@ module Decidim
         end
 
         private
+
+        def response_option
+          @response_option ||= response_options.find(params[:id])
+        end
 
         def election
           @election ||= Decidim::Elections::Election.where(component: current_component).find(params[:election_id])

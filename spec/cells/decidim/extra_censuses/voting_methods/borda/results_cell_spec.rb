@@ -133,6 +133,39 @@ module Decidim
             end
           end
 
+          describe "ordering with an optional position" do
+            context "when no labeled option has a position" do
+              let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }, settings: label_settings("First", nil)) }
+              let!(:option_b) { create(:election_response_option, question:, body: { "en" => "Beta" }, settings: label_settings("Second", nil)) }
+              let!(:option_c) { create(:election_response_option, question:, body: { "en" => "Gamma" }, settings: label_settings("Third", nil)) }
+
+              it "keeps the default option order" do
+                text = subject.text
+                expect(text.index("Alpha")).to be < text.index("Beta")
+                expect(text.index("Beta")).to be < text.index("Gamma")
+              end
+            end
+
+            context "when some labeled options have a position and others do not" do
+              let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }, settings: label_settings("Second", 2)) }
+              let!(:option_b) { create(:election_response_option, question:, body: { "en" => "Beta" }, settings: label_settings("None", nil)) }
+              let!(:option_c) { create(:election_response_option, question:, body: { "en" => "Gamma" }, settings: label_settings("First", 1)) }
+
+              it "orders positioned options first by value, position-less ones after, in the normal view" do
+                text = subject.text
+                expect(text.index("Gamma")).to be < text.index("Alpha")
+                expect(text.index("Alpha")).to be < text.index("Beta")
+              end
+
+              it "orders the winners panel the same way" do
+                panel = subject.find("[data-winners-toggle-target='winners']", visible: :all)
+                panel_text = panel.text(:all)
+                expect(panel_text.index("Gamma")).to be < panel_text.index("Alpha")
+                expect(panel_text.index("Alpha")).to be < panel_text.index("Beta")
+              end
+            end
+          end
+
           describe "grouped rendering" do
             let(:group_a) { "aaaa0001" }
             let(:group_b) { "bbbb0002" }

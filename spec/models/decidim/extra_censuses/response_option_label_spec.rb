@@ -26,12 +26,16 @@ module Decidim
       end
 
       describe "#position" do
-        it "is coerced to an integer" do
+        it "is coerced to an integer when set" do
           expect(subject.position).to eq(2)
         end
 
-        it "defaults to 0 when missing" do
-          expect(described_class.new("title" => { "en" => "x" }).position).to eq(0)
+        it "is nil when missing" do
+          expect(described_class.new("title" => { "en" => "x" }).position).to be_nil
+        end
+
+        it "is nil when blank" do
+          expect(described_class.new("title" => { "en" => "x" }, "position" => "").position).to be_nil
         end
       end
 

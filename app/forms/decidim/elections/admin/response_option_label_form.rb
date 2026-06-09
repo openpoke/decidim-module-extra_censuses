@@ -12,11 +12,10 @@ module Decidim
         translatable_attribute :title, String
         translatable_attribute :description, String
         attribute :color, String
-        attribute :position, Integer, default: 0
+        attribute :position, Integer
 
         validates :title, translatable_presence: true
         validates :description, translatable_presence: true
-        validates :position, presence: true
         validates :color, inclusion: { in: Decidim::ExtraCensuses.label_colors.keys.map(&:to_s) }
 
         def self.from_model(response_option)

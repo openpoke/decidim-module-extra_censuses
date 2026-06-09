@@ -12,7 +12,7 @@ module Decidim
               "label" => {
                 "title" => form.title,
                 "description" => form.description,
-                "position" => form.position.to_i,
+                "position" => form.position,
                 "color" => form.color
               }
             )

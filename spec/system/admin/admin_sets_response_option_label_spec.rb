@@ -6,13 +6,13 @@ describe "Admin sets response option winner label" do
   let(:manifest_name) { "elections" }
   let(:participatory_process) { create(:participatory_process, organization:) }
   let(:current_component) { create(:component, participatory_space: participatory_process, manifest_name: "elections") }
-  let!(:election) { create(:election, :published_results, :with_internal_users_census, component: current_component) }
+  let!(:election) { create(:election, :real_time, :published, :ongoing, :with_internal_users_census, component: current_component) }
   let!(:question) do
-    create(:election_question, :borda, :published_results, election:, max_choices: 3, body: { "en" => "Rank these" })
+    create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" })
   end
   let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }) }
   let!(:option_b) { create(:election_response_option, :with_label, question:, body: { "en" => "Beta" }) }
-  let!(:plain_question) { create(:election_question, :published_results, election:, body: { "en" => "Pick one" }) }
+  let!(:plain_question) { create(:election_question, election:, body: { "en" => "Pick one" }) }
   let!(:plain_option) { create(:election_response_option, question: plain_question, body: { "en" => "Gamma" }) }
 
   include_context "when managing a component as an admin"
@@ -43,6 +43,13 @@ describe "Admin sets response option winner label" do
       within "#question_#{plain_question.id}" do
         expect(page).to have_no_css("[data-dialog-open='label-modal-#{plain_option.id}']")
         expect(page).to have_no_css("#label-modal-#{plain_option.id}")
+      end
+    end
+
+    it "renders the position field as optional with a help text" do
+      within "#label-modal-#{option_a.id}" do
+        expect(page).to have_css("input[name='response_option_label[position]']:not([required])")
+        expect(page).to have_css(".help-text", text: "Optional")
       end
     end
   end

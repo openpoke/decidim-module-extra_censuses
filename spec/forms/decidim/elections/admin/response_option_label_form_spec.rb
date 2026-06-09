@@ -52,7 +52,7 @@ module Decidim
           context "when position is blank" do
             let(:position) { "" }
 
-            it { is_expected.not_to be_valid }
+            it { is_expected.to be_valid }
           end
         end
 
@@ -60,6 +60,11 @@ module Decidim
           it "coerces position to integer from a string" do
             form = described_class.from_params(response_option_label: attributes.merge(position: "3"))
             expect(form.position).to eq(3)
+          end
+
+          it "leaves position nil when blank" do
+            form = described_class.from_params(response_option_label: attributes.merge(position: ""))
+            expect(form.position).to be_nil
           end
 
           it "exposes the translatable title and description hashes" do

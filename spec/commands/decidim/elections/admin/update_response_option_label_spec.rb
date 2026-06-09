@@ -38,6 +38,15 @@ module Decidim
             expect(response_option.reload.settings["foo"]).to eq("bar")
           end
 
+          context "when the position is left blank" do
+            let(:attributes) { { title_en: "Winner", description_en: "The winning option", position: "", color: "blue" } }
+
+            it "stores a nil position" do
+              subject.call
+              expect(response_option.reload.settings["label"]["position"]).to be_nil
+            end
+          end
+
           it "traces the action", versioning: true do
             expect(Decidim.traceability)
               .to receive(:update!)
