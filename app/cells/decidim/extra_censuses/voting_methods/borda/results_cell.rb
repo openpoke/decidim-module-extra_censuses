@@ -10,6 +10,7 @@ module Decidim
         # points/votes total. Mirrors the upstream `_vote_results_option` markup so
         # the live poller keeps updating the same data-* hooks.
         class ResultsCell < Decidim::ViewModel
+          include Cell::ViewModel::Partial
           include Decidim::ExtraCensuses::ResultsHelper
           include Decidim::ExtraCensuses::GroupedResponseOptionsHelper
 

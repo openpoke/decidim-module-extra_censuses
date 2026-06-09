@@ -2,7 +2,7 @@
   <div class="mb-4">
     <h4 data-option-body>
       <%= translated_attribute(option.body) %>
-      <strong class="label" style="<%= option.label.css_style %>"><%= translated_attribute(option.label.title) %></strong>
+      <%= render partial: "decidim/extra_censuses/elections/results/labels/badge", formats: [:html], locals: { label: option.label } %>
     </h4>
     <p><%= winner_summary(option) %></p>
     <% if (description = translated_attribute(option.label.description)).present? %>

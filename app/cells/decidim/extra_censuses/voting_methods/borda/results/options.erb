@@ -1,13 +1,13 @@
 <% response_groups.each do |group, options| %>
   <% if group %>
-    <h3 class="question-group-title h5 mt-4 mb-2"><%= translated_attribute(group.title) %></h3>
+    <%= render partial: "decidim/extra_censuses/elections/results/group_heading", formats: [:html], locals: { group: } %>
   <% end %>
   <% ordered_options(options).each do |option| %>
     <div class="mb-4">
       <h4 data-option-body>
         <%= translated_attribute(option.body) %>
         <% if label_shown? && option.labeled? %>
-          <strong class="label" style="<%= option.label.css_style %>"><%= translated_attribute(option.label.title) %></strong>
+          <%= render partial: "decidim/extra_censuses/elections/results/labels/badge", formats: [:html], locals: { label: option.label } %>
         <% end %>
       </h4>
       <div class="flex items-center justify-between gap-2 mb-2">

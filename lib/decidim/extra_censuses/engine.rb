@@ -84,6 +84,7 @@ module Decidim
 
       initializer "decidim.extra_censuses.add_cells_view_paths" do
         Cell::ViewModel.view_paths << File.expand_path("app/cells", root)
+        Cell::ViewModel.view_paths << File.expand_path("app/views", root) # for partials
       end
 
       # Overrides and helpers

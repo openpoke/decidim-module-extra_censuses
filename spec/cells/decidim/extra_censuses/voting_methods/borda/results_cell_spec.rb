@@ -114,7 +114,7 @@ module Decidim
             end
 
             context "when no option is labeled" do
-              it "renders the normal view without the toggle" do
+              it "renders the options view without the toggle" do
                 expect(subject).to have_no_css("[data-controller='winners-toggle']")
                 expect(subject).to have_no_css("button[data-winners-toggle-target='button']")
                 expect(subject).to have_no_css("[data-winners-toggle-target='winners']", visible: :all)
@@ -150,7 +150,7 @@ module Decidim
               let!(:option_b) { create(:election_response_option, question:, body: { "en" => "Beta" }, settings: label_settings("None", nil)) }
               let!(:option_c) { create(:election_response_option, question:, body: { "en" => "Gamma" }, settings: label_settings("First", 1)) }
 
-              it "orders positioned options first by value, position-less ones after, in the normal view" do
+              it "orders positioned options first by value, position-less ones after, in the options view" do
                 text = subject.text
                 expect(text.index("Gamma")).to be < text.index("Alpha")
                 expect(text.index("Alpha")).to be < text.index("Beta")

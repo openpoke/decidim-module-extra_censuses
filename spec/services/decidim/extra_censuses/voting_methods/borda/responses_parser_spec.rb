@@ -80,14 +80,14 @@ module Decidim
             context "when the vote is empty" do
               it "raises" do
                 parsed = build_parsed({})
-                expect { parser.validate!(parsed) }.to raise_error(StandardError)
+                expect { parser.validate!(parsed) }.to raise_error(StandardError, /no positions/)
               end
             end
 
             context "when the vote is below min_choices" do
               it "raises" do
                 parsed = build_parsed(opt_a.id => 1)
-                expect { parser.validate!(parsed) }.to raise_error(StandardError)
+                expect { parser.validate!(parsed) }.to raise_error(StandardError, /below min_choices/)
               end
             end
 
@@ -96,14 +96,14 @@ module Decidim
 
               it "raises" do
                 parsed = build_parsed(opt_a.id => 1, opt_b.id => 2, opt_c.id => 3)
-                expect { parser.validate!(parsed) }.to raise_error(StandardError)
+                expect { parser.validate!(parsed) }.to raise_error(StandardError, /above max_choices/)
               end
             end
 
             context "when positions are not contiguous" do
               it "raises" do
                 parsed = build_parsed(opt_a.id => 1, opt_b.id => 3)
-                expect { parser.validate!(parsed) }.to raise_error(StandardError)
+                expect { parser.validate!(parsed) }.to raise_error(StandardError, /not contiguous/)
               end
             end
           end
