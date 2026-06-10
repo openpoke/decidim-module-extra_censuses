@@ -21,7 +21,6 @@ module Decidim
       @voting_method_registry ||= Decidim::ManifestRegistry.new("extra_censuses/voting_method")
     end
 
-    # Palette for response option labels
     def self.label_colors
       {
         gray: { background: "#F6F8FA", foreground: "#4B5058", name: I18n.t("gray", scope: "activemodel.attributes.response_option_label.colors") },

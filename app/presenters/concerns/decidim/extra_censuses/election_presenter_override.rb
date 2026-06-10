@@ -30,15 +30,20 @@ module Decidim
           totals = scorer.totals_by_response_option
           total = totals.values.sum
 
+          if question_hash.has_key?(:total_votes)
+            question_hash[:result_score_total_text] =
+              I18n.t("decidim.extra_censuses.elections.results.points", count: total)
+          end
+
           Array(question_hash[:response_options]).each do |option_hash|
             # Only annotate options whose results the upstream gate already exposed
             # (the option hash carries :votes_count only when admin || published).
             next unless option_hash.has_key?(:votes_count)
 
             score = totals.fetch(option_hash[:id], 0)
-            option_hash[:borda_score] = score
-            option_hash[:borda_score_text] = I18n.t("decidim.extra_censuses.elections.results.borda.points", count: score)
-            option_hash[:borda_score_percent_text] = number_to_percentage(total.positive? ? (score.to_f / total * 100).round(1) : 0, precision: 1)
+            option_hash[:result_score] = score
+            option_hash[:result_score_text] = I18n.t("decidim.extra_censuses.elections.results.points", count: score)
+            option_hash[:result_score_percent_text] = number_to_percentage(Decidim::ExtraCensuses::ResultsHelper.percentage(score, total), precision: 1)
           end
         end
       end

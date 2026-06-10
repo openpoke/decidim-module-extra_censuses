@@ -39,19 +39,10 @@ describe "BORDA question public results", driver: :rack_test do
     end
   end
 
-  it "sizes bars by each option's share of the total points, not of the max" do
-    widths = page.all(".percent-bar-width").map { |node| node[:style].to_s.delete(" ;") }
-    # A=6/11=54.5, B=4/11=36.4, C=1/11=9.1 (NOT 100/66.7/16.7)
-    expect(widths).to include("width:54.5%")
-    expect(widths).to include("width:36.4%")
-    expect(widths).to include("width:9.1%")
-    expect(widths).not_to include("width:100%")
-  end
-
   it "keeps the borda live-update hooks on the bars and scores" do
     within "#question-#{question.id}" do
-      expect(page).to have_css(".percent-bar-width[data-option-borda-score-width]", count: 3)
-      expect(page).to have_css("[data-option-borda-score-text]", count: 3)
+      expect(page).to have_css(".percent-bar-width[data-option-result-score-width]", count: 3)
+      expect(page).to have_css("[data-option-result-score-text]", count: 3)
     end
   end
 

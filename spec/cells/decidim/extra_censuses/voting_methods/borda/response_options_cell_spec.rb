@@ -22,11 +22,18 @@ module Decidim
           controller Decidim::PagesController
 
           describe "show state" do
-            it "renders a row, checkbox and position select per option plus the status counter" do
-              expect(subject).to have_css("[data-voter-borda-target='row']", count: 3)
+            it "mounts the Stimulus controller with its config values on the cell wrapper" do
+              expect(subject).to have_css("[data-controller='voter-borda']", count: 1)
+              wrapper = subject.find("[data-controller='voter-borda']")
+              expect(wrapper["data-voter-borda-max-choices-value"]).to eq(question.max_votable_options.to_s)
+              expect(wrapper["data-voter-borda-scoring-scale-value"]).to eq(question.scoring_scale)
+              expect(wrapper["data-voter-borda-counter-template-value"]).to be_present
+            end
+
+            it "renders a checkbox and position select per option plus the status counter" do
               expect(subject).to have_css("input[type=checkbox][data-voter-borda-target='checkbox']", count: 3)
               expect(subject).to have_select(class: "borda-position-select", count: 3)
-              expect(subject).to have_css("[data-voter-borda-target='status'] [data-voter-borda-target='counter']")
+              expect(subject).to have_css(".borda-status [data-voter-borda-target='counter']")
             end
 
             it "offers one ranked position per votable option" do
@@ -58,7 +65,7 @@ module Decidim
             subject { cell(cell_path, question, context:).call(:option, option_a) }
 
             it "renders only the given option row" do
-              expect(subject).to have_css("[data-voter-borda-target='row']", count: 1)
+              expect(subject).to have_field(type: "checkbox", count: 1)
               expect(subject).to have_css("#borda-checkbox-#{question.id}-#{option_a.id}")
             end
           end

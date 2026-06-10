@@ -15,7 +15,6 @@ module Decidim
         @color = attrs[:color]
       end
 
-      # Inline badge style
       def css_style
         colors = Decidim::ExtraCensuses.label_colors[color&.to_sym]
         return "" unless colors

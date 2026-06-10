@@ -24,6 +24,24 @@ describe Decidim::Elections::Admin::Permissions do
     it { is_expected.to be(false) }
   end
 
+  context "when there is no user" do
+    let(:election) { create(:election, :after_end, :published, :ongoing, component:) }
+    let(:user) { nil }
+
+    it "does not set the permission" do
+      expect { subject }.to raise_error(Decidim::PermissionAction::PermissionNotSetError)
+    end
+  end
+
+  context "when the action scope is not admin" do
+    let(:election) { create(:election, :after_end, :published, :ongoing, component:) }
+    let(:permission_action) { Decidim::PermissionAction.new(scope: :public, action: :update, subject: :response_option_label) }
+
+    it "does not set the permission" do
+      expect { subject }.to raise_error(Decidim::PermissionAction::PermissionNotSetError)
+    end
+  end
+
   context "when results_availability is per_question" do
     let(:election) { create(:election, :per_question, :published, :ongoing, component:) }
 

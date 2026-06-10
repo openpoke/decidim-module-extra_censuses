@@ -6,10 +6,13 @@ module Decidim
       module Borda
         # response_option_id (String) => position (String) for a voter's ranked
         # vote: the session buffer when present, otherwise the persisted vote.
-        # Single source shared by the response-options cell and the confirm helper.
         class BufferedPositions
+          def self.lookup(question, context)
+            new(votes_buffer: context[:votes_buffer] || {}, voter_uid: context[:voter_uid], question:).to_h
+          end
+
           def self.stringify(hash)
-            pairs = hash.respond_to?(:to_unsafe_h) ? hash.to_unsafe_h : hash
+            pairs = hash.try(:to_unsafe_h) || hash
             pairs.each_with_object({}) do |(option_id, position), memo|
               memo[option_id.to_s] = position.to_s
             end

@@ -6,9 +6,7 @@ describe "Admin winner label lock once results are published" do
   let(:manifest_name) { "elections" }
   let(:participatory_process) { create(:participatory_process, organization:) }
   let(:current_component) { create(:component, participatory_space: participatory_process, manifest_name: "elections") }
-  let!(:question) do
-    create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" })
-  end
+  let!(:question) { create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" }) }
   let!(:option_a) { create(:election_response_option, :with_label, question:, body: { "en" => "Alpha" }) }
 
   include_context "when managing a component as an admin"
@@ -56,9 +54,7 @@ describe "Admin winner label lock once results are published" do
     end
 
     context "when the question results are published" do
-      let!(:question) do
-        create(:election_question, :borda, :published_results, election:, max_choices: 3, body: { "en" => "Rank these" })
-      end
+      let!(:question) { create(:election_question, :borda, :published_results, election:, max_choices: 3, body: { "en" => "Rank these" }) }
 
       it "hides the pencil" do
         within "#question_#{question.id}" do

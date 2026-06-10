@@ -21,9 +21,7 @@ describe "User votes in a BORDA question" do
            settings: { "voting_method" => "borda", "scoring_scale" => scoring_scale },
            skip_injection: true)
   end
-  let!(:response_options) do
-    %w(Alpha Bravo Charlie Delta).map { |name| create(:election_response_option, question:, body: { "en" => name }) }
-  end
+  let!(:response_options) { %w(Alpha Bravo Charlie Delta).map { |name| create(:election_response_option, question:, body: { "en" => name }) } }
 
   def checkbox_for(option)
     find("input[type=checkbox][data-option-id='#{option.id}']")
@@ -83,11 +81,11 @@ describe "User votes in a BORDA question" do
 
       it "recomputes the points labels after each check" do
         checkbox_for(response_options[0]).check
-        expect(select_for(response_options[0])).to have_text("1 point")
+        expect(select_for(response_options[0])).to have_content("1 point")
 
         checkbox_for(response_options[1]).check
-        expect(select_for(response_options[0])).to have_text("2 points")
-        expect(select_for(response_options[1])).to have_text("1 point")
+        expect(select_for(response_options[0])).to have_content("2 points")
+        expect(select_for(response_options[1])).to have_content("1 point")
       end
     end
 
@@ -117,13 +115,13 @@ describe "User votes in a BORDA question" do
       submit_button.click
 
       within ".selected_responses" do
-        expect(page).to have_text("[1]")
-        expect(page).to have_text("[2]")
-        expect(page).to have_text("[3]")
-        expect(page).to have_text("Alpha")
-        expect(page).to have_text("3 pts")
-        expect(page).to have_text("2 pts")
-        expect(page).to have_text("1 pt")
+        expect(page).to have_content("[1]")
+        expect(page).to have_content("[2]")
+        expect(page).to have_content("[3]")
+        expect(page).to have_content("Alpha")
+        expect(page).to have_content("3 pts")
+        expect(page).to have_content("2 pts")
+        expect(page).to have_content("1 pt")
       end
     end
 
@@ -195,13 +193,22 @@ describe "User votes in a BORDA question" do
     end
 
     it "renders the group subheadings with per-option checkbox and select" do
-      expect(page).to have_css("h3", text: "Animals")
-      expect(page).to have_css("h3", text: "Plants")
+      expect(page).to have_css("h2.question-group-title", text: "Animals")
+      expect(page).to have_css("h2.question-group-title", text: "Plants")
 
       response_options.each do |option|
         expect(page).to have_css("input[type=checkbox][data-option-id='#{option.id}']")
         expect(page).to have_css("select[data-option-id='#{option.id}']", visible: :all)
       end
+    end
+
+    it "checking options across groups assigns sequential ranks from one controller" do
+      checkbox_for(response_options[0]).check
+      expect(select_for(response_options[0]).value).to eq("1")
+      expect(select_for(response_options[0])).to be_visible
+
+      checkbox_for(response_options[1]).check
+      expect(select_for(response_options[1]).value).to eq("2")
     end
   end
 

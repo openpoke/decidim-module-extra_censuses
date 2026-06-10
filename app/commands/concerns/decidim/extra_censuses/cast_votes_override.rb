@@ -30,11 +30,11 @@ module Decidim
             raise StandardError, "No responses for question #{question.id}" if parsed.responses.blank?
 
             parser_for(question)&.validate!(parsed)
-            question.votes.where(voter_uid: voter_uid).destroy_all
+            question.votes.where(voter_uid:).destroy_all
             parsed.responses.each do |response_option|
               question.votes.create!(
-                voter_uid: voter_uid,
-                response_option: response_option,
+                voter_uid:,
+                response_option:,
                 position: parsed.positions[response_option.id]
               )
             end

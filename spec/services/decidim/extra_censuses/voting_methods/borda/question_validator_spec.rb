@@ -48,6 +48,15 @@ module Decidim
               end
             end
 
+            context "when both max_choices and question_type are wrong" do
+              let(:question) { build(:election_question, election:, settings: { "voting_method" => "borda" }, question_type: "single_option", max_choices: nil) }
+
+              it "adds a single error" do
+                validator.validate(question)
+                expect(question.errors[:voting_method]).to eq(["is invalid"])
+              end
+            end
+
             context "when the question is not borda" do
               let(:question) { build(:election_question, election:, settings: {}, question_type: "single_option", max_choices: nil) }
 

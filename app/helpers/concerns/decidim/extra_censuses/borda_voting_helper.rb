@@ -2,38 +2,12 @@
 
 module Decidim
   module ExtraCensuses
-    # View helpers for the voter-facing ranked (BORDA) vote. Mounted on the
-    # public voting controllers from the engine.
+    # Confirmation-summary helper for the voter-facing ranked (BORDA) vote.
     module BordaVotingHelper
       extend ActiveSupport::Concern
 
       included do
-        # Stimulus identifier mounted on the response-options container, blank for
-        # non-BORDA questions so the controller stays inert.
-        def borda_controller_name(question)
-          "voter-borda" if question.voting_method == "borda"
-        end
-
-        def borda?(question)
-          question.voting_method == "borda"
-        end
-
-        # Raw (uninterpolated) i18n templates fed to the Stimulus controller, which
-        # substitutes %{position} / %{count} client-side as the number of ranked options changes.
-        def borda_label_one_template
-          t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: 1)
-        end
-
-        def borda_label_other_template
-          t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: "%{count}")
-        end
-
-        def borda_counter_template
-          t("decidim.extra_censuses.elections.votes.borda.selected_counter", count: "%{count}", max: "%{max}")
-        end
-
-        # Selected options for the confirmation summary. BORDA buffers a
-        # { option_id => position } hash ordered by rank; standard questions keep
+        # BORDA buffers a { option_id => position } hash; standard questions keep
         # the upstream array shape handled by Question#safe_responses.
         def confirm_selected_options(question, buffered)
           return question.safe_responses(buffered) unless question.voting_method == "borda"

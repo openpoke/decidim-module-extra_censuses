@@ -1,10 +1,10 @@
 <!-- surround_contents "div.question__response-options" -->
-<% if question.grouped? %>
+<% if (response_options_cell = voting_method_cell(question, "response_options", votes_buffer:, voter_uid:, wrapper_class: "js-check-box-collection")) %>
+  <%= response_options_cell %>
+<% elsif question.grouped? %>
   <%= render "decidim/extra_censuses/elections/votes/grouped_question_response_options",
              question: question,
              wrapper_class: "js-check-box-collection" %>
-<% elsif (response_options_cell = voting_method_cell(question, "response_options", votes_buffer:, voter_uid:, wrapper_class: "js-check-box-collection")) %>
-  <%= response_options_cell %>
 <% else %>
   <%= render_original %>
 <% end %>

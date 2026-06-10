@@ -40,10 +40,11 @@ module Decidim
       # array of option ids. Both reduce to a set of chosen option ids; blank
       # (unranked) positions are ignored.
       def chosen_options_count(response_ids)
-        ids = if response_ids.respond_to?(:keys)
-                response_ids.reject { |_option_id, position| position.to_s.strip.empty? }.keys
+        payload = response_ids.try(:to_unsafe_h) || response_ids
+        ids = if payload.is_a?(Hash)
+                payload.reject { |_option_id, position| position.to_s.strip.empty? }.keys
               else
-                Array(response_ids)
+                Array(payload)
               end
         question.response_options.where(id: ids).count
       end

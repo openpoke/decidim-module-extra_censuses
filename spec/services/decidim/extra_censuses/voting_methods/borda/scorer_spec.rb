@@ -4,7 +4,7 @@ require "spec_helper"
 
 module Decidim
   module ExtraCensuses
-    describe BordaScorer do
+    describe VotingMethods::Borda::Scorer do
       include_context "with a borda question"
 
       subject(:scorer) { described_class.new(question) }

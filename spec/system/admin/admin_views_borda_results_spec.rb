@@ -15,11 +15,11 @@ describe "Admin views BORDA results" do
   end
 
   def score_cell(option)
-    page.find("[data-option-borda-score-text='#{option.question.id},#{option.id}']")
+    page.find("[data-option-result-score-text='#{option.question.id},#{option.id}']")
   end
 
   def score_percent_cell(option)
-    page.find("[data-option-borda-score-percent-text='#{option.question.id},#{option.id}']")
+    page.find("[data-option-result-score-percent-text='#{option.question.id},#{option.id}']")
   end
 
   context "with a borda question and cast votes" do
@@ -53,32 +53,32 @@ describe "Admin views BORDA results" do
       end
     end
 
-    it "renders the Score column as points straight from BordaScorer" do
+    it "renders the Score column as points straight from the borda scorer" do
       within "#question_#{question.id} table" do
-        expect(score_cell(option_a)).to have_text("6 points")
-        expect(score_cell(option_b)).to have_text("4 points")
-        expect(score_cell(option_c)).to have_text("1 point")
+        expect(score_cell(option_a)).to have_content("6 points")
+        expect(score_cell(option_b)).to have_content("4 points")
+        expect(score_cell(option_c)).to have_content("1 point")
       end
     end
 
     it "renders the Score percentage column as score over total score" do
       within "#question_#{question.id} table" do
         # total score 6 + 4 + 1 = 11
-        expect(score_percent_cell(option_a)).to have_text("54.5%")
-        expect(score_percent_cell(option_b)).to have_text("36.4%")
-        expect(score_percent_cell(option_c)).to have_text("9.1%")
+        expect(score_percent_cell(option_a)).to have_content("54.5%")
+        expect(score_percent_cell(option_b)).to have_content("36.4%")
+        expect(score_percent_cell(option_c)).to have_content("9.1%")
       end
     end
 
     it "puts total votes under Votes and total score under Score in the Total row" do
       within "#question_#{question.id} table" do
-        expect(page.find("[data-question-total-votes-text]")).to have_text("5 votes")
-        expect(page.find("[data-question-total-score-text]")).to have_text("11 points")
+        expect(page.find("[data-question-total-votes-text]")).to have_content("5 votes")
+        expect(page.find("[data-question-total-score-text]")).to have_content("11 points")
       end
     end
 
     it "renders rows in the question's natural option order (no score sorting)" do
-      rows = page.all("#question_#{question.id} tbody tr td.w-2\\/3").map(&:text)
+      rows = page.all("#question_#{question.id} tbody tr td:first-child").map(&:text)
       expect(rows.first(3)).to eq(%w(Alpha Beta Gamma))
     end
 
@@ -86,8 +86,8 @@ describe "Admin views BORDA results" do
       option_d = create(:election_response_option, question:, body: { "en" => "Delta" })
       visit dashboard_path
       within "#question_#{question.id} table" do
-        expect(score_cell(option_d)).to have_text("0 points")
-        expect(score_percent_cell(option_d)).to have_text("0%")
+        expect(score_cell(option_d)).to have_content("0 points")
+        expect(score_percent_cell(option_d)).to have_content("0%")
       end
     end
   end
@@ -110,8 +110,8 @@ describe "Admin views BORDA results" do
     it "does not render a Score column" do
       within "#question_#{question.id} table" do
         expect(page).to have_no_css("thead th", text: "Score")
-        expect(page).to have_no_css("[data-option-borda-score-text]")
-        expect(page).to have_no_css("[data-option-borda-score-percent-text]")
+        expect(page).to have_no_css("[data-option-result-score-text]")
+        expect(page).to have_no_css("[data-option-result-score-percent-text]")
       end
     end
   end

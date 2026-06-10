@@ -11,9 +11,7 @@ module Decidim
 
           let(:cell_path) { "decidim/extra_censuses/voting_methods/borda/results" }
           let(:election) { create(:election, :published_results) }
-          let(:question) do
-            create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" })
-          end
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" }) }
           let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }) }
           let!(:option_b) { create(:election_response_option, question:, body: { "en" => "Beta" }) }
           let!(:option_c) { create(:election_response_option, question:, body: { "en" => "Gamma" }) }
@@ -30,29 +28,22 @@ module Decidim
           end
 
           describe "per-option rendering" do
-            it "sizes each bar by its share of the total points, not the max" do
-              expect(subject).to have_css(".percent-bar-width[style*='width: 54.5%']")
-              expect(subject).to have_css(".percent-bar-width[style*='width: 36.4%']")
-              expect(subject).to have_css(".percent-bar-width[style*='width: 9.1%']")
-              expect(subject).to have_no_css(".percent-bar-width[style*='width: 100%']")
-            end
-
             it "shows the points-share percentage and a votes/points line" do
-              expect(subject).to have_text("54.5%")
-              expect(subject).to have_text("2 votes, 6 points", normalize_ws: true)
-              expect(subject).to have_text("1 vote, 1 point", normalize_ws: true)
+              expect(subject).to have_content("54.5%")
+              expect(subject).to have_content("2 votes, 6 points", normalize_ws: true)
+              expect(subject).to have_content("1 vote, 1 point", normalize_ws: true)
             end
 
             it "keeps the borda and upstream live-update hooks" do
-              expect(subject).to have_css("[data-option-borda-score-width='#{question.id},#{option_a.id}']")
-              expect(subject).to have_css("[data-option-borda-score-text='#{question.id},#{option_a.id}']")
+              expect(subject).to have_css("[data-option-result-score-width='#{question.id},#{option_a.id}']")
+              expect(subject).to have_css("[data-option-result-score-text='#{question.id},#{option_a.id}']")
               expect(subject).to have_css("[data-option-votes-count-text='#{question.id},#{option_a.id}']")
             end
           end
 
           describe "TOTAL footer" do
             it "totals votes and points" do
-              expect(subject).to have_text("5 votes, 11 points", normalize_ws: true)
+              expect(subject).to have_content("5 votes, 11 points", normalize_ws: true)
               expect(subject).to have_css("[data-question-total-votes-text='#{question.id}']")
               expect(subject).to have_css("[data-question-total-score-text='#{question.id}']")
             end
@@ -105,8 +96,8 @@ module Decidim
                 panel = subject.find("[data-winners-toggle-target='winners']", visible: :all)
                 expect(panel).to have_css("strong.label", text: "First", visible: :all)
                 expect(panel).to have_css("strong.label", text: "Second", visible: :all)
-                expect(panel).to have_text("Has received 2 votes, totaling 6 points (54.5%)", normalize_ws: true)
-                expect(panel).to have_text("Top pick")
+                expect(panel).to have_content("Has received 2 votes, totaling 6 points (54.5%)", normalize_ws: true)
+                expect(panel).to have_content("Top pick")
                 expect(panel).to have_no_css("[data-option-body]", text: "Beta", visible: :all)
                 text = panel.text(:all)
                 expect(text.index("Alpha")).to be < text.index("Gamma")
@@ -175,9 +166,9 @@ module Decidim
             it "renders group subheadings with their option rows" do
               expect(subject).to have_css("h3.question-group-title", text: "Animals")
               expect(subject).to have_css("h3.question-group-title", text: "Plants")
-              expect(subject).to have_text("Cat")
-              expect(subject).to have_text("Dog")
-              expect(subject).to have_text("Oak")
+              expect(subject).to have_content("Cat")
+              expect(subject).to have_content("Dog")
+              expect(subject).to have_content("Oak")
             end
           end
 

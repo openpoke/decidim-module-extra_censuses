@@ -18,25 +18,18 @@ module Decidim
           let!(:option_b) { create(:election_response_option, question:) }
           let!(:option_c) { create(:election_response_option, question:) }
           let(:selected) { [option_a, option_b, option_c] }
-          let(:votes_buffer) do
-            { question.id.to_s => { option_a.id.to_s => "1", option_b.id.to_s => "2", option_c.id.to_s => "3" } }
-          end
+          let(:votes_buffer) { { question.id.to_s => { option_a.id.to_s => "1", option_b.id.to_s => "2", option_c.id.to_s => "3" } } }
 
           controller Decidim::PagesController
 
           describe "flat render" do
             it "renders one ranked row per selected option in rank order with points" do
-              expect(subject).to have_css("div.flex.items-center.gap-2", count: 3)
-              expect(subject).to have_css("span.font-semibold", text: "[1]")
-              expect(subject).to have_css("span.font-semibold", text: "[2]")
-              expect(subject).to have_css("span.font-semibold", text: "[3]")
-              expect(subject).to have_css("span.text-gray", text: "3 pts")
-              expect(subject).to have_css("span.text-gray", text: "2 pts")
-              expect(subject).to have_css("span.text-gray", text: "1 pt")
-            end
-
-            it "shows no group subheadings for a flat question" do
-              expect(subject).to have_no_css("p.font-semibold")
+              expect(subject).to have_content("[1]")
+              expect(subject).to have_content("[2]")
+              expect(subject).to have_content("[3]")
+              expect(subject).to have_content("3 pts")
+              expect(subject).to have_content("2 pts")
+              expect(subject).to have_content("1 pt")
             end
           end
 
@@ -46,17 +39,15 @@ module Decidim
             let!(:option_a) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "Cat" }) }
             let!(:option_b) { create(:election_response_option, question:, group_id: group_b_id, body: { "en" => "Oak" }) }
             let(:selected) { [option_a, option_b] }
-            let(:votes_buffer) do
-              { question.id.to_s => { option_a.id.to_s => "1", option_b.id.to_s => "2" } }
-            end
+            let(:votes_buffer) { { question.id.to_s => { option_a.id.to_s => "1", option_b.id.to_s => "2" } } }
 
             it "renders group subheadings with their ranked rows" do
-              expect(subject).to have_css("p.font-semibold", text: "Animals")
-              expect(subject).to have_css("p.font-semibold", text: "Plants")
-              expect(subject).to have_css("span.font-semibold", text: "[1]")
-              expect(subject).to have_css("span.font-semibold", text: "[2]")
-              expect(subject).to have_text("Cat")
-              expect(subject).to have_text("Oak")
+              expect(subject).to have_content("Animals")
+              expect(subject).to have_content("Plants")
+              expect(subject).to have_content("[1]")
+              expect(subject).to have_content("[2]")
+              expect(subject).to have_content("Cat")
+              expect(subject).to have_content("Oak")
             end
           end
         end

@@ -5,6 +5,8 @@ module Decidim
     # Admin permission cases added by this module.
     module ElectionsAdminPermissionsOverride
       def permissions
+        return super unless user && permission_action.scope == :admin
+
         toggle_allow(label_editable?) if updating_response_option_label?
         super
       end
@@ -16,7 +18,7 @@ module Decidim
       end
 
       def label_editable?
-        question = context.fetch(:resource, nil)
+        question = context[:resource]
         return false unless question
 
         election = question.election

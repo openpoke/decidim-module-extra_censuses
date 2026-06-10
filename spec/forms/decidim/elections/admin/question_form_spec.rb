@@ -298,9 +298,7 @@ module Decidim
 
           describe "non_empty_groups_have_title" do
             context "when a group with options has a blank title" do
-              let(:groups) do
-                { "0" => { "id" => "g1aaaaaa", "title_en" => "", "position" => 0 } }
-              end
+              let(:groups) { { "0" => { "id" => "g1aaaaaa", "title_en" => "", "position" => 0 } } }
 
               it { is_expected.not_to be_valid }
 

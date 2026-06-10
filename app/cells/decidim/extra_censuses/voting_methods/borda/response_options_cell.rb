@@ -5,6 +5,8 @@ module Decidim
     module VotingMethods
       module Borda
         class ResponseOptionsCell < Decidim::ViewModel
+          include Decidim::ExtraCensuses::GroupedResponseOptionsHelper
+
           def show
             render
           end
@@ -21,11 +23,21 @@ module Decidim
           private
 
           def positions
-            @positions ||= Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.new(
-              votes_buffer: context[:votes_buffer] || {},
-              voter_uid: context[:voter_uid],
-              question: model
-            ).to_h
+            @positions ||= BufferedPositions.lookup(model, context)
+          end
+
+          # Raw (uninterpolated) i18n templates fed to the Stimulus controller, which
+          # substitutes %{position} / %{count} client-side as the number of ranked options changes.
+          def label_one_template
+            t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: 1)
+          end
+
+          def label_other_template
+            t("decidim.extra_censuses.elections.votes.borda.position_label", position: "%{position}", count: "%{count}")
+          end
+
+          def counter_template
+            t("decidim.extra_censuses.elections.votes.borda.selected_counter", count: "%{count}", max: "%{max}")
           end
 
           def response_position(option)

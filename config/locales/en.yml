@@ -110,7 +110,7 @@ en:
           edit_label: Set label
           modal:
             cancel: Cancel
-            help: Use label to let users easily identify who has win the election
+            help: Use label to let users easily identify who has won the election
               and in which order. If you use some correction mechanism over the results
               (for instance, applying parity), you can explain it here too.
             position_help: Optional. Set 1, 2, 3… to order winners in the expanded
@@ -218,12 +218,12 @@ en:
             ungrouped_options_title: Ungrouped response options
         results:
           borda:
-            points:
-              one: "%{count} point"
-              other: "%{count} points"
             show_results: Show results
             show_winners: Show winners
             winner_summary: Has received %{votes}, totaling %{points} (%{percent})
+          points:
+            one: "%{count} point"
+            other: "%{count} points"
         votes:
           borda:
             confirm_points:

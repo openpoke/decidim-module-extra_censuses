@@ -12,6 +12,9 @@ module Decidim::ExtraCensuses
       files: {
         # models
         "/app/models/decidim/elections/question.rb" => "5b8422f140ba46d959fbe979deefd223",
+        "/app/models/decidim/elections/response_option.rb" => "e80df56ee6f6f1422f9d05fbd8205e95",
+        # permissions
+        "/app/permissions/decidim/elections/admin/permissions.rb" => "f906db775613a7f9722c5ca48efba86b",
         # forms
         "/app/forms/decidim/elections/admin/question_form.rb" => "df808ddabd28c135e45b6fe4df0325a7",
         "/app/forms/decidim/elections/admin/response_option_form.rb" => "18e78ccbc41f1fc8bbe8298bd6535fc3",

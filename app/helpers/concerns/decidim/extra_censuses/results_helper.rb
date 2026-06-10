@@ -7,6 +7,13 @@ module Decidim
     module ResultsHelper
       extend ActiveSupport::Concern
 
+      # Single source for the score share shown in HTML and live-update JSON.
+      def self.percentage(score, total)
+        return 0 if total.to_i <= 0
+
+        (score.to_f / total * 100).round(1)
+      end
+
       included do
         def computes_results?(question)
           !!question.voting_method_manifest&.computes_results?
@@ -27,10 +34,7 @@ module Decidim
         end
 
         def score_percentage(question, option)
-          total = score_total(question)
-          return 0 if total <= 0
-
-          (score_for(question, option).to_f / total * 100).round(1)
+          Decidim::ExtraCensuses::ResultsHelper.percentage(score_for(question, option), score_total(question))
         end
 
         private

@@ -23,10 +23,10 @@ module Decidim
 
       describe "#result_scores" do
         it "runs the calculator once per question and memoizes" do
-          allow(Decidim::ExtraCensuses::BordaScorer).to receive(:new).and_call_original
+          allow(Decidim::ExtraCensuses::VotingMethods::Borda::Scorer).to receive(:new).and_call_original
           helper.result_scores(question)
           helper.result_scores(question)
-          expect(Decidim::ExtraCensuses::BordaScorer).to have_received(:new).once
+          expect(Decidim::ExtraCensuses::VotingMethods::Borda::Scorer).to have_received(:new).once
         end
       end
 

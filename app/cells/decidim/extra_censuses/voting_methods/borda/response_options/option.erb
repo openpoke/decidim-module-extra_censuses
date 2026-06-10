@@ -1,6 +1,6 @@
 <% current = response_position(@option) %>
 <% checked = current.present? %>
-<div class="flex items-center justify-between gap-4 w-full" data-voter-borda-target="row">
+<div class="flex items-center justify-between gap-4 w-full">
   <label class="flex items-center gap-2 grow">
     <%= check_box_tag "borda-checkbox-#{model.id}-#{@option.id}",
                       @option.id,

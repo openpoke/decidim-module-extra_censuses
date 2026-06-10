@@ -23,6 +23,15 @@ module Decidim
               Decidim::ExtraCensuses::VotingMethods::Borda::QuestionValidator.new.validate(self)
             end
           end
+
+          def map_model(model)
+            super
+            self.scoring_scale = model.scoring_scale
+          end
+
+          def voting_method_settings
+            super.merge("scoring_scale" => scoring_scale)
+          end
         end
       end
     end

@@ -24,18 +24,14 @@ module Decidim
           # `selected_options.size` is the full ranked count, so start_from_min
           # points match even when `options` is just one group.
           def confirm_rows(options)
-            options
-              .map { |option| [option, positions[option.id.to_s].to_i] }
-              .sort_by { |_option, rank| rank }
-              .map { |option, rank| [option, rank, model.borda_points(rank, selected_options.size)] }
+            options.sort_by { |option| positions[option.id.to_s].to_i }.map do |option|
+              rank = positions[option.id.to_s].to_i
+              [option, rank, model.borda_points(rank, selected_options.size)]
+            end
           end
 
           def positions
-            @positions ||= Decidim::ExtraCensuses::VotingMethods::Borda::BufferedPositions.new(
-              votes_buffer: context[:votes_buffer] || {},
-              voter_uid: context[:voter_uid],
-              question: model
-            ).to_h
+            @positions ||= BufferedPositions.lookup(model, context)
           end
         end
       end

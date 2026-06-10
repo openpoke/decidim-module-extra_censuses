@@ -7,9 +7,7 @@ describe "Admin sets response option winner label" do
   let(:participatory_process) { create(:participatory_process, organization:) }
   let(:current_component) { create(:component, participatory_space: participatory_process, manifest_name: "elections") }
   let!(:election) { create(:election, :real_time, :published, :ongoing, :with_internal_users_census, component: current_component) }
-  let!(:question) do
-    create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" })
-  end
+  let!(:question) { create(:election_question, :borda, election:, max_choices: 3, body: { "en" => "Rank these" }) }
   let!(:option_a) { create(:election_response_option, question:, body: { "en" => "Alpha" }) }
   let!(:option_b) { create(:election_response_option, :with_label, question:, body: { "en" => "Beta" }) }
   let!(:plain_question) { create(:election_question, election:, body: { "en" => "Pick one" }) }

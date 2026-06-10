@@ -10,16 +10,12 @@ module Decidim
       let(:election) { create(:election, :ongoing) }
       let(:voter_uid) { "voter_#{SecureRandom.hex(4)}" }
 
-      let!(:borda_question) do
-        create(:election_question, :borda, :voting_enabled, election:, max_choices: 4, min_choices: 2)
-      end
+      let!(:borda_question) { create(:election_question, :borda, :voting_enabled, election:, max_choices: 4, min_choices: 2) }
       let!(:b_opt_a) { create(:election_response_option, question: borda_question) }
       let!(:b_opt_b) { create(:election_response_option, question: borda_question) }
       let!(:b_opt_c) { create(:election_response_option, question: borda_question) }
 
-      let!(:standard_question) do
-        create(:election_question, :voting_enabled, election:, question_type: "multiple_option", max_choices: 2)
-      end
+      let!(:standard_question) { create(:election_question, :voting_enabled, election:, question_type: "multiple_option", max_choices: 2) }
       let!(:s_opt_a) { create(:election_response_option, question: standard_question) }
       let!(:s_opt_b) { create(:election_response_option, question: standard_question) }
 
@@ -87,9 +83,7 @@ module Decidim
       end
 
       context "when the borda vote exceeds max_choices" do
-        let(:borda_question) do
-          create(:election_question, :borda, :voting_enabled, election:, max_choices: 2, min_choices: 1)
-        end
+        let(:borda_question) { create(:election_question, :borda, :voting_enabled, election:, max_choices: 2, min_choices: 1) }
 
         let(:data) do
           {
@@ -140,9 +134,7 @@ module Decidim
 
       context "when casting a standard vote on a per-question election" do
         let(:election) { create(:election, :ongoing, :per_question) }
-        let(:data) do
-          { standard_question.id.to_s => [s_opt_a.id.to_s, s_opt_b.id.to_s] }
-        end
+        let(:data) { { standard_question.id.to_s => [s_opt_a.id.to_s, s_opt_b.id.to_s] } }
 
         it "broadcasts :ok and stores no positions" do
           expect { subject.call }.to broadcast(:ok)

@@ -1,7 +1,33 @@
-<% model.response_options.each do |option| %>
-  <div class="rounded-lg border border-gray p-4 <%= context[:wrapper_class] %>">
-    <%= option(option) %>
-  </div>
-<% end %>
+<div class="flex flex-col gap-4"
+     data-controller="voter-borda"
+     data-voter-borda-min-choices-value="<%= model.min_choices.to_i %>"
+     data-voter-borda-max-choices-value="<%= model.max_votable_options %>"
+     data-voter-borda-scoring-scale-value="<%= model.scoring_scale %>"
+     data-voter-borda-label-one-value="<%= label_one_template %>"
+     data-voter-borda-label-other-value="<%= label_other_template %>"
+     data-voter-borda-counter-template-value="<%= counter_template %>">
+  <% if model.grouped? %>
+    <% grouped_response_options(model).each do |group, options| %>
+      <div class="question-group mt-6">
+        <% if group %>
+          <h2 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h2>
+        <% end %>
+        <div class="question-group-options flex flex-col gap-4">
+          <% options.each do |option| %>
+            <div class="rounded-lg border border-gray p-4 <%= context[:wrapper_class] %>">
+              <%= option(option) %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <% model.response_options.each do |option| %>
+      <div class="rounded-lg border border-gray p-4 <%= context[:wrapper_class] %>">
+        <%= option(option) %>
+      </div>
+    <% end %>
+  <% end %>
 
-<%= status %>
+  <%= status %>
+</div>

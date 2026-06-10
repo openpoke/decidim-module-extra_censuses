@@ -65,7 +65,7 @@ module Decidim
         end
       end
 
-      initializer "decidim.extra_censuses.voting_methods", after: "decidim.elections.default_censuses" do
+      initializer "decidim.extra_censuses.voting_methods" do
         next unless Decidim.module_installed?(:elections)
 
         Decidim::ExtraCensuses.voting_method_registry.register(:borda) do |manifest|
@@ -73,7 +73,7 @@ module Decidim
           manifest.form_fields = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields"
           manifest.question_validator = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionValidator"
           manifest.responses_parser = "Decidim::ExtraCensuses::VotingMethods::Borda::ResponsesParser"
-          manifest.results_calculator = "Decidim::ExtraCensuses::BordaScorer"
+          manifest.results_calculator = "Decidim::ExtraCensuses::VotingMethods::Borda::Scorer"
           manifest.config_chips = "Decidim::ExtraCensuses::VotingMethods::Borda::ConfigChipsPresenter"
         end
       end
@@ -84,7 +84,7 @@ module Decidim
 
       initializer "decidim.extra_censuses.add_cells_view_paths" do
         Cell::ViewModel.view_paths << File.expand_path("app/cells", root)
-        Cell::ViewModel.view_paths << File.expand_path("app/views", root) # for partials
+        Cell::ViewModel.view_paths << File.expand_path("app/views", root)
       end
 
       # Overrides and helpers

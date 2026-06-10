@@ -22,16 +22,6 @@ FactoryBot.modify do
     end
   end
 
-  factory :election_vote do
-    trait :with_position do
-      transient do
-        rank { 1 }
-      end
-
-      position { rank }
-    end
-  end
-
   factory :election_response_option do
     trait :with_label do
       settings do

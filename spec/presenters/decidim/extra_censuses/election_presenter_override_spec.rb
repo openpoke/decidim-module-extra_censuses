@@ -18,42 +18,48 @@ module Decidim
         include_context "with a ranked borda vote"
 
         let(:json) { presenter.to_json(admin: true) }
-        let(:totals) { Decidim::ExtraCensuses::BordaScorer.new(question).totals_by_response_option }
+        let(:totals) { Decidim::ExtraCensuses::VotingMethods::Borda::Scorer.new(question).totals_by_response_option }
 
-        it "annotates each borda option with borda_score and borda_score_text" do
+        it "annotates each borda option with result_score and result_score_text" do
           expect(option_hash_for(json, question, option_a)).to include(
-            borda_score: totals.fetch(option_a.id),
-            borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: totals.fetch(option_a.id))
+            result_score: totals.fetch(option_a.id),
+            result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: totals.fetch(option_a.id))
           )
           expect(option_hash_for(json, question, option_b)).to include(
-            borda_score: totals.fetch(option_b.id),
-            borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: totals.fetch(option_b.id))
+            result_score: totals.fetch(option_b.id),
+            result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: totals.fetch(option_b.id))
           )
           expect(option_hash_for(json, question, option_c)).to include(
-            borda_score: totals.fetch(option_c.id),
-            borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: totals.fetch(option_c.id))
+            result_score: totals.fetch(option_c.id),
+            result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: totals.fetch(option_c.id))
           )
         end
 
-        it "matches BordaScorer totals exactly" do
+        it "matches the borda scorer totals exactly" do
           # A: (4-1+1) + (4-2+1) = 7, B: (4-2+1) + (4-1+1) = 7, C: (4-3+1) = 2
-          expect(option_hash_for(json, question, option_a)[:borda_score]).to eq(7)
-          expect(option_hash_for(json, question, option_b)[:borda_score]).to eq(7)
-          expect(option_hash_for(json, question, option_c)[:borda_score]).to eq(2)
+          expect(option_hash_for(json, question, option_a)[:result_score]).to eq(7)
+          expect(option_hash_for(json, question, option_b)[:result_score]).to eq(7)
+          expect(option_hash_for(json, question, option_c)[:result_score]).to eq(2)
         end
 
         it "annotates each borda option with its score percentage text" do
           # total score = 7 + 7 + 2 = 16 -> A,B = 43.8%, C = 12.5%
-          expect(option_hash_for(json, question, option_a)[:borda_score_percent_text]).to eq("43.8%")
-          expect(option_hash_for(json, question, option_b)[:borda_score_percent_text]).to eq("43.8%")
-          expect(option_hash_for(json, question, option_c)[:borda_score_percent_text]).to eq("12.5%")
+          expect(option_hash_for(json, question, option_a)[:result_score_percent_text]).to eq("43.8%")
+          expect(option_hash_for(json, question, option_b)[:result_score_percent_text]).to eq("43.8%")
+          expect(option_hash_for(json, question, option_c)[:result_score_percent_text]).to eq("12.5%")
         end
 
         it "reports score 0 for an unvoted borda option" do
           expect(option_hash_for(json, question, option_d)).to include(
-            borda_score: 0,
-            borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: 0)
+            result_score: 0,
+            result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: 0)
           )
+        end
+
+        it "annotates the question with the total score text" do
+          # total score = 7 + 7 + 2 = 16
+          question_hash = json[:questions].find { |hash| hash[:id] == question.id }
+          expect(question_hash[:result_score_total_text]).to eq(I18n.t("decidim.extra_censuses.elections.results.points", count: 16))
         end
       end
 
@@ -66,13 +72,13 @@ module Decidim
 
         it "attaches scores to the borda question only and leaves the non-borda one untouched" do
           # start_from_max, max_choices = 4, A ranked 1 => 4, B ranked 2 => 3
-          expect(option_hash_for(json, question, option_a)).to include(borda_score: 4, borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: 4))
-          expect(option_hash_for(json, question, option_b)).to include(borda_score: 3, borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: 3))
+          expect(option_hash_for(json, question, option_a)).to include(result_score: 4, result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: 4))
+          expect(option_hash_for(json, question, option_b)).to include(result_score: 3, result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: 3))
 
           standard_option_hash = option_hash_for(json, standard_question, standard_option)
-          expect(standard_option_hash).not_to have_key(:borda_score)
-          expect(standard_option_hash).not_to have_key(:borda_score_text)
-          expect(standard_option_hash).not_to have_key(:borda_score_percent_text)
+          expect(standard_option_hash).not_to have_key(:result_score)
+          expect(standard_option_hash).not_to have_key(:result_score_text)
+          expect(standard_option_hash).not_to have_key(:result_score_percent_text)
         end
       end
 
@@ -83,9 +89,9 @@ module Decidim
 
         it "does not add borda score keys to its option hashes" do
           option_hash = option_hash_for(json, standard_question, standard_option)
-          expect(option_hash).not_to have_key(:borda_score)
-          expect(option_hash).not_to have_key(:borda_score_text)
-          expect(option_hash).not_to have_key(:borda_score_percent_text)
+          expect(option_hash).not_to have_key(:result_score)
+          expect(option_hash).not_to have_key(:result_score_text)
+          expect(option_hash).not_to have_key(:result_score_percent_text)
         end
       end
 
@@ -97,9 +103,9 @@ module Decidim
         it "does not leak score keys when the option results are not exposed" do
           option_hash = option_hash_for(json, question, option_a)
           expect(option_hash).not_to have_key(:votes_count)
-          expect(option_hash).not_to have_key(:borda_score)
-          expect(option_hash).not_to have_key(:borda_score_text)
-          expect(option_hash).not_to have_key(:borda_score_percent_text)
+          expect(option_hash).not_to have_key(:result_score)
+          expect(option_hash).not_to have_key(:result_score_text)
+          expect(option_hash).not_to have_key(:result_score_percent_text)
         end
       end
 
@@ -114,8 +120,8 @@ module Decidim
           # start_from_max, max_choices = 4, A ranked 1 => 4 - 1 + 1 = 4
           expect(option_hash).to have_key(:votes_count)
           expect(option_hash).to include(
-            borda_score: 4,
-            borda_score_text: I18n.t("decidim.extra_censuses.elections.results.borda.points", count: 4)
+            result_score: 4,
+            result_score_text: I18n.t("decidim.extra_censuses.elections.results.points", count: 4)
           )
         end
       end

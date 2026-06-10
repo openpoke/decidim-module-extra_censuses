@@ -5,11 +5,15 @@ module Decidim
     module ResponseOptionOverride
       extend ActiveSupport::Concern
 
-      def label
-        raw = settings["label"]
-        return if raw.blank?
+      included do
+        include Decidim::Loggable
+      end
 
-        Decidim::ExtraCensuses::ResponseOptionLabel.new(raw)
+      def label
+        @label ||= begin
+          raw = settings["label"]
+          Decidim::ExtraCensuses::ResponseOptionLabel.new(raw) if raw.present?
+        end
       end
 
       def labeled?

@@ -88,10 +88,10 @@ describe "Admin manages BORDA voting for election questions" do
 
     it "hides the scoring-scale select until the checkbox is checked" do
       within "#accordion-questionnaire_question_#{question.id}-field" do
-        expect(page).to have_css(".questionnaire-question-scoring-scale.hidden", visible: :all)
+        expect(page).to have_css(".questionnaire-question-scoring-scale", visible: :hidden)
 
         check I18n.t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions")
-        expect(page).to have_no_css(".questionnaire-question-scoring-scale.hidden", visible: :all)
+        expect(page).to have_css(".questionnaire-question-scoring-scale", visible: :visible)
       end
     end
 
@@ -102,7 +102,7 @@ describe "Admin manages BORDA voting for election questions" do
                from: I18n.t("scoring_scale_label", scope: "decidim.extra_censuses.elections.admin.questions")
 
         uncheck I18n.t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions")
-        expect(page).to have_css(".questionnaire-question-scoring-scale.hidden", visible: :all)
+        expect(page).to have_css(".questionnaire-question-scoring-scale", visible: :hidden)
         expect(scoring_scale_select.value).to eq("start_from_max")
       end
     end
@@ -110,7 +110,7 @@ describe "Admin manages BORDA voting for election questions" do
     it "hides the BORDA wrapper when question type is single_option" do
       within "#accordion-questionnaire_question_#{question.id}-field" do
         select "Single option", from: "Type"
-        expect(page).to have_css(".questionnaire-question-borda.hidden", visible: :all)
+        expect(page).to have_css(".questionnaire-question-borda", visible: :hidden)
       end
     end
   end
