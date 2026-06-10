@@ -73,7 +73,7 @@ describe "Admin manages custom CSV census" do
 
         click_on "Save configuration"
 
-        expect(page).to have_content("Census configuration saved")
+        expect(page).to have_admin_callout("Census configuration saved")
       end
     end
 
@@ -108,7 +108,7 @@ describe "Admin manages custom CSV census" do
 
           click_on "Save and continue"
 
-          expect(page).to have_content("Census updated successfully")
+          expect(page).to have_admin_callout("Census updated successfully")
 
           visit election_census_path
           select "Custom CSV", from: "census_manifest"

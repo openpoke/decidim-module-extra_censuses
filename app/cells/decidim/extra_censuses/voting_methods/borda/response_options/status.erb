@@ -1,0 +1,16 @@
+<div class="borda-status mt-2 text-sm">
+  <span data-voter-borda-target="counter" aria-live="polite" aria-atomic="true">
+    <%= t("decidim.extra_censuses.elections.votes.borda.selected_counter",
+          count: 0, max: model.max_votable_options) %>
+  </span>
+  <small class="form-error borda-limit-hint" data-voter-borda-target="limitHint" style="display:none;" aria-live="assertive" aria-atomic="true">
+    <%= t("decidim.extra_censuses.elections.votes.borda.limit_reached") %>
+  </small>
+</div>
+
+<%# Upstream elections.js scans .response[data-max-choices] for a .max-choices-alert %>
+<%# child and dereferences it unconditionally. The Borda vote replaces the upstream %>
+<%# options markup, so re-supply the element to avoid a null crash in JS mode. %>
+<% if model.max_choices.presence %>
+  <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
+<% end %>

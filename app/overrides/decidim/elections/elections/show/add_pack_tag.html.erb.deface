@@ -1,0 +1,4 @@
+<!-- insert_before "div.results-list" -->
+<% if election.result_published_questions.any? { |published_question| published_question.voting_method == "borda" } %>
+  <% append_javascript_pack_tag "decidim_extra_censuses" %>
+<% end %>

@@ -29,11 +29,24 @@ module Decidim
 
         return false if min.nil? && max.nil?
 
-        count = question.response_options.where(id: response_ids).count
+        count = chosen_options_count(response_ids)
         return true if min && count < min
         return true if max && count > max
 
         false
+      end
+
+      # Borda votes arrive as { option_id => position }; standard votes as an
+      # array of option ids. Both reduce to a set of chosen option ids; blank
+      # (unranked) positions are ignored.
+      def chosen_options_count(response_ids)
+        payload = response_ids.try(:to_unsafe_h) || response_ids
+        ids = if payload.is_a?(Hash)
+                payload.reject { |_option_id, position| position.to_s.strip.empty? }.keys
+              else
+                Array(payload)
+              end
+        question.response_options.where(id: ids).count
       end
 
       def choices_range_alert_message

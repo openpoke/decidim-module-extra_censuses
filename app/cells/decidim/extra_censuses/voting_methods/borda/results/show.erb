@@ -1,0 +1,21 @@
+<% if show_winners_toggle? %>
+  <div data-controller="winners-toggle">
+    <div class="flex justify-end mb-2">
+      <button type="button" class="button button__sm button__secondary"
+              data-winners-toggle-target="button"
+              data-action="winners-toggle#toggle"
+              data-show-winners="<%= t("decidim.extra_censuses.elections.results.borda.show_winners") %>"
+              data-show-results="<%= t("decidim.extra_censuses.elections.results.borda.show_results") %>">
+        <%= t("decidim.extra_censuses.elections.results.borda.show_winners") %>
+      </button>
+    </div>
+    <div data-winners-toggle-target="results">
+      <%= render :options %>
+    </div>
+    <div data-winners-toggle-target="winners" class="hidden">
+      <%= render :winners %>
+    </div>
+  </div>
+<% else %>
+  <%= render :options %>
+<% end %>

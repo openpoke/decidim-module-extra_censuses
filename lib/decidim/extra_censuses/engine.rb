@@ -12,6 +12,8 @@ module Decidim
       initializer "decidim.extra_censuses.mount_routes" do
         Decidim::Elections::AdminEngine.routes.prepend do
           resources :elections, only: [] do
+            resources :response_option_labels, only: [:update], controller: "/decidim/elections/admin/response_option_labels"
+
             resources :census_updates, only: [:index, :new, :create, :destroy], controller: "/decidim/elections/admin/census_updates"
 
             resources :survey_imports, only: [:index, :new, :create], controller: "/decidim/elections/admin/survey_imports" do
@@ -63,8 +65,26 @@ module Decidim
         end
       end
 
+      initializer "decidim.extra_censuses.voting_methods" do
+        next unless Decidim.module_installed?(:elections)
+
+        Decidim::ExtraCensuses.voting_method_registry.register(:borda) do |manifest|
+          manifest.model_concern = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFields"
+          manifest.form_fields = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionFormFields"
+          manifest.question_validator = "Decidim::ExtraCensuses::VotingMethods::Borda::QuestionValidator"
+          manifest.responses_parser = "Decidim::ExtraCensuses::VotingMethods::Borda::ResponsesParser"
+          manifest.results_calculator = "Decidim::ExtraCensuses::VotingMethods::Borda::Scorer"
+          manifest.config_chips = "Decidim::ExtraCensuses::VotingMethods::Borda::ConfigChipsPresenter"
+        end
+      end
+
       initializer "decidim.extra_censuses.webpacker.assets_path" do
         Decidim.register_assets_path File.expand_path("app/packs", root)
+      end
+
+      initializer "decidim.extra_censuses.add_cells_view_paths" do
+        Cell::ViewModel.view_paths << File.expand_path("app/cells", root)
+        Cell::ViewModel.view_paths << File.expand_path("app/views", root)
       end
 
       # Overrides and helpers
@@ -73,18 +93,36 @@ module Decidim
         Decidim::Elections::Admin::CensusController.helper(Decidim::Elections::Admin::Censuses::CustomCsvHelper)
 
         Decidim::Elections::Question.include(Decidim::ExtraCensuses::QuestionOverride)
+        Decidim::Elections::ResponseOption.include(Decidim::ExtraCensuses::ResponseOptionOverride)
+        Decidim::Elections::ElectionPresenter.include(Decidim::ExtraCensuses::ElectionPresenterOverride)
         Decidim::Elections::Admin::ResponseOptionForm.include(Decidim::ExtraCensuses::ResponseOptionFormOverride)
         Decidim::Elections::Admin::QuestionForm.include(Decidim::ExtraCensuses::QuestionFormOverride)
+
+        Decidim::ExtraCensuses.voting_method_registry.manifests.each do |manifest|
+          Decidim::Elections::Question.include(manifest.model_concern.constantize) if manifest.model_concern.present?
+          Decidim::Elections::Admin::QuestionForm.include(manifest.form_fields.constantize) if manifest.form_fields.present?
+        end
+
+        Decidim::Elections::Admin::Permissions.prepend(Decidim::ExtraCensuses::ElectionsAdminPermissionsOverride)
         Decidim::Elections::Admin::UpdateQuestions.include(Decidim::ExtraCensuses::UpdateQuestionsOverride)
+        Decidim::Elections::CastVotes.include(Decidim::ExtraCensuses::CastVotesOverride)
         Decidim::Elections::VotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::PerQuestionVotesController.include(Decidim::ExtraCensuses::ChoicesRangeCheck)
         Decidim::Elections::ApplicationHelper.include(Decidim::ExtraCensuses::ApplicationHelperOverride)
 
         Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
+        Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::BordaVotingHelper)
+        Decidim::Elections::VotesController.helper(Decidim::ExtraCensuses::VotingMethodCellHelper)
+        Decidim::Elections::PerQuestionVotesController.helper(Decidim::ExtraCensuses::VotingMethodCellHelper)
         Decidim::Elections::Admin::QuestionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
         Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)
+        Decidim::Elections::Admin::ElectionsController.helper(Decidim::ExtraCensuses::AdminQuestionMetaHelper)
         Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::GroupedResponseOptionsHelper)
+        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::ResultsHelper)
+        Decidim::Elections::ElectionsController.helper(Decidim::ExtraCensuses::VotingMethodCellHelper)
       end
     end
   end

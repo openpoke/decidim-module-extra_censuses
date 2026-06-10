@@ -1,5 +1,7 @@
 <!-- surround_contents "div.question__response-options" -->
-<% if question.grouped? %>
+<% if (response_options_cell = voting_method_cell(question, "response_options", votes_buffer:, voter_uid:)) %>
+  <%= response_options_cell %>
+<% elsif question.grouped? %>
   <%= render "decidim/extra_censuses/elections/votes/grouped_question_response_options", question: question %>
 <% else %>
   <%= render_original %>

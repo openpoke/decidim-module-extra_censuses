@@ -5,6 +5,7 @@ locales: [en]
 
 ignore_unused:
   - "decidim.components.extra_censuses.name"
+  - "decidim.extra_censuses.elections.admin.dashboard.questions.meta.*"
   - "decidim.elections.admin.censuses.custom_csv_form.*"
   - "decidim.elections.admin.census_updates.*"
   - "decidim.elections.censuses.custom_csv.*"
@@ -16,6 +17,7 @@ ignore_unused:
   - "activemodel.attributes.custom_csv.*"
   - "activemodel.attributes.question.*"
   - "activemodel.errors.models.custom_csv.*"
+  - "activemodel.attributes.response_option_label.*"
 
 ignore_missing:
   - decidim.participatory_processes.scopes.global
@@ -27,6 +29,7 @@ ignore_missing:
   # Upstream keys provided by decidim-elections / decidim-forms locale files.
   - decidim.elections.admin.dashboard.questions_table.total
   - decidim.elections.admin.dashboard.questions_table.votes_count
+  - decidim.elections.elections.show.votes_count
   - decidim.elections.elections.vote_results.total
   - decidim.elections.elections.vote_results.total_votes
   - decidim.elections.votes.confirm.not_answered
