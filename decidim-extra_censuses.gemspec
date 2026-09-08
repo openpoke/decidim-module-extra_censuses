@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
     "bug_tracker_uri" => "https://github.com/openpoke/decidim-module-extra_censuses/issues",
     "source_code_uri" => "https://github.com/openpoke/decidim-module-extra_censuses"
   }
-  s.required_ruby_version = "~> 3.3"
+  s.required_ruby_version = "~> 3.4"
 
   s.name = "decidim-extra_censuses"
   s.summary = "Extra Censuses For the Election Component"

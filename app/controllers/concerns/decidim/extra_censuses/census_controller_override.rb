@@ -26,7 +26,7 @@ module Decidim
             end
             on(:invalid) do
               flash[:alert] = t("decidim.elections.admin.census.update.error")
-              render :edit, status: :unprocessable_entity
+              render :edit, status: :unprocessable_content
             end
           end
         end

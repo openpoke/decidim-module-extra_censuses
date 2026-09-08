@@ -13,7 +13,7 @@ env:
   CI: "true"
   RAILS_ENV: "test"
   DISABLE_SPRING: 1
-  RUBY_VERSION: 3.3.4
+  RUBY_VERSION: 3.4.7
   NODE_VERSION: 22.14.0
 
 concurrency:
