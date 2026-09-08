@@ -60,6 +60,8 @@ jobs:
           key: npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             npm-
+      - run: sudo apt update && sudo apt install -y libvips libvips-tools
+        name: Install libvips
       - run: bundle exec rake test_app
         name: Create test app
       - run: mkdir -p ./spec/decidim_dummy_app/tmp/screenshots
