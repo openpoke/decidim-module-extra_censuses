@@ -29,8 +29,6 @@ module Decidim
         Decidim.menu :admin_elections_menu do |menu|
           next if @election.blank?
 
-          # Requires Election#editable? from openpoke/decidim 0.31-backports (upstream PR #15687).
-          # On stock decidim 0.31.0 this method does not exist — replace with `!@election.published?`.
           show_tab = @election.census_manifest == "custom_csv" &&
                      @election.census_settings&.dig("columns").present? &&
                      @election.editable?
