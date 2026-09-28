@@ -1,0 +1,34 @@
+<% response_groups.each do |group, options| %>
+  <% if group %>
+    <%= render partial: "decidim/extra_censuses/elections/results/group_heading", formats: [:html], locals: { group: } %>
+  <% end %>
+  <% ordered_options(options).each do |option| %>
+    <div class="mb-4">
+      <h4 data-option-body>
+        <%= translated_attribute(option.body) %>
+        <% if label_shown? && option.labeled? %>
+          <%= render partial: "decidim/extra_censuses/elections/results/labels/badge", formats: [:html], locals: { label: option.label } %>
+        <% end %>
+      </h4>
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <div class="percent-bar">
+          <div class="percent-bar-width" style="width: <%= score_percentage(model, option) %>%" data-option-result-score-width="<%= model.id %>,<%= option.id %>"></div>
+        </div>
+        <div class="text-right text-sm leading-tight shrink-0 min-w-[64px]">
+          <div data-option-result-score-percent-text="<%= model.id %>,<%= option.id %>"><%= number_to_percentage(score_percentage(model, option), precision: 1) %></div>
+          <div>
+            <span data-option-votes-count-text="<%= model.id %>,<%= option.id %>"><%= t("votes_count", scope: "decidim.elections.elections.show", count: option.votes_count) %></span>,
+            <span data-option-result-score-text="<%= model.id %>,<%= option.id %>"><%= t("decidim.extra_censuses.elections.results.points", count: score_for(model, option)) %></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<div class="py-4 flex justify-between items-center">
+  <span><%= t("decidim.elections.elections.vote_results.total") %></span>
+  <div>
+    <span data-question-total-votes-text="<%= model.id %>"><%= t("total_votes", scope: "decidim.elections.elections.vote_results", count: model.total_votes) %></span>,
+    <span data-question-total-score-text="<%= model.id %>"><%= t("decidim.extra_censuses.elections.results.points", count: score_total(model)) %></span>
+  </div>
+</div>

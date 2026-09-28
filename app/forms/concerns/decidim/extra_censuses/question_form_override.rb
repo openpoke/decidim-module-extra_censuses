@@ -9,6 +9,7 @@ module Decidim
         attribute :min_choices, Integer
         attribute :grouped, :boolean, default: false
         attribute :groups, [Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm]
+        attribute :voting_method, String, default: "approval"
 
         validates :min_choices,
                   numericality: {
@@ -19,6 +20,8 @@ module Decidim
                   allow_blank: true
         validates :min_choices, absence: true, unless: :allows_min_choices?
 
+        validates :voting_method, inclusion: { in: ->(*) { Decidim::Elections::Question.voting_methods } }
+
         validate :grouped_requires_multiple_option, if: :grouped?
         validate :must_have_at_least_one_non_empty_group, if: :grouped?
         validate :non_empty_groups_have_title, if: :grouped?
@@ -28,7 +31,7 @@ module Decidim
         # Replaces upstream `response_options.size` so the min/max_choices
         # upper bound excludes options the admin has marked for deletion.
         def number_of_options
-          response_options.reject(&:deleted?).size
+          live_response_options.size
         end
 
         def allows_min_choices?
@@ -36,17 +39,16 @@ module Decidim
         end
 
         def groups_to_persist
-          live_options = response_options.reject(&:deleted?)
           groups.reject do |group|
-            group.deleted || live_options.none? { |opt| opt.group_id == group.id }
+            group.deleted || live_response_options.none? { |opt| opt.group_id == group.id }
           end
         end
 
-        def map_model(model)
-          self.grouped = model.grouped?
-        end
-
         private
+
+        def live_response_options
+          response_options.reject(&:deleted?)
+        end
 
         def grouped_requires_multiple_option
           return if question_type == "multiple_option"
@@ -77,13 +79,24 @@ module Decidim
 
         def response_options_have_valid_group_id
           known_ids = groups_to_persist.map(&:id)
-          response_options.reject(&:deleted?).each do |option|
-            next if option.group_id.present? && known_ids.include?(option.group_id)
+          return if live_response_options.all? { |option| option.group_id.present? && known_ids.include?(option.group_id) }
 
-            errors.add(:response_options, :invalid)
-            break
-          end
+          errors.add(:response_options, :invalid)
         end
+      end
+
+      # Module-level so voting-method form concerns can extend the mapping
+      # with their own attributes via `super`.
+      def map_model(model)
+        super
+        self.grouped = model.grouped?
+        self.voting_method = model.voting_method
+      end
+
+      # Settings keys owned by voting-method form concerns, merged into
+      # question.settings on save; each concern extends it via `super`.
+      def voting_method_settings
+        {}
       end
     end
   end

@@ -1,0 +1,3 @@
+<!-- insert_before "div.questionnaire-question-min-choices" -->
+<!-- sequence :after => "add_min_choices_field" -->
+<%= render "decidim/extra_censuses/elections/admin/questions/borda_voting", question: question, form: form, editable: editable %>

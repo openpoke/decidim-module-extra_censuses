@@ -1,0 +1,12 @@
+<% response_groups.each do |group, options| %>
+  <% if group %>
+    <p class="font-semibold"><%= translated_attribute(group.title) %></p>
+  <% end %>
+  <% confirm_rows(options).each do |option, rank, points| %>
+    <div class="flex items-center gap-2">
+      <span class="font-semibold">[<%= rank %>]</span>
+      <span class="flex-1"><%= translated_attribute(option.body) %></span>
+      <span class="text-gray"><%= t("decidim.extra_censuses.elections.votes.borda.confirm_points", count: points) %></span>
+    </div>
+  <% end %>
+<% end %>

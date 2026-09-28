@@ -83,6 +83,160 @@ module Decidim
           end
         end
       end
+
+      describe "#voting_method" do
+        context "when settings has no voting_method key" do
+          let(:settings) { {} }
+
+          it "defaults to 'approval'" do
+            expect(question.voting_method).to eq("approval")
+          end
+        end
+
+        context "when settings has voting_method set" do
+          let(:question) { create(:election_question, election:, settings:, max_choices: 3, question_type: "multiple_option") }
+          let(:settings) { { "voting_method" => "borda" } }
+
+          it "returns the stored value" do
+            expect(question.voting_method).to eq("borda")
+          end
+        end
+      end
+
+      describe "#scoring_scale" do
+        context "when settings has no scoring_scale key" do
+          let(:settings) { {} }
+
+          it "defaults to 'start_from_max'" do
+            expect(question.scoring_scale).to eq("start_from_max")
+          end
+        end
+
+        context "when settings has scoring_scale set" do
+          let(:settings) { { "scoring_scale" => "start_from_min" } }
+
+          it "returns the stored value" do
+            expect(question.scoring_scale).to eq("start_from_min")
+          end
+        end
+      end
+
+      describe "#allows_borda?" do
+        let(:settings) { {} }
+
+        context "when question_type is multiple_option" do
+          let(:question) { create(:election_question, election:, settings:, question_type: "multiple_option") }
+
+          it "is true" do
+            expect(question.allows_borda?).to be true
+          end
+        end
+
+        context "when question_type is single_option" do
+          let(:question) { create(:election_question, election:, settings:, question_type: "single_option") }
+
+          it "is false" do
+            expect(question.allows_borda?).to be false
+          end
+        end
+      end
+
+      describe "#borda_points" do
+        context "with start_from_max scoring" do
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_max") }
+
+          it "scores from max_votable_options regardless of ranked_options_count" do
+            expect(question.max_votable_options).to eq(3)
+            expect(question.borda_points(1, 3)).to eq(3)
+            expect(question.borda_points(2, 3)).to eq(2)
+            expect(question.borda_points(3, 3)).to eq(1)
+          end
+
+          it "ignores ranked_options_count, using max_votable_options as the base" do
+            expect(question.borda_points(1, 99)).to eq(3)
+          end
+        end
+
+        context "with start_from_min scoring" do
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_min") }
+
+          it "scores from ranked_options_count" do
+            expect(question.borda_points(1, 3)).to eq(3)
+            expect(question.borda_points(2, 3)).to eq(2)
+            expect(question.borda_points(3, 3)).to eq(1)
+          end
+
+          it "uses ranked_options_count as the base, not max_votable_options" do
+            expect(question.borda_points(1, 2)).to eq(2)
+          end
+        end
+
+        context "when position is below 1" do
+          let(:question) { create(:election_question, :borda, election:, max_choices: 3, scoring_scale: "start_from_max") }
+
+          it "returns 0" do
+            expect(question.borda_points(0, 3)).to eq(0)
+            expect(question.borda_points(-1, 3)).to eq(0)
+          end
+        end
+      end
+
+      describe "model-level validations" do
+        let(:question) { build(:election_question, election:, settings:, question_type: "multiple_option", max_choices: 3) }
+
+        context "when voting_method is invalid" do
+          let(:settings) { { "voting_method" => "ranked_pairs" } }
+
+          it "is invalid" do
+            expect(question).not_to be_valid
+            expect(question.errors[:voting_method]).to include("is invalid")
+          end
+        end
+
+        context "when scoring_scale is invalid" do
+          let(:settings) { { "scoring_scale" => "exotic" } }
+
+          it "is invalid" do
+            expect(question).not_to be_valid
+            expect(question.errors[:scoring_scale]).to include("is invalid")
+          end
+        end
+
+        context "when borda is enabled without max_choices" do
+          let(:question) { build(:election_question, election:, settings: { "voting_method" => "borda" }, question_type: "multiple_option", max_choices: nil) }
+
+          it "is invalid" do
+            expect(question).not_to be_valid
+            expect(question.errors[:voting_method]).to be_present
+          end
+        end
+
+        context "when borda is enabled with max_choices = 1" do
+          let(:question) { build(:election_question, election:, settings: { "voting_method" => "borda" }, question_type: "multiple_option", max_choices: 1) }
+
+          it "is invalid" do
+            expect(question).not_to be_valid
+            expect(question.errors[:voting_method]).to be_present
+          end
+        end
+
+        context "when borda is enabled with a single_option question" do
+          let(:question) { build(:election_question, election:, settings: { "voting_method" => "borda" }, question_type: "single_option", max_choices: 3) }
+
+          it "is invalid" do
+            expect(question).not_to be_valid
+            expect(question.errors[:voting_method]).to be_present
+          end
+        end
+
+        context "when borda is enabled with multiple_option and max_choices > 1" do
+          let(:question) { build(:election_question, election:, settings: { "voting_method" => "borda" }, question_type: "multiple_option", max_choices: 3) }
+
+          it "is valid" do
+            expect(question).to be_valid
+          end
+        end
+      end
     end
   end
 end

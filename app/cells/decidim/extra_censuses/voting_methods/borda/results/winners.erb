@@ -1,0 +1,12 @@
+<% winner_options.each do |option| %>
+  <div class="mb-4">
+    <h4 data-option-body>
+      <%= translated_attribute(option.body) %>
+      <%= render partial: "decidim/extra_censuses/elections/results/labels/badge", formats: [:html], locals: { label: option.label } %>
+    </h4>
+    <p><%= winner_summary(option) %></p>
+    <% if (description = translated_attribute(option.label.description)).present? %>
+      <p><%= description %></p>
+    <% end %>
+  </div>
+<% end %>
