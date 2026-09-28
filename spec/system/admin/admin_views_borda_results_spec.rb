@@ -115,4 +115,79 @@ describe "Admin views BORDA results" do
       end
     end
   end
+
+  context "with grouped borda results", :js do
+    let(:group_a_id) { "group-a" }
+    let(:group_b_id) { "group-b" }
+    let(:grouped_settings) do
+      {
+        "voting_method" => "borda",
+        "scoring_scale" => "start_from_max",
+        "grouped" => true,
+        "groups" => [
+          { "id" => group_a_id, "title" => { "en" => "Animals group" }, "position" => 0 },
+          { "id" => group_b_id, "title" => { "en" => "Plants group" }, "position" => 1 }
+        ]
+      }
+    end
+
+    let!(:question) do
+      create(:election_question, :published_results,
+             election:,
+             question_type: "multiple_option",
+             settings: grouped_settings,
+             max_choices: 4,
+             min_choices: 1,
+             skip_injection: true,
+             body: { "en" => "Rank these" })
+    end
+    let!(:option_a) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "Alpha" }) }
+    let!(:option_b) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "Beta" }) }
+    let!(:option_c) { create(:election_response_option, question:, group_id: group_b_id, body: { "en" => "Gamma" }) }
+    let!(:option_d) { create(:election_response_option, question:, group_id: group_b_id, body: { "en" => "Delta" }) }
+
+    before do
+      # Totals: Alpha=7, Beta=5, Gamma=6, Delta=2
+      create(:election_vote, question:, response_option: option_a, voter_uid: "v1", position: 1)
+      create(:election_vote, question:, response_option: option_b, voter_uid: "v1", position: 2)
+      create(:election_vote, question:, response_option: option_c, voter_uid: "v1", position: 3)
+      create(:election_vote, question:, response_option: option_d, voter_uid: "v1", position: 4)
+
+      create(:election_vote, question:, response_option: option_c, voter_uid: "v2", position: 1)
+      create(:election_vote, question:, response_option: option_a, voter_uid: "v2", position: 2)
+      create(:election_vote, question:, response_option: option_b, voter_uid: "v2", position: 3)
+      create(:election_vote, question:, response_option: option_d, voter_uid: "v2", position: 4)
+
+      visit dashboard_path
+    end
+
+    def grouped_table_sequence(question)
+      page.all("#question_#{question.id} tbody tr td:first-child").map(&:text).map(&:squish).select do |text|
+        ["Animals group", "Plants group", "Alpha", "Beta", "Gamma", "Delta"].include?(text)
+      end
+    end
+
+    it "sorts options by score inside each group while keeping group title rows in place" do
+      within "#question_#{question.id} table" do
+        expect(grouped_table_sequence(question)).to eq([
+                                                         "Animals group", "Alpha", "Beta",
+                                                         "Plants group", "Gamma", "Delta"
+                                                       ])
+
+        find("thead th:nth-child(4)").click
+
+        expect(grouped_table_sequence(question)).to eq([
+                                                         "Animals group", "Beta", "Alpha",
+                                                         "Plants group", "Delta", "Gamma"
+                                                       ])
+
+        find("thead th:nth-child(4)").click
+
+        expect(grouped_table_sequence(question)).to eq([
+                                                         "Animals group", "Alpha", "Beta",
+                                                         "Plants group", "Gamma", "Delta"
+                                                       ])
+      end
+    end
+  end
 end
