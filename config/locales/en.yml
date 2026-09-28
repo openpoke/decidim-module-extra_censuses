@@ -182,7 +182,7 @@ en:
               meta:
                 choices:
                   at_least: Choose at least %{min}
-                  range: Choose %{min}–%{max}
+                  range: Choose %{min}-%{max}
                   up_to: Choose up to %{max}
                 scoring_scale:
                   start_from_max: Standard Borda count
