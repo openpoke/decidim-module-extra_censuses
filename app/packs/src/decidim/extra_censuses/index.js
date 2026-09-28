@@ -7,6 +7,7 @@ import GroupedQuestionToggleController from "src/decidim/extra_censuses/controll
 import ResponseOptionGroupsController from "src/decidim/extra_censuses/controllers/response_option_groups/controller"
 import ResponseOptionGroupController from "src/decidim/extra_censuses/controllers/response_option_group/controller"
 import WinnersToggleController from "src/decidim/extra_censuses/controllers/winners_toggle/controller"
+import ResultsSorterController from "src/decidim/extra_censuses/controllers/results_sorter/controller"
 
 let registered = false
 
@@ -24,6 +25,7 @@ document.addEventListener("turbo:load", () => {
   window.Stimulus.register("response-option-groups", ResponseOptionGroupsController)
   window.Stimulus.register("response-option-group", ResponseOptionGroupController)
   window.Stimulus.register("winners-toggle", WinnersToggleController)
+  window.Stimulus.register("results-sorter", ResultsSorterController)
 
   registered = true
 })

@@ -148,8 +148,25 @@ ca:
     extra_censuses:
       elections:
         admin:
+          dashboard:
+            questions:
+              meta:
+                choices:
+                  at_least: Tria com a mínim %{min}
+                  range: Tria %{min}-%{max}
+                  up_to: Tria fins a %{max}
+                scoring_scale:
+                  start_from_max: Comptatge Borda estàndard
+                  start_from_min: Comptatge Borda modificat
+            questions_table:
+              score: Puntuació
+              score_percentage: Percentatge de puntuació
           questions:
             add_group: "+ Afegeix grup"
+            borda_help_text: Això introduirà una puntuació (basada en el nombre màxim
+              d'opcions disponibles) que permetrà als usuaris triar l'ordre de preferència
+              de les opcions escollides.
+            borda_label: Vot preferencial - Ordena les opcions de resposta (mètode Borda)
             collapse: Replega
             expand: Desplega
             group_title_placeholder: Títol del grup
@@ -159,8 +176,35 @@ ca:
             grouped_label: Agrupa les opcions de resposta
             new_group: Grup nou
             remove_group: Elimina el grup
+            scoring_scale_help_text: Les dues són variants reconegudes del mètode Borda;
+              només difereixen quan un votant classifica menys opcions que el màxim permès.
+            scoring_scale_label: Escala de puntuació
+            scoring_scale_options:
+              start_from_max: Comptatge Borda estàndard (la primera opció sempre val el màxim)
+              start_from_min: Comptatge Borda modificat (la puntuació es basa en quantes en classifiquen)
             toggle_group: Commuta el grup
             ungrouped_options_hint: Aquestes opcions de resposta fan referència a
               un grup que ja no existeix. Elimina-les o reassigna-les editant la configuració
               de la pregunta.
             ungrouped_options_title: Opcions de resposta sense grup
+        results:
+          borda:
+            show_results: Mostra els resultats
+            show_winners: Mostra els guanyadors
+            winner_summary: Ha rebut %{votes}, amb un total de %{points} (%{percent})
+          points:
+            one: "%{count} punt"
+            other: "%{count} punts"
+        votes:
+          borda:
+            confirm_points:
+              one: "%{count} pt"
+              other: "%{count} pts"
+            limit_reached: Has assolit el nombre màxim d'opcions classificades.
+            position_label:
+              one: Posició %{position} (%{count} punt)
+              other: Posició %{position} (%{count} punts)
+            position_select_label: Posició per a %{option}
+            selected_counter:
+              one: seleccionat %{count} / %{max}
+              other: seleccionats %{count} / %{max}
