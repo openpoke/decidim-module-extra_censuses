@@ -298,9 +298,7 @@ module Decidim
 
           describe "non_empty_groups_have_title" do
             context "when a group with options has a blank title" do
-              let(:groups) do
-                { "0" => { "id" => "g1aaaaaa", "title_en" => "", "position" => 0 } }
-              end
+              let(:groups) { { "0" => { "id" => "g1aaaaaa", "title_en" => "", "position" => 0 } } }
 
               it { is_expected.not_to be_valid }
 
@@ -399,6 +397,91 @@ module Decidim
           it "keeps groups that have at least one live option" do
             ids = subject.groups_to_persist.map(&:id)
             expect(ids).to include("g1aaaaaa")
+          end
+        end
+
+        describe "voting_method attribute" do
+          it "defaults to 'approval' when missing" do
+            expect(subject.voting_method).to eq("approval")
+          end
+
+          it "exposes the attribute" do
+            form = described_class.from_params(question: attributes.merge(voting_method: "borda", max_choices: 3))
+                                  .with_context(current_organization: questionable.organization)
+            expect(form.voting_method).to eq("borda")
+          end
+        end
+
+        describe "scoring_scale attribute" do
+          it "defaults to 'start_from_max' when missing" do
+            expect(subject.scoring_scale).to eq("start_from_max")
+          end
+        end
+
+        describe "voting_method validation" do
+          context "when voting_method is unknown" do
+            subject do
+              described_class.from_params(question: attributes.merge(voting_method: "ranked_pairs"))
+                             .with_context(current_organization: questionable.organization)
+            end
+
+            it { is_expected.not_to be_valid }
+          end
+
+          context "when borda is selected on a single_option question" do
+            let(:question_type) { "single_option" }
+
+            subject do
+              described_class.from_params(question: attributes.merge(voting_method: "borda", max_choices: 3))
+                             .with_context(current_organization: questionable.organization)
+            end
+
+            it { is_expected.not_to be_valid }
+
+            it "adds an error on :voting_method" do
+              subject.valid?
+              expect(subject.errors[:voting_method]).not_to be_empty
+            end
+          end
+
+          context "when borda is selected with max_choices missing" do
+            subject do
+              described_class.from_params(question: attributes.merge(voting_method: "borda"))
+                             .with_context(current_organization: questionable.organization)
+            end
+
+            it { is_expected.not_to be_valid }
+          end
+
+          context "when borda is selected with max_choices = 1" do
+            let(:max_choices) { 1 }
+
+            subject do
+              described_class.from_params(question: attributes.merge(voting_method: "borda", max_choices: 1))
+                             .with_context(current_organization: questionable.organization)
+            end
+
+            it { is_expected.not_to be_valid }
+          end
+
+          context "when borda is selected with multiple_option and max_choices > 1" do
+            subject do
+              described_class.from_params(question: attributes.merge(voting_method: "borda", max_choices: 3))
+                             .with_context(current_organization: questionable.organization)
+            end
+
+            it { is_expected.to be_valid }
+          end
+        end
+
+        describe "scoring_scale validation" do
+          context "when scoring_scale is unknown" do
+            subject do
+              described_class.from_params(question: attributes.merge(scoring_scale: "exotic"))
+                             .with_context(current_organization: questionable.organization)
+            end
+
+            it { is_expected.not_to be_valid }
           end
         end
       end

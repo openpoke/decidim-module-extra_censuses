@@ -1,7 +1,7 @@
 <% grouped_response_options(question).each do |group, options| %>
   <div class="question-group mt-6">
     <% if group %>
-      <h3 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h3>
+      <h2 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h2>
     <% end %>
     <div class="question-group-options flex flex-col gap-4">
       <% options.each do |option| %>

@@ -2,13 +2,12 @@
 
 module Decidim
   module ExtraCensuses
-    # Override module to customize CensusController behavior for custom_csv census.
-    # Handles redirect logic when census configuration is saved without data.
+    # Redirects a saved-but-empty custom_csv census back to its config page
+    # instead of the dashboard.
     module CensusControllerOverride
       extend ActiveSupport::Concern
 
       included do
-        # Override the update action to handle custom_csv redirect
         def update
           enforce_permission_to :update, :census, election: election
 

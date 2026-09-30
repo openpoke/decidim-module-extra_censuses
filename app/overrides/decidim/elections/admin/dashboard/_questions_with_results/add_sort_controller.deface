@@ -1,0 +1,2 @@
+add_to_attributes "table.table-list"
+attributes "data-controller" => "results-sorter"

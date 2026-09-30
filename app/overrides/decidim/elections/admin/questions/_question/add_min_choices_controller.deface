@@ -1,2 +1,2 @@
 add_to_attributes "div.questionnaire-question"
-attributes "data-controller" => "admin-min-choices grouped-question-toggle"
+attributes "data-controller" => "admin-min-choices grouped-question-toggle admin-borda"

@@ -1,0 +1,2 @@
+<!-- insert_after "small.font-normal.ml-4" -->
+<%= render "decidim/extra_censuses/elections/admin/dashboard/question_meta", question: question %>

@@ -149,7 +149,7 @@ describe "Admin manages census updates" do
         fill_in_datepicker :data_birth_date_date, with: "15/06/1995"
         click_on "Create"
 
-        expect(page).to have_content("Entry created successfully")
+        expect(page).to have_admin_callout("Entry created successfully")
         expect(page).to have_content("99999999X")
       end
 
@@ -221,7 +221,7 @@ describe "Admin manages census updates" do
           accept_confirm do
             click_on "Delete"
           end
-          expect(page).to have_content("Entry deleted successfully")
+          expect(page).to have_admin_callout("Entry deleted successfully")
         end.to change(Decidim::Elections::Voter, :count).by(-1)
 
         expect(page).to have_no_content("12345678A")

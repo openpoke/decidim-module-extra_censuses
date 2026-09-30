@@ -1,0 +1,20 @@
+<% current = response_position(@option) %>
+<% checked = current.present? %>
+<div class="flex items-center justify-between gap-4 w-full">
+  <label class="flex items-center gap-2 grow">
+    <%= check_box_tag "borda-checkbox-#{model.id}-#{@option.id}",
+                      @option.id,
+                      checked,
+                      id: "borda-checkbox-#{model.id}-#{@option.id}",
+                      name: nil,
+                      data: { "voter-borda-target": "checkbox", "option-id": @option.id } %>
+    <%= translated_attribute(@option.body) %>
+  </label>
+
+  <%= select_tag "response[#{model.id}][#{@option.id}]",
+                 options_for_select(position_options, current),
+                 include_blank: true,
+                 class: "borda-position-select",
+                 aria: { label: t("decidim.extra_censuses.elections.votes.borda.position_select_label", option: translated_attribute(@option.body)) },
+                 data: { "voter-borda-target": "position", "option-id": @option.id } %>
+</div>

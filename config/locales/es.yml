@@ -148,8 +148,25 @@ es:
     extra_censuses:
       elections:
         admin:
+          dashboard:
+            questions:
+              meta:
+                choices:
+                  at_least: Elige al menos %{min}
+                  range: Elige %{min}–%{max}
+                  up_to: Elige hasta %{max}
+                scoring_scale:
+                  start_from_max: Conteo Borda estándar
+                  start_from_min: Conteo Borda modificado
+            questions_table:
+              score: Puntuación
+              score_percentage: Porcentaje de puntuación
           questions:
             add_group: "+ Añadir grupo"
+            borda_help_text: Esto introducirá una puntuación (basada en el número máximo
+              de opciones disponibles) que permitirá a los usuarios elegir el orden de preferencia
+              de las opciones elegidas.
+            borda_label: Voto preferencial - Ordena las opciones de respuesta (método Borda)
             collapse: Contraer
             expand: Expandir
             group_title_placeholder: Título del grupo
@@ -159,8 +176,35 @@ es:
             grouped_label: Agrupar opciones de respuesta
             new_group: Nuevo grupo
             remove_group: Eliminar grupo
+            scoring_scale_help_text: Las dos son variantes reconocidas del método Borda;
+              solo difieren cuando un votante clasifica menos opciones que el máximo permitido.
+            scoring_scale_label: Escala de puntuación
+            scoring_scale_options:
+              start_from_max: Conteo Borda estándar (la opción superior siempre vale lo máximo)
+              start_from_min: Conteo Borda modificado (la puntuación depende de cuántas clasificas)
             toggle_group: Alternar grupo
             ungrouped_options_hint: Estas opciones de respuesta hacen referencia a
               un grupo que ya no existe. Elimínalas o reasígnalas editando la configuración
               de la pregunta.
             ungrouped_options_title: Opciones de respuesta sin grupo
+        results:
+          borda:
+            show_results: Mostrar resultados
+            show_winners: Mostrar ganadores
+            winner_summary: Ha recibido %{votes}, totalizando %{points} (%{percent})
+          points:
+            one: "%{count} punto"
+            other: "%{count} puntos"
+        votes:
+          borda:
+            confirm_points:
+              one: "%{count} pt"
+              other: "%{count} pts"
+            limit_reached: Has alcanzado el número máximo de opciones clasificadas.
+            position_label:
+              one: Posición %{position} (%{count} punto)
+              other: Posición %{position} (%{count} puntos)
+            position_select_label: Posición para %{option}
+            selected_counter:
+              one: seleccionado %{count} / %{max}
+              other: seleccionados %{count} / %{max}

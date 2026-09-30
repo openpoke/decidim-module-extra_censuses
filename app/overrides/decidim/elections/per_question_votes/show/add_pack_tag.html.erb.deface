@@ -1,0 +1,4 @@
+<!-- insert_before "div.question__response-options" -->
+<% if question.voting_method == "borda" %>
+  <% append_javascript_pack_tag "decidim_extra_censuses" %>
+<% end %>

@@ -1,26 +1,41 @@
-<!-- surround "tbody" -->
-<% if question.grouped? %>
-  <tbody>
-    <% grouped_response_options(question).each do |group, options| %>
-      <% if group %>
-        <tr class="bg-gray-1">
-          <td colspan="3" class="font-semibold"><%= translated_attribute(group.title) %></td>
-        </tr>
-      <% end %>
-      <% options.each do |option| %>
-        <tr>
-          <td class="w-2/3"><%= translated_attribute option.body %></td>
-          <td data-option-votes-count-text="<%= question.id %>,<%= option.id %>"><%= t("votes_count", scope: "decidim.elections.admin.dashboard.questions_table", count: option.votes_count) %></td>
-          <td data-option-votes-percent-text="<%= question.id %>,<%= option.id %>"><%= number_to_percentage(option.votes_percent, precision: 1) %></td>
-        </tr>
-      <% end %>
+<!-- replace "tbody" -->
+<% results = computes_results?(question) %>
+<% group_colspan = results ? 5 : 3 %>
+<% groups = question.grouped? ? grouped_response_options(question) : [[nil, question.response_options.to_a]] %>
+<tbody>
+  <% groups.each do |group, options| %>
+    <% if group %>
+      <tr class="bg-gray-1">
+        <td colspan="<%= group_colspan %>" class="font-semibold"><%= translated_attribute(group.title) %></td>
+      </tr>
     <% end %>
-    <tr>
-      <td class="w-2/3 border-none"><%= t("decidim.elections.admin.dashboard.questions_table.total") %></td>
+    <% options.each do |option| %>
+      <tr>
+        <td class="w-2/3">
+          <%= translated_attribute option.body %>
+          <% if results %>
+            <% if option.labeled? %><%= render "decidim/extra_censuses/elections/results/labels/badge", label: option.label %><% end %>
+            <% if allowed_to?(:update, :response_option_label, resource: question) %>
+              <%= icon_link_to "pencil-line", "#", t("decidim.elections.admin.response_option_labels.edit_label"), data: { "dialog-open" => "label-modal-#{option.id}" } %>
+            <% end %>
+          <% end %>
+        </td>
+        <td data-option-votes-count-text="<%= question.id %>,<%= option.id %>"><%= t("votes_count", scope: "decidim.elections.admin.dashboard.questions_table", count: option.votes_count) %></td>
+        <td data-option-votes-percent-text="<%= question.id %>,<%= option.id %>"><%= number_to_percentage(option.votes_percent, precision: 1) %></td>
+        <% if results %>
+          <td data-option-result-score-text="<%= question.id %>,<%= option.id %>"><%= t("decidim.extra_censuses.elections.results.points", count: score_for(question, option)) %></td>
+          <td data-option-result-score-percent-text="<%= question.id %>,<%= option.id %>"><%= number_to_percentage(score_percentage(question, option), precision: 1) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  <% end %>
+  <tr>
+    <td class="w-2/3 border-none"><%= t("decidim.elections.admin.dashboard.questions_table.total") %></td>
+    <td class="border-none" data-question-total-votes-text="<%= question.id %>"><%= t("votes_count", scope: "decidim.elections.admin.dashboard.questions_table", count: question.total_votes) %></td>
+    <td class="border-none"></td>
+    <% if results %>
+      <td class="border-none" data-question-total-score-text="<%= question.id %>"><%= t("decidim.extra_censuses.elections.results.points", count: score_total(question)) %></td>
       <td class="border-none"></td>
-      <td class="border-none" data-question-total-votes-text="<%= question.id %>"><%= t("votes_count", scope: "decidim.elections.admin.dashboard.questions_table", count: question.total_votes) %></td>
-    </tr>
-  </tbody>
-<% else %>
-  <%= render_original %>
-<% end %>
+    <% end %>
+  </tr>
+</tbody>

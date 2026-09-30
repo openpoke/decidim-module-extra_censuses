@@ -1,0 +1,50 @@
+<% label_form = Decidim::Elections::Admin::ResponseOptionLabelForm.from_model(option) %>
+<% preview_id = "label-preview-#{option.id}" %>
+<%= decidim_modal id: "label-modal-#{option.id}" do %>
+  <%= decidim_form_for(label_form, url: election_response_option_label_path(election, id: option.id), method: :put, namespace: "label-#{option.id}", html: { id: "label-form-#{option.id}", class: "form-defaults form" }) do |form| %>
+    <div data-dialog-container>
+      <%= icon "information-line" %>
+      <h3 class="h3" id="dialog-title-label-modal-<%= option.id %>" data-dialog-title>
+        <%= t("decidim.elections.admin.response_option_labels.modal.title", option: translated_attribute(option.body)) %>
+      </h3>
+    </div>
+
+    <div class="form__wrapper">
+      <p><%= t("decidim.elections.admin.response_option_labels.modal.help") %></p>
+
+      <%= form.translated :text_field, :title, aria: { label: :title }, data: { "text-copy" => true, "target" => "##{preview_id} span" } %>
+      <%= form.translated :text_area, :description, aria: { label: :description } %>
+      <%= form.number_field :position, required: false, help_text: t("decidim.elections.admin.response_option_labels.modal.position_help") %>
+
+      <div class="response-option-label__colors">
+        <% Decidim::ExtraCensuses.label_colors.each do |token, values| %>
+          <%= form.radio_button :color, token.to_s,
+                                label: false,
+                                title: values[:name],
+                                class: "!mr-4",
+                                style: "--swatch-fg: #{values[:foreground]}; --swatch-bg: #{values[:background]};",
+                                aria: { label: values[:name] },
+                                data: {
+                                  "css-preview" => true,
+                                  "css-preview-updates" => "##{preview_id}:backgroundColor:#{values[:background]}; ##{preview_id}:color:#{values[:foreground]};"
+                                } %>
+        <% end %>
+      </div>
+
+      <div class="response-option-label__preview">
+        <label class="form__label"><%= t("decidim.elections.admin.response_option_labels.modal.preview") %></label>
+        <div>
+          <%= translated_attribute(option.body) %>
+          <strong class="label" id="<%= preview_id %>" style="<%= option.label&.css_style %>"><span><%= translated_attribute(option.label&.title) if option.labeled? %></span></strong>
+        </div>
+      </div>
+    </div>
+
+    <div data-dialog-actions>
+      <button type="button" class="button button__sm md:button__lg button__transparent-secondary" data-dialog-close="label-modal-<%= option.id %>">
+        <%= t("decidim.elections.admin.response_option_labels.modal.cancel") %>
+      </button>
+      <%= form.submit t("decidim.elections.admin.response_option_labels.modal.save"), class: "button button__sm md:button__lg button__secondary" %>
+    </div>
+  <% end %>
+<% end %>
