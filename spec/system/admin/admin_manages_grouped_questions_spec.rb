@@ -99,6 +99,87 @@ describe "Admin manages grouped response options" do
     end
   end
 
+  context "when switching language tabs on dynamically added fields", :js do
+    let(:group_a_id) { "aaaa0001" }
+    let(:group_b_id) { "bbbb0002" }
+    let!(:question) do
+      create(:election_question,
+             election:,
+             question_type: "multiple_option",
+             settings: settings_for([[group_a_id, "Group A"], [group_b_id, "Group B"]]))
+    end
+    let!(:option_a1) { create(:election_response_option, question:, group_id: group_a_id, body: { "en" => "A one" }) }
+    let!(:option_b1) { create(:election_response_option, question:, group_id: group_b_id, body: { "en" => "B one" }) }
+
+    let(:add_option_button) { "button[data-action='click->response-option-groups#addOptionInGroup']" }
+    let(:catalan) { I18n.with_locale(:ca) { I18n.t("name", scope: "locale") } }
+
+    before do
+      visit questions_edit_path
+      open_question_accordion(question)
+    end
+
+    it "gives every added option its own working language tabs" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        group_a = all(".questionnaire-question-group").first
+
+        within group_a do
+          find(add_option_button).click
+          find(add_option_button).click
+
+          new_options = all(".questionnaire-question-response-option").last(2)
+          tab_ids = new_options.map { |option| option.find("ul.tabs--lang")[:id] }
+          expect(tab_ids.uniq.size).to eq(2)
+          expect(tab_ids).not_to include(a_string_including("questionnaire-question-response-option-id"))
+
+          within new_options.last do
+            click_on catalan
+            expect(page).to have_css("input[name$='[body_ca]']", visible: :visible)
+            expect(page).to have_css("input[name$='[body_en]']", visible: :hidden)
+          end
+
+          within new_options.first do
+            expect(page).to have_css("input[name$='[body_en]']", visible: :visible)
+            expect(page).to have_css("input[name$='[body_ca]']", visible: :hidden)
+          end
+        end
+      end
+    end
+
+    it "keeps the title tabs of each group independent" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        group_a, group_b = all(".questionnaire-question-group").first(2)
+
+        within group_b do
+          within("ul.tabs--lang[id$='_group_#{group_b_id}']") { click_on catalan }
+          expect(page).to have_css("input[name$='[title_ca]']", visible: :visible)
+          expect(page).to have_css("input[name$='[title_en]']", visible: :hidden)
+        end
+
+        within group_a do
+          expect(page).to have_css("input[name$='[title_en]']", visible: :visible)
+          expect(page).to have_css("input[name$='[title_ca]']", visible: :hidden)
+        end
+      end
+    end
+
+    it "gives a newly added group working title tabs" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        click_on "+ Add group"
+        new_group = all(".questionnaire-question-group").last
+
+        within new_group do
+          title_tabs = find("ul.tabs--lang[id*='_group_']", match: :first)
+          expect(title_tabs[:id]).not_to include("questionnaire-question-response-option-group-id")
+
+          within(title_tabs) { click_on catalan }
+          expect(page).to have_css("input[name$='[title_ca]']", visible: :visible)
+          expect(page).to have_css("input[name$='[title_en]']", visible: :hidden)
+        end
+      end
+    end
+  end
+
   context "when toggling the grouped checkbox on an existing multiple_option question", :js do
     let!(:question) do
       create(:election_question, election:, question_type: "multiple_option").tap do |q|

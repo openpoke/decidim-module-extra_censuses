@@ -1,6 +1,9 @@
 <!-- surround_contents "div.card-accordion-section" -->
 <% if question.grouped? %>
-  <div class="mb-4"><%= render_question_description(question) %></div>
+  <% description = render_question_description(question) %>
+  <% if description.present? %>
+    <div class="editor-content"><%= description %></div>
+  <% end %>
 
   <% grouped_response_options(question).each do |group, options| %>
     <% if group %>

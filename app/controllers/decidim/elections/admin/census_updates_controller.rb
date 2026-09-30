@@ -30,7 +30,7 @@ module Decidim
             end
             on(:invalid) do
               flash.now[:alert] = I18n.t("create.error", scope: "decidim.elections.admin.census_updates")
-              render :new, status: :unprocessable_entity
+              render :new, status: :unprocessable_content
             end
           end
         end

@@ -8,14 +8,14 @@ This module adds a new census type to Decidim Elections that allows administrato
 
 ## Requirements
 
-This module requires the [openpoke/decidim](https://github.com/openpoke/decidim) fork, branch `0.31-backports`. The official Decidim 0.31 gem does not include the `max_choices` feature for elections questions that this module extends.
+This module requires Decidim `~> 0.32.0` and Ruby 3.4. The `max_choices` and census-check-before-start features for election questions that this module extends are included in the official Decidim 0.32 gems, so no fork is needed.
 
 ## Installation
 
 Add these lines to your application's Gemfile:
 
 ```ruby
-gem "decidim", git: "https://github.com/openpoke/decidim", branch: "0.31-backports"
+gem "decidim", "~> 0.32.0"
 gem "decidim-extra_censuses", git: "https://github.com/pokecode/decidim-module-extra_censuses"
 ```
 
