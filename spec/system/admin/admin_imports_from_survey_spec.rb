@@ -266,6 +266,8 @@ describe "Admin imports from survey" do
     it "enqueues import job when clicking import button" do
       expect do
         click_on "Import 2 entries"
+        # Wait for the request to complete before inspecting the queue.
+        expect(page).to have_content("has been queued")
       end.to have_enqueued_job(Decidim::ExtraCensuses::ImportFromSurveyJob)
     end
 

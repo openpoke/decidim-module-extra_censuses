@@ -1,8 +1,16 @@
-const PLACEHOLDER = "NEW_RECORD"
+// NEW_RECORD is the form array key used in the templates. The other two are
+// the `to_param` placeholders of the blank ResponseOptionForm and
+// ResponseOptionGroupForm, which end up in the language tabs ids. They must
+// be uniquified too, otherwise every cloned field shares the same tab ids.
+const PLACEHOLDERS = [
+  "NEW_RECORD",
+  "questionnaire-question-response-option-id",
+  "questionnaire-question-response-option-group-id"
+]
 
 /**
  * Walks the DOM (not innerHTML.replaceAll) so user-typed strings containing
- * NEW_RECORD can never be hit.
+ * a placeholder can never be hit.
  *
  * @param {HTMLElement} root the subtree root to walk
  * @param {string} value the substitution value
@@ -13,8 +21,14 @@ const substitutePlaceholder = function(root, value) {
   while (stack.length > 0) {
     const el = stack.pop()
     for (const attr of Array.from(el.attributes)) {
-      if (attr.value.includes(PLACEHOLDER)) {
-        el.setAttribute(attr.name, attr.value.split(PLACEHOLDER).join(value))
+      let attrValue = attr.value
+      for (const placeholder of PLACEHOLDERS) {
+        if (attrValue.includes(placeholder)) {
+          attrValue = attrValue.split(placeholder).join(value)
+        }
+      }
+      if (attrValue !== attr.value) {
+        el.setAttribute(attr.name, attrValue)
       }
     }
     for (const child of el.children) {
@@ -24,7 +38,7 @@ const substitutePlaceholder = function(root, value) {
 }
 
 /**
- * Clones an HTMLTemplateElement and substitutes the NEW_RECORD placeholder
+ * Clones an HTMLTemplateElement and substitutes the known placeholders
  * with `uid` across every attribute of the cloned subtree.
  *
  * @param {HTMLTemplateElement} template the source template

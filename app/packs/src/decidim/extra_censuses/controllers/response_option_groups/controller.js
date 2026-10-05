@@ -54,6 +54,7 @@ export default class extends Controller {
       return
     }
     this.listTarget.appendChild(group)
+    this.initFoundation(group)
     this.appendOptionTo(group)
     this.enableSortable()
     this.runAutoLabel()
@@ -105,6 +106,7 @@ export default class extends Controller {
       return
     }
     this.listTarget.appendChild(group)
+    this.initFoundation(group)
 
     const optionsList = group.querySelector(GROUP_OPTIONS_LIST)
     flatOptions.forEach((option) => {
@@ -158,6 +160,19 @@ export default class extends Controller {
     option.dataset.new = "true"
     this.stampGroupId(option, group.dataset.groupId)
     group.querySelector(GROUP_OPTIONS_LIST)?.appendChild(option)
+    this.initFoundation(option)
+  }
+
+  // Mirrors decidim-admin/dynamic_fields.component.js#_addField: cloned
+  // markup carries Foundation language tabs (ul.tabs[data-tabs]) that must be
+  // initialised, otherwise the tab links act as plain anchors and jump to
+  // the panel instead of switching it.
+  initFoundation(element) {
+    if (typeof window.initFoundation === "function") {
+      window.initFoundation(element)
+    } else if (window.jQuery && typeof window.jQuery(element).foundation === "function") {
+      window.jQuery(element).foundation()
+    }
   }
 
   stampGroupId(option, groupId) {

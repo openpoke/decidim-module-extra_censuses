@@ -49,6 +49,7 @@
         form.translated(
           :text_field,
           :title,
+          tabs_id: "questionnaire_question_#{question.to_param}_group_#{group.to_param}",
           label: t("group_title_placeholder", scope: "decidim.extra_censuses.elections.admin.questions"),
           disabled: !editable
         )

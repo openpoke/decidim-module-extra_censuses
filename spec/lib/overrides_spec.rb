@@ -20,15 +20,15 @@ module Decidim::ExtraCensuses
         "/app/forms/decidim/elections/admin/response_option_form.rb" => "18e78ccbc41f1fc8bbe8298bd6535fc3",
         # commands
         "/app/commands/decidim/elections/admin/update_questions.rb" => "2b64fc68a96bbd352becb311a8415eb0",
-        "/app/commands/decidim/elections/cast_votes.rb" => "f14dc636a3cd3d182b7d48338c7c55c8",
+        "/app/commands/decidim/elections/cast_votes.rb" => "25240f96687e9b76355c3de244c48957",
         # presenters
         "/app/presenters/decidim/elections/election_presenter.rb" => "62961be51c941bf956214b78cd1a08be",
         # controllers
-        "/app/controllers/decidim/elections/admin/census_controller.rb" => "f3a866fe5f69f378cf419a40304b97e0",
+        "/app/controllers/decidim/elections/admin/census_controller.rb" => "a6db5913be985c66058e7d7f422d19f7",
         "/app/controllers/decidim/elections/votes_controller.rb" => "53a611d2a456e2032b986a76cdcf6bf1",
         "/app/controllers/decidim/elections/per_question_votes_controller.rb" => "fa6a7d89d010bbe8faa02d3e89c94d43",
         # helpers
-        "/app/helpers/decidim/elections/application_helper.rb" => "c299bc5843e4c3c361756b5fdf602237",
+        "/app/helpers/decidim/elections/application_helper.rb" => "7e3d5c688ccdce66d43e2f7d66a06599",
         # admin views
         "/app/views/decidim/elections/admin/dashboard/_questions.html.erb" => "a7dfda79d4d417d95a6d266083323fc5",
         "/app/views/decidim/elections/admin/dashboard/_questions_with_results.html.erb" => "d34c5f76445d444e9e28b2192d80d420",
@@ -37,8 +37,8 @@ module Decidim::ExtraCensuses
         "/app/views/decidim/elections/admin/questions/_response_option.html.erb" => "58cf226fd79cd547a5d1cf87ea7a3c22",
         "/app/views/decidim/elections/admin/elections/dashboard.html.erb" => "277897a8f93152d0ac6e0786150b2266",
         # public views
-        "/app/views/decidim/elections/elections/show.html.erb" => "f08f1c9a72f0dc7b7c0e1acaa49841ca",
-        "/app/views/decidim/elections/elections/_questions.html.erb" => "182f98be98b5f84d553978150507369c",
+        "/app/views/decidim/elections/elections/show.html.erb" => "eaf27c236a383d53996e227bbbdcef83",
+        "/app/views/decidim/elections/elections/_questions.html.erb" => "7df6ea8d865db354ba2869cb3058ad01",
         "/app/views/decidim/elections/elections/_vote_results_option.html.erb" => "77e720856c3c8dc6beb709c97e7a1ad5",
         "/app/views/decidim/elections/elections/_vote_results_question.html.erb" => "449b5dcd8c2ea5a0d1d59d7cc5b315ae",
         "/app/views/decidim/elections/per_question_votes/show.html.erb" => "5b0cd91877704f8211307ed220006421",
