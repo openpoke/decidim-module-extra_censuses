@@ -45,7 +45,7 @@ module Decidim
           let(:question) { create(:election_question, election:, question_type: "multiple_option", min_choices: 1, max_choices: 5) }
 
           it "returns the range choices chip" do
-            expect(helper.question_meta_chips(question)).to eq(["Choose 1–5"])
+            expect(helper.question_meta_chips(question)).to eq(["Choose 1-5"])
           end
         end
 
@@ -66,7 +66,7 @@ module Decidim
 
           it "returns chips in order: scoring, choices" do
             expect(helper.question_meta_chips(question)).to eq(
-              ["Standard Borda count", "Choose 1–5"]
+              ["Standard Borda count", "Choose 1-5"]
             )
           end
         end
