@@ -40,6 +40,15 @@ en:
               validation_error: 'Row %{row}, column ''%{column}'': %{error}'
               voters_exist: Cannot upload file while census data exists. Remove existing
                 data first.
+        question:
+          attributes:
+            response_options:
+              exclusive_requires_choosable_option: must include at least one non-exclusive
+                option
+              exclusive_requires_multiple_option: can only be exclusive in multiple option
+                questions
+            voting_method:
+              exclusive_options_not_allowed: does not allow exclusive options
   decidim:
     admin:
       menu:

@@ -19,6 +19,10 @@ module Decidim
       def labeled?
         label.present?
       end
+
+      def exclusive?
+        !!settings["exclusive"]
+      end
     end
   end
 end

@@ -24,6 +24,7 @@ module Decidim
 
         validates :voting_method, inclusion: { in: ->(*) { Decidim::Elections::Question.voting_methods } }
 
+        validate :exclusive_options_valid
         validate :grouped_requires_multiple_option, if: :grouped?
         validate :must_have_at_least_one_non_empty_group, if: :grouped?
         validate :non_empty_groups_have_title, if: :grouped?
@@ -33,7 +34,7 @@ module Decidim
         # Replaces upstream `response_options.size` so the min/max_choices
         # upper bound excludes options the admin has marked for deletion.
         def number_of_options
-          live_response_options.size
+          choosable_response_options.size
         end
 
         def allows_min_choices?
@@ -42,7 +43,7 @@ module Decidim
 
         def groups_to_persist
           groups.reject do |group|
-            group.deleted || live_response_options.none? { |opt| opt.group_id == group.id }
+            group.deleted || choosable_response_options.none? { |opt| opt.group_id == group.id }
           end
         end
 
@@ -50,6 +51,17 @@ module Decidim
 
         def live_response_options
           response_options.reject(&:deleted?)
+        end
+
+        def choosable_response_options
+          live_response_options.reject(&:exclusive?)
+        end
+
+        def exclusive_options_valid
+          return if live_response_options.none?(&:exclusive?)
+
+          errors.add(:response_options, :exclusive_requires_multiple_option) unless question_type == "multiple_option"
+          errors.add(:response_options, :exclusive_requires_choosable_option) if choosable_response_options.empty?
         end
 
         def grouped_requires_multiple_option
@@ -81,7 +93,7 @@ module Decidim
 
         def response_options_have_valid_group_id
           known_ids = groups_to_persist.map(&:id)
-          return if live_response_options.all? { |option| option.group_id.present? && known_ids.include?(option.group_id) }
+          return if choosable_response_options.all? { |option| option.group_id.present? && known_ids.include?(option.group_id) }
 
           errors.add(:response_options, :invalid)
         end
