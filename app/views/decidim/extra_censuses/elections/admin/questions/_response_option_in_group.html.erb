@@ -27,6 +27,7 @@
         )
       %>
     </div>
+    <%= render "decidim/extra_censuses/elections/admin/questions/exclusive_field", form: form, editable: editable %>
   </div>
 
   <%= form.hidden_field :group_id, value: response_option.group_id.presence || group_id %>

@@ -207,6 +207,13 @@ en:
               of the chosen options.
             borda_label: Preferential voting - Rank response options (Borda count)
             collapse: Collapse
+            exclusive_help_text: If voters check this option, they cannot check any
+              other. Use it for a blank vote.
+            exclusive_label: Exclusive option
+            exclusive_options_hint: These options are kept outside groups and are shown
+              at the end of the ballot. Voters who check one of them are exempt from
+              the per-group requirement.
+            exclusive_options_title: Exclusive options
             expand: Expand
             force_one_answer_per_group_help_text: When enabled, voters must check
               at least one response option in every group before they can advance.

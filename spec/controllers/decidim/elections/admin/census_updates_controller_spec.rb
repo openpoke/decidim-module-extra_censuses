@@ -58,7 +58,7 @@ module Decidim
 
             it "creates a new voter and redirects with success message" do
               expect do
-                post :create, params: params
+                post :create, params:
               end.to change(Decidim::Elections::Voter, :count).by(1)
 
               expect(flash[:notice]).to eq(I18n.t("decidim.elections.admin.census_updates.create.success"))
@@ -70,7 +70,7 @@ module Decidim
             let(:params) { { election_id: election.id, data: { "dni" => "", "birth_date" => "" } } }
 
             it "renders the new view with error message" do
-              post :create, params: params
+              post(:create, params:)
 
               expect(flash[:alert]).to eq(I18n.t("decidim.elections.admin.census_updates.create.error"))
               expect(response).to render_template(:new)
@@ -82,7 +82,7 @@ module Decidim
             let(:params) { { election_id: election.id, data: { "dni" => "12345678A", "birth_date" => "1990-01-15" } } }
 
             it "renders the new view with error message" do
-              post :create, params: params
+              post(:create, params:)
 
               expect(flash[:alert]).to eq(I18n.t("decidim.elections.admin.census_updates.create.error"))
               expect(response).to render_template(:new)

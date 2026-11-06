@@ -58,7 +58,7 @@ module Decidim
           manifest.after_update_command = "Decidim::Elections::Admin::Censuses::CustomCsv"
 
           manifest.user_query do |election|
-            Decidim::Elections::Voter.where(election: election)
+            Decidim::Elections::Voter.where(election:)
           end
         end
       end

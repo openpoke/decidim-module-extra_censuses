@@ -43,7 +43,8 @@ module Decidim
         def save_response_option(question, option_form, grouped)
           option = question.response_options.find_by(id: option_form.id) || question.response_options.build
           option.body = option_form.body
-          option.group_id = grouped ? option_form.group_id.presence : nil
+          option.group_id = grouped && !option_form.exclusive? ? option_form.group_id.presence : nil
+          option.settings = option.settings.merge("exclusive" => option_form.exclusive?)
           option.save!
         end
 
