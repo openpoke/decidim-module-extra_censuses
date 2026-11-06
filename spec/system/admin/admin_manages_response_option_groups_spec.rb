@@ -47,7 +47,7 @@ describe "Admin manages response option groups" do
 
     it "persists the force_one_answer_per_group setting with multiple groups" do
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       question.reload
       expect(question.force_one_answer_per_group?).to be true
@@ -70,7 +70,7 @@ describe "Admin manages response option groups" do
       end
 
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       question.reload
       expect(question.force_one_answer_per_group?).to be true
@@ -87,7 +87,7 @@ describe "Admin manages response option groups" do
       end
 
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       question.reload
       expect(question.force_one_answer_per_group?).to be true
