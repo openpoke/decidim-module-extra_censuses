@@ -1,0 +1,3 @@
+<!-- insert_bottom "div[data-erb-class*='panel-question-card']" -->
+<!-- sequence :after => "add_groups_section" -->
+<%= render "decidim/extra_censuses/elections/admin/questions/exclusive_option", form: form, tabs_id: id, editable: editable %>
