@@ -17,6 +17,7 @@ ignore_unused:
   - "activemodel.attributes.custom_csv.*"
   - "activemodel.attributes.question.*"
   - "activemodel.errors.models.custom_csv.*"
+  - "activemodel.errors.models.question.*"
   - "activemodel.attributes.response_option_label.*"
 
 ignore_missing:
