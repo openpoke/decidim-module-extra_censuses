@@ -26,7 +26,7 @@ describe "Admin views question meta line", driver: :rack_test do
 
     it "renders the borda and choices chips" do
       expect(page).to have_content("Standard Borda count")
-      expect(page).to have_content("Choose 1–5")
+      expect(page).to have_content("Choose 1-5")
     end
   end
 
@@ -61,7 +61,7 @@ describe "Admin views question meta line", driver: :rack_test do
 
     it "renders the meta chips in the results question heading" do
       expect(page).to have_content("Standard Borda count")
-      expect(page).to have_content("Choose 1–5")
+      expect(page).to have_content("Choose 1-5")
     end
   end
 end

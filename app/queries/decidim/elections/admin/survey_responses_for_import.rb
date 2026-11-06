@@ -57,7 +57,7 @@ module Decidim
           return {} if question_ids.empty?
 
           answers = Decidim::Forms::Response
-                    .where(questionnaire: questionnaire, decidim_question_id: question_ids)
+                    .where(questionnaire:, decidim_question_id: question_ids)
                     .includes(:question, :choices)
 
           answers.group_by(&:session_token)
@@ -65,11 +65,11 @@ module Decidim
 
         def build_response_data(session_token, answers, census_data, raw_values)
           {
-            session_token: session_token,
-            answers: answers,
-            census_data: census_data,
+            session_token:,
+            answers:,
+            census_data:,
             status: determine_status(census_data),
-            raw_values: raw_values
+            raw_values:
           }
         end
 

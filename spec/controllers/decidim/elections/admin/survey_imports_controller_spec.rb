@@ -68,7 +68,7 @@ module Decidim
             let(:params) { { election_id: election.id, survey_import: { survey_component_id: surveys_component.id, survey_id: survey.id, field_mapping: { "dni" => short_response_question.id.to_s } } } }
 
             it "saves configuration and redirects with success message" do
-              post :create, params: params
+              post(:create, params:)
 
               expect(flash[:notice]).to eq(I18n.t("decidim.elections.admin.survey_imports.create.success"))
               expect(response).to redirect_to(election_survey_imports_path)
@@ -80,7 +80,7 @@ module Decidim
             let(:params) { { election_id: election.id, survey_import: { survey_component_id: nil, survey_id: nil, field_mapping: {} } } }
 
             it "renders the new view with error message" do
-              post :create, params: params
+              post(:create, params:)
 
               expect(flash[:alert]).to eq(I18n.t("decidim.elections.admin.survey_imports.create.error"))
               expect(response).to render_template(:new)

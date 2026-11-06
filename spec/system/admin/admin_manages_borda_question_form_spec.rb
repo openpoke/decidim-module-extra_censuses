@@ -57,7 +57,7 @@ describe "Admin manages BORDA voting for election questions" do
       end
 
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       question.reload
       expect(question.settings["voting_method"]).to eq("borda")
@@ -151,7 +151,7 @@ describe "Admin manages BORDA voting for election questions" do
 
       click_on "Save and continue"
 
-      expect(page).to have_admin_callout("problem")
+      expect(page).to have_admin_callout("There was a problem updating the questions")
       expect(question.reload.settings["voting_method"]).to be_blank
     end
   end

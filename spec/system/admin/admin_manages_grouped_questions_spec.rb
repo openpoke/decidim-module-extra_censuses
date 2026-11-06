@@ -86,7 +86,7 @@ describe "Admin manages grouped response options" do
 
     it "persists grouped settings and group_ids when saving without changes" do
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       question.reload
       expect(question.grouped?).to be true
@@ -296,7 +296,7 @@ describe "Admin manages grouped response options" do
       end
 
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       saved = election.reload.questions.find { |q| q.body["en"] == "Grouped question" }
       expect(saved).to be_present
@@ -351,7 +351,7 @@ describe "Admin manages grouped response options" do
       visit questions_edit_path
       click_on "Save and continue"
 
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
       question.reload
       titles = question.settings["groups"].map { |g| g["title"]["en"] }
       expect(titles).to eq(["Filled"])

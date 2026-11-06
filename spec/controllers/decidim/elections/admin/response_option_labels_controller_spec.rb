@@ -35,7 +35,7 @@ module Decidim
             it "saves the label even though the election is no longer editable" do
               expect(election.editable?).to be(false)
 
-              put :update, params: params
+              put(:update, params:)
 
               expect(flash[:notice]).to eq(I18n.t("decidim.elections.admin.response_option_labels.update.success"))
               expect(response).to redirect_to(dashboard_path)
@@ -49,7 +49,7 @@ module Decidim
             before { sign_in current_user }
 
             it "does not save the label" do
-              expect { put :update, params: params }.not_to(change { response_option.reload.settings })
+              expect { put :update, params: }.not_to(change { response_option.reload.settings })
             end
           end
 
@@ -59,7 +59,7 @@ module Decidim
             before { sign_in current_user }
 
             it "does not save the label" do
-              expect { put :update, params: params }.not_to(change { response_option.reload.settings })
+              expect { put :update, params: }.not_to(change { response_option.reload.settings })
             end
           end
         end

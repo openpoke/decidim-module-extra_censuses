@@ -151,7 +151,7 @@ module Decidim
               ]
               result = instance.normalize_columns(columns)
 
-              expect(result.all? { |c| c.keys.all? { |k| k.is_a?(String) } }).to be(true)
+              expect(result.all? { |c| c.keys.all?(String) }).to be(true)
             end
           end
         end

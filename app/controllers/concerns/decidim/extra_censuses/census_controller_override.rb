@@ -9,9 +9,9 @@ module Decidim
 
       included do
         def update
-          enforce_permission_to :update, :census, election: election
+          enforce_permission_to(:update, :census, election:)
 
-          @form = form(election.census.admin_form.constantize).from_params(params, election: election) if election.census.admin_form.present?
+          @form = form(election.census.admin_form.constantize).from_params(params, election:) if election.census.admin_form.present?
 
           Decidim::Elections::Admin::ProcessCensus.call(@form, election) do
             on(:ok) do

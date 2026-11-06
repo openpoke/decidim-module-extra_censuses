@@ -7,6 +7,8 @@ en:
         file: File
         remove_all: Remove all current census data
       question:
+        exclusive_option: Exclusive option
+        exclusive_option_body: Exclusive option text
         min_choices: Minimum number of choices
       response_option_label:
         color: Color
@@ -40,6 +42,10 @@ en:
               validation_error: 'Row %{row}, column ''%{column}'': %{error}'
               voters_exist: Cannot upload file while census data exists. Remove existing
                 data first.
+        question:
+          attributes:
+            voting_method:
+              exclusive_option_not_allowed: does not allow an exclusive option
   decidim:
     admin:
       menu:
@@ -174,6 +180,7 @@ en:
           choices_range: Select between %{min} and %{max} options
           min_choices: Select at least %{count} options
           min_choices_not_met: You must select at least %{min} options.
+          must_select_one_per_group: You must select at least one option in each group.
     extra_censuses:
       elections:
         admin:
@@ -197,7 +204,16 @@ en:
               of the chosen options.
             borda_label: Preferential voting - Rank response options (Borda count)
             collapse: Collapse
+            exclusive_option_body_label: Exclusive option text
+            exclusive_option_default_body: Blank vote
+            exclusive_option_help_text: Adds an option at the end of the ballot that
+              cannot be combined with any other. Use it for a blank vote.
+            exclusive_option_label: Exclusive option
             expand: Expand
+            force_one_answer_per_group_help_text: When enabled, voters must check
+              at least one response option in every group before they can advance.
+            force_one_answer_per_group_label: Force users to check at least one response
+              option per group
             group_title_placeholder: Group title
             grouped_help_text: Organize response options into named groups so voters
               see them under subheadings. Global min/max choices still apply to the

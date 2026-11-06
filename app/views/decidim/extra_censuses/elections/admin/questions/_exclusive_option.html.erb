@@ -1,0 +1,20 @@
+<div class="questionnaire-question-exclusive-option" data-admin-exclusive-option-target="wrapper">
+  <div class="row column">
+    <%= form.check_box :exclusive_option,
+                       label: t("exclusive_option_label", scope: "decidim.extra_censuses.elections.admin.questions"),
+                       help_text: t("exclusive_option_help_text", scope: "decidim.extra_censuses.elections.admin.questions"),
+                       disabled: !editable,
+                       data: { "admin-exclusive-option-target": "checkbox", "admin-exclusive-option-frozen": (!editable).to_s } %>
+  </div>
+  <div class="row column" data-admin-exclusive-option-target="body">
+    <%=
+      form.translated(
+        :text_field,
+        :exclusive_option_body,
+        tabs_id: "#{tabs_id}-exclusive-option",
+        label: t("exclusive_option_body_label", scope: "decidim.extra_censuses.elections.admin.questions"),
+        disabled: !editable
+      )
+    %>
+  </div>
+</div>

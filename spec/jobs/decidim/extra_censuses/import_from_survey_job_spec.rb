@@ -86,7 +86,7 @@ module Decidim
         it "wraps creation in transaction" do
           allow(Decidim::Elections::Voter).to receive(:create!).and_call_original
           allow(Decidim::Elections::Voter).to receive(:create!).with(
-            election: election,
+            election:,
             data: { "dni" => "87654321B", "birth_date" => "1985-05-20" }
           ).and_raise(ActiveRecord::RecordInvalid)
 

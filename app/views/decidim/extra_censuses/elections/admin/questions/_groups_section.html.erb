@@ -3,6 +3,19 @@
 <% options_by_group = question.response_options.group_by(&:group_id) %>
 
 <div class="questionnaire-question-groups <%= "hidden" unless question.grouped? %>" data-controller="response-option-groups">
+  <% if editable %>
+    <div class="row column">
+      <label>
+        <%= check_box_tag "questions[#{question.to_param}][force_one_answer_per_group]",
+                          "1",
+                          question.force_one_answer_per_group?,
+                          disabled: !editable %>
+        <%= t("force_one_answer_per_group_label", scope: "decidim.extra_censuses.elections.admin.questions") %>
+      </label>
+      <span class="help-text"><%= t("force_one_answer_per_group_help_text", scope: "decidim.extra_censuses.elections.admin.questions") %></span>
+    </div>
+  <% end %>
+
   <div class="questionnaire-question-groups-list" data-response-option-groups-target="list">
     <% response_option_group_forms(question).each do |group| %>
       <%= fields_for "questions[#{question.to_param}][groups][]", group do |group_form| %>

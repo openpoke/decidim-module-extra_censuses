@@ -42,7 +42,7 @@ describe "Admin manages min choices for election questions" do
 
       click_on "Save and continue"
 
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
       expect(question.reload.min_choices).to eq(2)
       expect(question.reload.max_choices).to be_nil
     end
@@ -55,7 +55,7 @@ describe "Admin manages min choices for election questions" do
 
       click_on "Save and continue"
 
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
       expect(question.reload.min_choices).to eq(2)
       expect(question.reload.max_choices).to eq(3)
     end
@@ -80,7 +80,7 @@ describe "Admin manages min choices for election questions" do
 
         click_on "Save and continue"
 
-        expect(page).to have_admin_callout("successfully")
+        expect(page).to have_admin_callout("Questions updated successfully")
         expect(question.reload.min_choices).to be_nil
       end
     end
@@ -161,7 +161,7 @@ describe "Admin manages min choices for election questions" do
       end
 
       click_on "Save and continue"
-      expect(page).to have_admin_callout("successfully")
+      expect(page).to have_admin_callout("Questions updated successfully")
 
       expect(question.reload.max_choices).to eq(3)
     end

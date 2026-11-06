@@ -28,8 +28,8 @@ module Decidim
             buffered = @votes_buffer[@question.id.to_s]
             return self.class.stringify(buffered) if buffered.is_a?(Hash) || buffered.is_a?(ActionController::Parameters)
 
-            @question.votes.where(voter_uid: @voter_uid).where.not(position: nil).each_with_object({}) do |vote, memo|
-              memo[vote.response_option_id.to_s] = vote.position.to_s
+            @question.votes.where(voter_uid: @voter_uid).where.not(position: nil).to_h do |vote|
+              [vote.response_option_id.to_s, vote.position.to_s]
             end
           end
         end

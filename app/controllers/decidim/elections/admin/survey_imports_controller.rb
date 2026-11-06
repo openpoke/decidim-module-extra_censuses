@@ -11,7 +11,7 @@ module Decidim
                       :invalid_count, :all_valid_responses_count
 
         def index
-          enforce_permission_to :update, :census, election: election
+          enforce_permission_to(:update, :census, election:)
 
           return redirect_to new_election_survey_import_path(election) unless survey_import_configured?
 
@@ -20,14 +20,14 @@ module Decidim
         end
 
         def new
-          enforce_permission_to :update, :census, election: election
-          @form = form(SurveyImportConfigForm).instance(election: election)
+          enforce_permission_to(:update, :census, election:)
+          @form = form(SurveyImportConfigForm).instance(election:)
           @form.map_model(election)
         end
 
         def create
-          enforce_permission_to :update, :census, election: election
-          @form = form(SurveyImportConfigForm).from_params(params, election: election)
+          enforce_permission_to(:update, :census, election:)
+          @form = form(SurveyImportConfigForm).from_params(params, election:)
 
           ConfigureSurveyImport.call(@form, election) do
             on(:ok) do
@@ -42,11 +42,11 @@ module Decidim
         end
 
         def import
-          enforce_permission_to :update, :census, election: election
+          enforce_permission_to(:update, :census, election:)
 
           ImportFromSurvey.call(election) do
             on(:ok) do |count|
-              flash[:notice] = I18n.t("import.success", scope: "decidim.elections.admin.survey_imports", count: count)
+              flash[:notice] = I18n.t("import.success", scope: "decidim.elections.admin.survey_imports", count:)
               redirect_to election_census_updates_path(election)
             end
             on(:invalid) do
@@ -57,7 +57,7 @@ module Decidim
         end
 
         def surveys
-          enforce_permission_to :update, :census, election: election
+          enforce_permission_to(:update, :census, election:)
 
           component_id = params[:survey_component_id]
           surveys_list = Decidim::Surveys::Survey
@@ -69,7 +69,7 @@ module Decidim
         end
 
         def questions
-          enforce_permission_to :update, :census, election: election
+          enforce_permission_to(:update, :census, election:)
 
           survey = Decidim::Surveys::Survey.includes(questionnaire: :questions).find_by(id: params[:survey_id])
           return render json: [] if survey.blank?
