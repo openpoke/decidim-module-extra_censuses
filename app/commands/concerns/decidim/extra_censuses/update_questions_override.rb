@@ -29,7 +29,19 @@ module Decidim
           ) do
             question.save!
             update_response_options(question, question_form)
+            sync_exclusive_option(question, question_form)
           end
+        end
+
+        def sync_exclusive_option(question, question_form)
+          option = question.exclusive_response_option
+          return option&.destroy! unless question_form.exclusive_option?
+
+          option ||= question.response_options.build
+          option.body = question_form.exclusive_option_body
+          option.group_id = nil
+          option.settings = option.settings.merge("exclusive" => true)
+          option.save!
         end
 
         def update_response_options(question, question_form)
@@ -43,8 +55,7 @@ module Decidim
         def save_response_option(question, option_form, grouped)
           option = question.response_options.find_by(id: option_form.id) || question.response_options.build
           option.body = option_form.body
-          option.group_id = grouped && !option_form.exclusive? ? option_form.group_id.presence : nil
-          option.settings = option.settings.merge("exclusive" => option_form.exclusive?)
+          option.group_id = grouped ? option_form.group_id.presence : nil
           option.save!
         end
 
@@ -52,7 +63,8 @@ module Decidim
           base = question.settings.merge(
             "grouped" => question_form.grouped?,
             "force_one_answer_per_group" => question_form.grouped? && question_form.force_one_answer_per_group?,
-            "voting_method" => question_form.voting_method
+            "voting_method" => question_form.voting_method,
+            "exclusive_option" => question_form.exclusive_option?
           ).merge(question_form.voting_method_settings)
           return base.merge("groups" => []) unless question_form.grouped?
 

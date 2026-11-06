@@ -30,6 +30,14 @@ module Decidim
         settings.fetch("groups", []).map { |g| Decidim::ExtraCensuses::ResponseOptionGroup.from_settings_hash(g) }.sort_by(&:position)
       end
 
+      def exclusive_option?
+        !!settings["exclusive_option"]
+      end
+
+      def exclusive_response_option
+        response_options.find(&:exclusive?)
+      end
+
       def voting_method
         settings.fetch("voting_method", "approval")
       end

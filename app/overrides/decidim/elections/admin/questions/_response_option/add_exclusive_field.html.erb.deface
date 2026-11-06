@@ -1,2 +1,0 @@
-<!-- insert_bottom "div.card-section" -->
-<%= render "decidim/extra_censuses/elections/admin/questions/exclusive_field", form: form, editable: editable %>

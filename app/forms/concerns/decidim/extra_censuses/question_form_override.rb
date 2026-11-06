@@ -12,6 +12,10 @@ module Decidim
         attribute :voting_method, String, default: "approval"
         attribute :force_one_answer_per_group, :boolean, default: false
         validates :force_one_answer_per_group, absence: true, unless: :grouped?
+        attribute :exclusive_option, :boolean, default: false
+        translatable_attribute :exclusive_option_body, String
+        validates :exclusive_option_body, translatable_presence: true, if: :exclusive_option?
+        validates :exclusive_option, absence: true, unless: :allows_min_choices?
 
         validates :min_choices,
                   numericality: {
@@ -24,7 +28,6 @@ module Decidim
 
         validates :voting_method, inclusion: { in: ->(*) { Decidim::Elections::Question.voting_methods } }
 
-        validate :exclusive_options_valid
         validate :grouped_requires_multiple_option, if: :grouped?
         validate :must_have_at_least_one_non_empty_group, if: :grouped?
         validate :non_empty_groups_have_title, if: :grouped?
@@ -34,7 +37,7 @@ module Decidim
         # Replaces upstream `response_options.size` so the min/max_choices
         # upper bound excludes options the admin has marked for deletion.
         def number_of_options
-          choosable_response_options.size
+          live_response_options.size
         end
 
         def allows_min_choices?
@@ -43,7 +46,7 @@ module Decidim
 
         def groups_to_persist
           groups.reject do |group|
-            group.deleted || choosable_response_options.none? { |opt| opt.group_id == group.id }
+            group.deleted || live_response_options.none? { |opt| opt.group_id == group.id }
           end
         end
 
@@ -51,17 +54,6 @@ module Decidim
 
         def live_response_options
           response_options.reject(&:deleted?)
-        end
-
-        def choosable_response_options
-          live_response_options.reject(&:exclusive?)
-        end
-
-        def exclusive_options_valid
-          return if live_response_options.none?(&:exclusive?)
-
-          errors.add(:response_options, :exclusive_requires_multiple_option) unless question_type == "multiple_option"
-          errors.add(:response_options, :exclusive_requires_choosable_option) if choosable_response_options.empty?
         end
 
         def grouped_requires_multiple_option
@@ -93,7 +85,7 @@ module Decidim
 
         def response_options_have_valid_group_id
           known_ids = groups_to_persist.map(&:id)
-          return if choosable_response_options.all? { |option| option.group_id.present? && known_ids.include?(option.group_id) }
+          return if live_response_options.all? { |option| option.group_id.present? && known_ids.include?(option.group_id) }
 
           errors.add(:response_options, :invalid)
         end
@@ -106,12 +98,31 @@ module Decidim
         self.grouped = model.grouped?
         self.force_one_answer_per_group = model.force_one_answer_per_group?
         self.voting_method = model.voting_method
+        map_exclusive_option(model)
       end
 
       # Settings keys owned by voting-method form concerns, merged into
       # question.settings on save; each concern extends it via `super`.
       def voting_method_settings
         {}
+      end
+
+      private
+
+      def map_exclusive_option(model)
+        exclusive_response_option = model.exclusive_response_option
+        self.exclusive_option = model.exclusive_option? && exclusive_response_option.present?
+        self.exclusive_option_body = exclusive_response_option&.body.presence || default_exclusive_option_body(model)
+        return if exclusive_response_option.blank?
+
+        self.response_options = response_options.reject { |option| option.id.to_s == exclusive_response_option.id.to_s }
+      end
+
+      def default_exclusive_option_body(model)
+        Decidim::TranslationsHelper.multi_translation(
+          "decidim.extra_censuses.elections.admin.questions.exclusive_option_default_body",
+          model.election.organization.available_locales
+        )
       end
     end
   end
