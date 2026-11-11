@@ -16,17 +16,27 @@ module Decidim
 
       def check_choices_range!
         response_ids = params.dig(:response, question.id.to_s) || []
-        if out_of_choices_range?(response_ids)
-          votes_buffer[question.id.to_s] = response_ids
-          flash.now[:alert] = choices_range_alert_message
-          return render :show
+        if exclusive_chosen?(response_ids)
+          return if chosen_option_ids(response_ids).one?
+
+          return reject_vote(response_ids, I18n.t("exclusive_option_combined", scope: "decidim.elections.votes.question"))
         end
+        return reject_vote(response_ids, choices_range_alert_message) if out_of_choices_range?(response_ids)
 
-        return unless missing_group_coverage?(response_ids)
+        reject_vote(response_ids, I18n.t("must_select_one_per_group", scope: "decidim.elections.votes.question")) if missing_group_coverage?(response_ids)
+      end
 
+      def reject_vote(response_ids, message)
         votes_buffer[question.id.to_s] = response_ids
-        flash.now[:alert] = I18n.t("must_select_one_per_group", scope: "decidim.elections.votes.question")
+        flash.now[:alert] = message
         render :show
+      end
+
+      def exclusive_chosen?(response_ids)
+        return false unless question.exclusive_option?
+
+        exclusive = question.exclusive_response_option
+        exclusive.present? && chosen_option_ids(response_ids).map(&:to_s).include?(exclusive.id.to_s)
       end
 
       def out_of_choices_range?(response_ids)

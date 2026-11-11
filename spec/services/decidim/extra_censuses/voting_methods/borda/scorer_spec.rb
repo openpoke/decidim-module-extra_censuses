@@ -84,6 +84,16 @@ module Decidim
           end
         end
 
+        context "with a vote for the exclusive option" do
+          let!(:exclusive) { create(:election_response_option, question:, settings: { "exclusive" => true }) }
+
+          before { cast("voter-1", { exclusive => 1 }) }
+
+          it "gives it no points" do
+            expect(scorer.totals_by_response_option).not_to have_key(exclusive.id)
+          end
+        end
+
         context "when totals tie" do
           let(:scoring_scale) { "start_from_max" }
 
