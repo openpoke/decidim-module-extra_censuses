@@ -127,6 +127,14 @@ module Decidim
             expect(pairs.size).to eq(1)
             expect(pairs[0].last).to contain_exactly(known_option)
           end
+
+          it "appends it as a last section in response_option_sections" do
+            expect(helper.response_option_sections(question).last).to eq([nil, [exclusive_option]])
+          end
+
+          it "keeps it in confirm_response_groups when selected" do
+            expect(helper.confirm_response_groups(question, [exclusive_option])).to eq([[nil, [exclusive_option]]])
+          end
         end
       end
 

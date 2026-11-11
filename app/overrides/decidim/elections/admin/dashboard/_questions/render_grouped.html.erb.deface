@@ -1,6 +1,6 @@
 <!-- surround "ul" -->
 <% if question.grouped? %>
-  <% grouped_response_options(question).each do |group, options| %>
+  <% response_option_sections(question).each do |group, options| %>
     <% if group %>
       <h4 class="font-semibold mt-3 mb-1"><%= translated_attribute(group.title) %></h4>
     <% end %>

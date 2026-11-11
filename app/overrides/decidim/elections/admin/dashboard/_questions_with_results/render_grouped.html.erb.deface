@@ -1,7 +1,7 @@
 <!-- replace "tbody" -->
 <% results = computes_results?(question) %>
 <% group_colspan = results ? 5 : 3 %>
-<% groups = question.grouped? ? grouped_response_options(question) : [[nil, question.response_options.to_a]] %>
+<% groups = response_option_sections(question) %>
 <tbody>
   <% groups.each do |group, options| %>
     <% if group %>

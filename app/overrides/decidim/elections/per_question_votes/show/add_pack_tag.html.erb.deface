@@ -1,4 +1,4 @@
 <!-- insert_before "div.question__response-options" -->
-<% if question.voting_method == "borda" %>
+<% if question.voting_method == "borda" || question.exclusive_option? %>
   <% append_javascript_pack_tag "decidim_extra_censuses" %>
 <% end %>

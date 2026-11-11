@@ -19,15 +19,21 @@ export default class extends Controller {
   }
 
   validate() {
+    const exclusive = this.exclusiveSelected()
     this.groupElements().forEach((groupEl) => {
       const anyChecked = Array.from(groupEl.querySelectorAll("input[type='checkbox']"))
         .some((cb) => cb.checked)
       groupEl.querySelector(".group-one-required-alert")
-        ?.style.setProperty("display", anyChecked ? "none" : "")
+        ?.style.setProperty("display", anyChecked || exclusive ? "none" : "")
     })
   }
 
+  exclusiveSelected() {
+    return Boolean(this.element.querySelector("[data-exclusive-option] input[type='checkbox']:checked"))
+  }
+
   preventSubmit(event) {
+    if (this.exclusiveSelected()) return
     const invalid = this.groupElements().some((groupEl) =>
       Array.from(groupEl.querySelectorAll("input[type='checkbox']")).every((cb) => !cb.checked)
     )

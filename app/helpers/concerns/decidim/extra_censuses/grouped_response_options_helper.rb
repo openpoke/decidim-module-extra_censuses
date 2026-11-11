@@ -40,16 +40,32 @@ module Decidim
           question.response_options.reject { |option| option.try(:exclusive?) }
         end
 
+        def voting_response_options(question)
+          question.grouped? ? grouped_response_options(question) : [[nil, regular_options(question)]]
+        end
+
+        def exclusive_option_for(question)
+          question.exclusive_response_option if question.exclusive_option?
+        end
+
+        def response_option_sections(question)
+          exclusive = exclusive_option_for(question)
+          sections = voting_response_options(question)
+          exclusive ? sections + [[nil, [exclusive]]] : sections
+        end
+
         # Non-grouped questions yield a single `group: nil` pair, so the view
         # renders both cases through one loop.
         def confirm_response_groups(question, selected_options)
           return [[nil, selected_options]] unless question.grouped?
 
           chosen_ids = selected_options.map(&:id)
-          grouped_response_options(question).filter_map do |group, options|
+          pairs = grouped_response_options(question).filter_map do |group, options|
             selected = options.select { |opt| chosen_ids.include?(opt.id) }
             [group, selected] if selected.any?
           end
+          exclusive = selected_options.find { |option| option.try(:exclusive?) }
+          exclusive ? pairs + [[nil, [exclusive]]] : pairs
         end
       end
     end

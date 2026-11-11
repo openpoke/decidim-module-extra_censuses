@@ -10,6 +10,7 @@ import ResponseOptionGroupController from "src/decidim/extra_censuses/controller
 import WinnersToggleController from "src/decidim/extra_censuses/controllers/winners_toggle/controller"
 import ResultsSorterController from "src/decidim/extra_censuses/controllers/results_sorter/controller"
 import GroupedVoteValidationController from "src/decidim/extra_censuses/controllers/grouped_vote_validation/controller"
+import VoterExclusiveOptionController from "src/decidim/extra_censuses/controllers/voter_exclusive_option/controller"
 
 let registered = false
 
@@ -30,6 +31,7 @@ document.addEventListener("turbo:load", () => {
   window.Stimulus.register("winners-toggle", WinnersToggleController)
   window.Stimulus.register("results-sorter", ResultsSorterController)
   window.Stimulus.register("grouped-vote-validation", GroupedVoteValidationController)
+  window.Stimulus.register("voter-exclusive-option", VoterExclusiveOptionController)
 
   registered = true
 })
