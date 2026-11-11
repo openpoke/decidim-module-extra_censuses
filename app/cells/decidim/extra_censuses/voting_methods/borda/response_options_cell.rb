@@ -20,7 +20,21 @@ module Decidim
             render :status
           end
 
+          def exclusive_option
+            render :exclusive_option
+          end
+
           private
+
+          def exclusive_response_option
+            return unless model.exclusive_option?
+
+            @exclusive_response_option ||= model.exclusive_response_option
+          end
+
+          def exclusive_checked?
+            positions[exclusive_response_option.id.to_s].present?
+          end
 
           def positions
             @positions ||= BufferedPositions.lookup(model, context)

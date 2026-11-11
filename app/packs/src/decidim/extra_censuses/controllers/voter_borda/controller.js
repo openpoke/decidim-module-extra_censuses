@@ -8,7 +8,7 @@ import { Controller } from "@hotwired/stimulus"
 // validation.
 export default class extends Controller {
   static get targets() {
-    return ["checkbox", "position", "counter", "limitHint"]
+    return ["checkbox", "position", "counter", "limitHint", "exclusive"]
   }
 
   static get values() {
@@ -28,23 +28,27 @@ export default class extends Controller {
     }
 
     this.ranks = {}
-    this.checkboxTargets.forEach((checkbox) => {
-      const optionId = checkbox.dataset.optionId
-      const select = this.positionFor(optionId)
-      const stored = select && select.value !== ""
-        ? parseInt(select.value, 10)
-        : null
-      if (checkbox.checked && stored) {
-        this.ranks[optionId] = stored
-      }
-    })
+    if (!this.exclusiveSelected) {
+      this.checkboxTargets.forEach((checkbox) => {
+        const optionId = checkbox.dataset.optionId
+        const select = this.positionFor(optionId)
+        const stored = select && select.value !== ""
+          ? parseInt(select.value, 10)
+          : null
+        if (checkbox.checked && stored) {
+          this.ranks[optionId] = stored
+        }
+      })
+    }
 
     this.normalize()
 
     this.boundOnCheckbox = this.onCheckbox.bind(this)
     this.boundOnSelect = this.onSelect.bind(this)
+    this.boundOnExclusive = this.onExclusive.bind(this)
     this.checkboxTargets.forEach((checkbox) => checkbox.addEventListener("change", this.boundOnCheckbox))
     this.positionTargets.forEach((select) => select.addEventListener("change", this.boundOnSelect))
+    this.exclusiveTargets.forEach((exclusive) => exclusive.addEventListener("change", this.boundOnExclusive))
 
     this.render()
   }
@@ -52,10 +56,22 @@ export default class extends Controller {
   disconnect() {
     this.checkboxTargets.forEach((checkbox) => checkbox.removeEventListener("change", this.boundOnCheckbox))
     this.positionTargets.forEach((select) => select.removeEventListener("change", this.boundOnSelect))
+    this.exclusiveTargets.forEach((exclusive) => exclusive.removeEventListener("change", this.boundOnExclusive))
   }
 
   get count() {
     return Object.keys(this.ranks).length
+  }
+
+  get exclusiveSelected() {
+    return this.hasExclusiveTarget && this.exclusiveTarget.checked
+  }
+
+  onExclusive() {
+    if (this.exclusiveSelected) {
+      this.ranks = {}
+    }
+    this.render()
   }
 
   onCheckbox(event) {
@@ -118,13 +134,14 @@ export default class extends Controller {
 
   render() {
     const count = this.count
+    const exclusiveSelected = this.exclusiveSelected
     this.checkboxTargets.forEach((checkbox) => {
       const optionId = checkbox.dataset.optionId
       const select = this.positionFor(optionId)
       const ranked = Reflect.has(this.ranks, optionId)
 
       checkbox.checked = ranked
-      checkbox.disabled = !ranked && count >= this.maxChoicesValue
+      checkbox.disabled = exclusiveSelected || (!ranked && count >= this.maxChoicesValue)
 
       if (!select) {
         return
@@ -186,6 +203,10 @@ export default class extends Controller {
   renderSubmit(count) {
     const submit = this.submitButton()
     if (!submit) {
+      return
+    }
+    if (this.exclusiveSelected) {
+      submit.disabled = false
       return
     }
     submit.disabled = count < this.minChoicesValue || count > this.maxChoicesValue

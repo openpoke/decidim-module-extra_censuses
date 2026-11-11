@@ -143,6 +143,30 @@ describe "User votes in a BORDA question" do
     end
   end
 
+  context "when the question has an exclusive option", :js do
+    let(:min_choices) { 2 }
+    let!(:question) do
+      create(:election_question,
+             election:,
+             question_type: "multiple_option",
+             min_choices:,
+             max_choices:,
+             settings: { "voting_method" => "borda", "scoring_scale" => scoring_scale, "exclusive_option" => true },
+             skip_injection: true).tap do |q|
+        create(:election_response_option, question: q, body: { "en" => "Blank vote" }, settings: { "exclusive" => true })
+      end
+    end
+
+    it "clears the ranking, disables the other options and enables submit when checked" do
+      checkbox_for(response_options[0]).check
+      check "Blank vote"
+
+      expect(checkbox_for(response_options[0])).not_to be_checked
+      expect(checkbox_for(response_options[1])).to be_disabled
+      expect(submit_button).not_to be_disabled
+    end
+  end
+
   context "without JavaScript", driver: :rack_test do
     it "renders a position select for every option and accepts a valid vote" do
       response_options.each do |option|

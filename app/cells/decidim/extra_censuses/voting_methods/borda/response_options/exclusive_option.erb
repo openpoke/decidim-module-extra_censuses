@@ -1,0 +1,8 @@
+<label class="flex items-center gap-2 w-full">
+  <%= check_box_tag "response[#{model.id}][#{exclusive_response_option.id}]",
+                    "1",
+                    exclusive_checked?,
+                    id: "borda-exclusive-#{model.id}-#{exclusive_response_option.id}",
+                    data: { "voter-borda-target": "exclusive", "option-id": exclusive_response_option.id } %>
+  <%= translated_attribute(exclusive_response_option.body) %>
+</label>
