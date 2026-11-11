@@ -26,7 +26,7 @@ module Decidim
           end
 
           def response_groups
-            return [[nil, model.response_options.to_a]] unless model.grouped?
+            return [[nil, model.regular_response_options]] unless model.grouped?
 
             grouped_response_options(model)
           end
@@ -40,11 +40,22 @@ module Decidim
           end
 
           def show_winners_toggle?
-            label_shown? && model.response_options.any?(&:labeled?)
+            label_shown? && model.regular_response_options.any?(&:labeled?)
+          end
+
+          def exclusive_response_option
+            return unless model.exclusive_option?
+
+            @exclusive_response_option ||= model.exclusive_response_option
+          end
+
+          def exclusive_percentage
+            voters = model.votes.distinct.count(:voter_uid)
+            Decidim::ExtraCensuses::ResultsHelper.percentage(exclusive_response_option.votes_count, voters)
           end
 
           def winner_options
-            model.response_options.each_with_index
+            model.regular_response_options.each_with_index
                  .select { |option, _index| option.labeled? }
                  .sort_by { |option, index| label_sort_key(option, index) }
                  .map(&:first)

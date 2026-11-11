@@ -33,6 +33,17 @@ module Decidim
             end
           end
 
+          describe "exclusive option" do
+            let!(:exclusive) { create(:election_response_option, question:, body: { "en" => "Blank vote" }, settings: { "exclusive" => true }) }
+            let(:selected) { [exclusive] }
+            let(:votes_buffer) { { question.id.to_s => { exclusive.id.to_s => "1" } } }
+
+            it "renders it without rank or points" do
+              expect(subject).to have_content("Blank vote")
+              expect(subject).to have_no_content("[1]")
+            end
+          end
+
           describe "grouped render" do
             include_context "with a grouped borda question"
 
