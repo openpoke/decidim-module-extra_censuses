@@ -38,6 +38,10 @@ module Decidim
         response_options.find(&:exclusive?)
       end
 
+      def regular_response_options
+        response_options.reject(&:exclusive?)
+      end
+
       def voting_method
         settings.fetch("voting_method", "approval")
       end

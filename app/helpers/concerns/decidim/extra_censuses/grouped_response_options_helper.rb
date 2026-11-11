@@ -18,7 +18,7 @@ module Decidim
 
         # Ungrouped options land under a nil group.
         def grouped_response_options(question)
-          options_by_group = question.response_options.group_by(&:group_id)
+          options_by_group = regular_options(question).group_by(&:group_id)
           pairs = question.groups.map { |group| [group, options_by_group[group.id] || []] }
           ungrouped = ungrouped_response_options(question)
           pairs << [nil, ungrouped] if ungrouped.any?
@@ -31,9 +31,13 @@ module Decidim
           return [] unless question.grouped?
 
           known_ids = question.groups.map(&:id)
-          question.response_options.reject do |opt|
+          regular_options(question).reject do |opt|
             opt.group_id.present? && known_ids.include?(opt.group_id)
           end
+        end
+
+        def regular_options(question)
+          question.response_options.reject { |option| option.try(:exclusive?) }
         end
 
         # Non-grouped questions yield a single `group: nil` pair, so the view

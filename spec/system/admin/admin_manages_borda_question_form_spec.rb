@@ -113,6 +113,38 @@ describe "Admin manages BORDA voting for election questions" do
         expect(page).to have_css(".questionnaire-question-borda", visible: :hidden)
       end
     end
+
+    it "keeps the exclusive option card visible when BORDA is enabled" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        check I18n.t("exclusive_option_label", scope: "decidim.extra_censuses.elections.admin.questions")
+        check I18n.t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions")
+
+        expect(page).to have_css(".questionnaire-question-exclusive-option", visible: :visible)
+        expect(page).to have_checked_field(I18n.t("exclusive_option_label", scope: "decidim.extra_censuses.elections.admin.questions"))
+      end
+    end
+  end
+
+  context "when enabling BORDA together with the exclusive option" do
+    before do
+      visit questions_edit_path
+      open_question_accordion
+    end
+
+    it "persists both settings and creates the exclusive response option" do
+      within "#accordion-questionnaire_question_#{question.id}-field" do
+        check I18n.t("borda_label", scope: "decidim.extra_censuses.elections.admin.questions")
+        check I18n.t("exclusive_option_label", scope: "decidim.extra_censuses.elections.admin.questions")
+      end
+
+      click_on "Save and continue"
+      expect(page).to have_admin_callout("Questions updated successfully")
+
+      question.reload
+      expect(question.settings["voting_method"]).to eq("borda")
+      expect(question).to be_exclusive_option
+      expect(question.exclusive_response_option).to be_present
+    end
   end
 
   context "when the election has at least one vote on the question" do

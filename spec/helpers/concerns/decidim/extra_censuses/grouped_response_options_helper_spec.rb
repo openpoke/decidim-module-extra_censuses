@@ -108,6 +108,26 @@ module Decidim
             expect(pairs.last.last).to contain_exactly(blank_option)
           end
         end
+
+        context "when the question has an exclusive option" do
+          let(:question) do
+            create(:election_question,
+                   election:,
+                   settings: {
+                     "grouped" => true,
+                     "exclusive_option" => true,
+                     "groups" => [{ "id" => "g1aaaaaa", "title" => { "en" => "First" }, "position" => 0 }]
+                   })
+          end
+          let!(:known_option) { create(:election_response_option, question:, group_id: "g1aaaaaa") }
+          let!(:exclusive_option) { create(:election_response_option, question:, group_id: nil, settings: { "exclusive" => true }) }
+
+          it "leaves the exclusive option out of every group entry" do
+            pairs = helper.grouped_response_options(question)
+            expect(pairs.size).to eq(1)
+            expect(pairs[0].last).to contain_exactly(known_option)
+          end
+        end
       end
 
       describe "#ungrouped_response_options" do
