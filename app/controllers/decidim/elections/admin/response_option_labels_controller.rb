@@ -5,7 +5,7 @@ module Decidim
     module Admin
       class ResponseOptionLabelsController < Admin::ApplicationController
         def update
-          enforce_permission_to(:update, :response_option_label, resource: response_option.question)
+          enforce_permission_to(:update, :response_option_label, resource: response_option.question, response_option:)
 
           @form = form(ResponseOptionLabelForm).from_params(params)
 

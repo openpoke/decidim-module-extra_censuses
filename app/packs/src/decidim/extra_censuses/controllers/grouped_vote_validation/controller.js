@@ -24,7 +24,7 @@ export default class extends Controller {
       const anyChecked = Array.from(groupEl.querySelectorAll("input[type='checkbox']"))
         .some((cb) => cb.checked)
       groupEl.querySelector(".group-one-required-alert")
-        ?.style.setProperty("display", anyChecked || exclusive ? "none" : "")
+        ?.style.setProperty("display", anyChecked || exclusive ? "none" : "block")
     })
   }
 
@@ -44,6 +44,6 @@ export default class extends Controller {
   }
 
   groupElements() {
-    return Array.from(this.element.querySelectorAll("[data-group-id]"))
+    return Array.from(this.element.querySelectorAll("[data-group-id]:not([data-group-id=''])"))
   }
 }

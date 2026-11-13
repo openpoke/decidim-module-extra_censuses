@@ -1,3 +1,4 @@
+<% append_javascript_pack_tag "decidim_extra_censuses" %>
 <% exclusive = exclusive_option_for(question) %>
 <div data-controller="grouped-vote-validation<%= " voter-exclusive-option" if exclusive %>" data-grouped-vote-validation-required-value="<%= question.force_one_answer_per_group? %>">
   <% voting_response_options(question).each do |group, options| %>

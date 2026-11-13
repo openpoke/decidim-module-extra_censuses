@@ -53,6 +53,12 @@ describe "User votes with force one answer per group" do
       expect(page).to have_content("must select at least one option").or have_content("required")
     end
 
+    it "shows the group alert as soon as an option is checked", :js do
+      check translated_attribute(option_a1.body)
+
+      expect(page).to have_css(".group-one-required-alert", visible: :visible, count: 2)
+    end
+
     it "shows validation error when skipping a group", :js do
       check translated_attribute(option_a1.body)
       check translated_attribute(option_c1.body)
@@ -71,6 +77,24 @@ describe "User votes with force one answer per group" do
       click_on "Cast vote" if page.has_button?("Cast vote")
 
       expect(page).to have_content("successfully cast")
+    end
+
+    context "when there is an option without group" do
+      let!(:ungrouped) { create(:election_response_option, question:, group_id: nil, body: { "en" => "Loose" }) }
+
+      it "does not require checking it", :js do
+        page.refresh
+        expect(page).to have_content("Loose")
+
+        check translated_attribute(option_a1.body)
+        check translated_attribute(option_b1.body)
+        check translated_attribute(option_c1.body)
+
+        click_on "Next"
+        click_on "Cast vote" if page.has_button?("Cast vote")
+
+        expect(page).to have_content("successfully cast")
+      end
     end
 
     it "allows selecting multiple options from the same group" do

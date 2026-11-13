@@ -15,7 +15,7 @@
           <%= translated_attribute option.body %>
           <% if results %>
             <% if option.labeled? %><%= render "decidim/extra_censuses/elections/results/labels/badge", label: option.label %><% end %>
-            <% if allowed_to?(:update, :response_option_label, resource: question) %>
+            <% if allowed_to?(:update, :response_option_label, resource: question, response_option: option) %>
               <%= icon_link_to "pencil-line", "#", t("decidim.elections.admin.response_option_labels.edit_label"), data: { "dialog-open" => "label-modal-#{option.id}" } %>
             <% end %>
           <% end %>

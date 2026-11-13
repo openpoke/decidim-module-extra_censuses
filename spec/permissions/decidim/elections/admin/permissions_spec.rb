@@ -84,6 +84,14 @@ describe Decidim::Elections::Admin::Permissions do
     end
   end
 
+  context "when the response option is exclusive" do
+    let(:election) { create(:election, :after_end, :published, :ongoing, component:) }
+    let(:exclusive) { create(:election_response_option, question:, settings: { "exclusive" => true }) }
+    let(:context) { { current_component: component, resource: question, response_option: exclusive } }
+
+    it_behaves_like "locked"
+  end
+
   context "without a resource" do
     let(:election) { create(:election, :after_end, :published, :ongoing, component:) }
     let(:context) { { current_component: component } }
