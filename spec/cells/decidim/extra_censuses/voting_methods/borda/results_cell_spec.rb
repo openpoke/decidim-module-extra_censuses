@@ -41,6 +41,19 @@ module Decidim
             end
           end
 
+          describe "exclusive option" do
+            let(:question) { create(:election_question, :borda, election:, max_choices: 3).tap { |q| q.update!(settings: q.settings.merge("exclusive_option" => true)) } }
+            let!(:exclusive) { create(:election_response_option, question:, body: { "en" => "Blank vote" }, settings: { "exclusive" => true }) }
+
+            before { create(:election_vote, question:, response_option: exclusive, voter_uid: "v3", position: 1) }
+
+            it "shows its votes and voter share without points" do
+              expect(subject).to have_content("Blank vote")
+              expect(subject).to have_content("33.3%")
+              expect(subject).to have_no_css("[data-option-result-score-text='#{question.id},#{exclusive.id}']")
+            end
+          end
+
           describe "TOTAL footer" do
             it "totals votes and points" do
               expect(subject).to have_content("5 votes, 11 points", normalize_ws: true)

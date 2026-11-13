@@ -22,11 +22,17 @@
       </div>
     <% end %>
   <% else %>
-    <% model.response_options.each do |option| %>
+    <% model.regular_response_options.each do |option| %>
       <div class="rounded-lg border border-gray p-4 <%= context[:wrapper_class] %>">
         <%= option(option) %>
       </div>
     <% end %>
+  <% end %>
+
+  <% if exclusive_response_option %>
+    <div class="rounded-lg border border-gray p-4 mt-6 <%= context[:wrapper_class] %>">
+      <%= exclusive_option %>
+    </div>
   <% end %>
 
   <%= status %>

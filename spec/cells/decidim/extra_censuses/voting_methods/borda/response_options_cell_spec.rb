@@ -59,6 +59,24 @@ module Decidim
                 expect(subject).to have_css("select[name='response[#{question.id}][#{option_a.id}]'] option[value='1'][selected]")
               end
             end
+
+            context "when the question has an exclusive option" do
+              let(:question) { create(:election_question, :borda, election:).tap { |q| q.update!(settings: q.settings.merge("exclusive_option" => true)) } }
+              let!(:exclusive) { create(:election_response_option, question:, settings: { "exclusive" => true }) }
+
+              it "renders it as a checkbox without position select" do
+                expect(subject).to have_css("#borda-exclusive-#{question.id}-#{exclusive.id}")
+                expect(subject).to have_no_css("select[name='response[#{question.id}][#{exclusive.id}]']")
+              end
+
+              context "when the votes buffer holds it" do
+                let(:votes_buffer) { { question.id.to_s => { exclusive.id.to_s => "1" } } }
+
+                it "checks it" do
+                  expect(subject).to have_css("#borda-exclusive-#{question.id}-#{exclusive.id}[checked]")
+                end
+              end
+            end
           end
 
           describe "option state" do

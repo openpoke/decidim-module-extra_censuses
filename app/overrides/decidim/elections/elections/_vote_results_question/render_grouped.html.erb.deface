@@ -1,8 +1,8 @@
 <!-- surround_contents "div[data-options-container]" -->
 <% if (results_cell = voting_method_cell(question, "results")) %>
   <%= results_cell %>
-<% elsif question.grouped? %>
-  <% grouped_response_options(question).each do |group, options| %>
+<% elsif question.grouped? || question.exclusive_option? %>
+  <% response_option_sections(question).each do |group, options| %>
     <% if group %>
       <%= render "decidim/extra_censuses/elections/results/group_heading", group: group %>
     <% end %>

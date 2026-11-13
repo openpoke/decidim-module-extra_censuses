@@ -59,6 +59,22 @@ module Decidim
         expect(payload_option(option_a.id)[:result_score]).to be_a(Integer)
         expect(payload_option(option_b.id)[:result_score]).to be_a(Integer)
       end
+
+      context "when the question has an exclusive option" do
+        let(:question) { create(:election_question, :borda, election:, max_choices: 3).tap { |q| q.update!(settings: q.settings.merge("exclusive_option" => true)) } }
+        let!(:exclusive) { create(:election_response_option, question:, settings: { "exclusive" => true }) }
+        let(:exclusive_hash) { payload_option(exclusive.id) }
+
+        before do
+          create(:election_vote, question:, response_option: exclusive, voter_uid: "v2", position: 1)
+        end
+
+        it "server-renders the voters share hooks with the exact payload value" do
+          expect(exclusive_hash[:voters_percent]).to eq(50.0)
+          expect(subject.find("[data-option-voters-percent-text]").text.strip).to eq(exclusive_hash[:voters_percent_text])
+          expect(subject.find("[data-option-voters-width]")["style"]).to include("width: #{exclusive_hash[:voters_percent]}%")
+        end
+      end
     end
   end
 end

@@ -63,7 +63,7 @@ module Decidim
 
             expect(response).to have_http_status(:ok)
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/cannot select more than 3/)
+            expect(flash.now[:alert]).to include("cannot select more than 3")
           end
 
           it "accepts a selection within max_choices and casts the vote" do
@@ -89,7 +89,7 @@ module Decidim
 
             expect(response).to have_http_status(:ok)
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/at least 2/)
+            expect(flash.now[:alert]).to include("at least 2")
           end
 
           it "accepts a selection meeting min_choices and casts the vote" do
@@ -115,7 +115,7 @@ module Decidim
             )
 
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/between 2 and 3/)
+            expect(flash.now[:alert]).to include("between 2 and 3")
           end
 
           it "rejects a selection above the range" do
@@ -126,7 +126,7 @@ module Decidim
             )
 
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/between 2 and 3/)
+            expect(flash.now[:alert]).to include("between 2 and 3")
           end
 
           it "accepts a selection within the range and casts the vote" do

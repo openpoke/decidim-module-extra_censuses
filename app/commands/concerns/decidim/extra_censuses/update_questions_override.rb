@@ -29,7 +29,19 @@ module Decidim
           ) do
             question.save!
             update_response_options(question, question_form)
+            sync_exclusive_option(question, question_form)
           end
+        end
+
+        def sync_exclusive_option(question, question_form)
+          option = question.exclusive_response_option
+          return option&.destroy! unless question_form.exclusive_option?
+
+          option ||= question.response_options.build
+          option.body = question_form.exclusive_option_body
+          option.group_id = nil
+          option.settings = option.settings.merge("exclusive" => true)
+          option.save!
         end
 
         def update_response_options(question, question_form)
@@ -50,7 +62,9 @@ module Decidim
         def serialized_settings(question, question_form)
           base = question.settings.merge(
             "grouped" => question_form.grouped?,
-            "voting_method" => question_form.voting_method
+            "force_one_answer_per_group" => question_form.grouped? && question_form.force_one_answer_per_group?,
+            "voting_method" => question_form.voting_method,
+            "exclusive_option" => question_form.exclusive_option?
           ).merge(question_form.voting_method_settings)
           return base.merge("groups" => []) unless question_form.grouped?
 

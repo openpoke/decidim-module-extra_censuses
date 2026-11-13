@@ -20,6 +20,7 @@ module Decidim
       def label_editable?
         question = context[:resource]
         return false unless question
+        return false if context[:response_option]&.exclusive?
 
         election = question.election
         return !question.published_results? if election.per_question?

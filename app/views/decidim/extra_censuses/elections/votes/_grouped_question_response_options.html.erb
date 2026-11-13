@@ -1,21 +1,36 @@
-<% grouped_response_options(question).each do |group, options| %>
-  <div class="question-group mt-6">
-    <% if group %>
-      <h2 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h2>
-    <% end %>
-    <div class="question-group-options flex flex-col gap-4">
-      <% options.each do |option| %>
-        <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
-          <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
-        </div>
+<% append_javascript_pack_tag "decidim_extra_censuses" %>
+<% exclusive = exclusive_option_for(question) %>
+<div data-controller="grouped-vote-validation<%= " voter-exclusive-option" if exclusive %>" data-grouped-vote-validation-required-value="<%= question.force_one_answer_per_group? %>">
+  <% voting_response_options(question).each do |group, options| %>
+    <div class="question-group <%= "mt-6" if question.grouped? %>" data-group-id="<%= group&.id %>">
+      <% if group %>
+        <h2 class="question-group-title h4 mb-4"><%= translated_attribute(group.title) %></h2>
+      <% end %>
+      <div class="question-group-options flex flex-col gap-4">
+        <% options.each do |option| %>
+          <div class="rounded-lg border border-gray p-4 <%= local_assigns[:wrapper_class] %>">
+            <%= render "decidim/elections/votes/responses/multiple_option", option: option %>
+          </div>
+        <% end %>
+      </div>
+      <% if question.force_one_answer_per_group? && group %>
+        <small class="form-error group-one-required-alert" style="display:none;">
+          <%= t("must_select_one_per_group", scope: "decidim.elections.votes.question") %>
+        </small>
       <% end %>
     </div>
-  </div>
-<% end %>
+  <% end %>
 
-<%# Upstream client-side contract: decidim-elections/elections.js toggles this %>
-<%# element's style.display when a voter exceeds max_choices. Required or the %>
-<%# upstream JS throws on null when voting on a grouped question with a cap.   %>
-<% if local_assigns[:wrapper_class] && question.max_choices.presence %>
-  <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
-<% end %>
+  <% if exclusive %>
+    <div class="rounded-lg border border-gray p-4 mt-6 <%= local_assigns[:wrapper_class] %>" data-exclusive-option data-voter-exclusive-option-target="exclusive">
+      <%= render "decidim/elections/votes/responses/multiple_option", option: exclusive %>
+    </div>
+  <% end %>
+
+  <%# Upstream client-side contract: decidim-elections/elections.js toggles this %>
+  <%# element's style.display when a voter exceeds max_choices. Required or the %>
+  <%# upstream JS throws on null when voting on a grouped question with a cap.   %>
+  <% if local_assigns[:wrapper_class] && question.max_choices.presence %>
+    <small class="form-error max-choices-alert" style="display:none;"><%= t("max_choices_alert", scope: "decidim.elections.votes.question") %></small>
+  <% end %>
+</div>

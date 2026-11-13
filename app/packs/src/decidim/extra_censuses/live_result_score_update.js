@@ -14,6 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const optionResultScorePercentTexts = () => document.querySelectorAll("[data-option-result-score-percent-text]");
   const optionResultScoreWidths = () => document.querySelectorAll("[data-option-result-score-width]");
   const questionTotalScoreTexts = () => document.querySelectorAll("[data-question-total-score-text]");
+  const optionVotersPercentTexts = () => document.querySelectorAll("[data-option-voters-percent-text]");
+  const optionVotersWidths = () => document.querySelectorAll("[data-option-voters-width]");
 
   const animateText = (element, value) => {
     if (element.textContent === value) {
@@ -100,6 +102,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const total = totalResultScore(questionId, data);
         if (score !== null && total > 0) {
           el.style.width = `${Math.round((score / total) * 1000) / 10}%`;
+        }
+      });
+      optionVotersPercentTexts().forEach((el) => {
+        const [questionId, optionId] = el.dataset.optionVotersPercentText.split(",");
+        const val = digOptionValue(questionId, optionId, data, "voters_percent_text");
+        if (val !== null) {
+          animateText(el, val);
+        }
+      });
+      optionVotersWidths().forEach((el) => {
+        const [questionId, optionId] = el.dataset.optionVotersWidth.split(",");
+        const val = digOptionValue(questionId, optionId, data, "voters_percent");
+        if (val !== null) {
+          el.style.width = `${val}%`;
         }
       });
       questionTotalScoreTexts().forEach((el) => {

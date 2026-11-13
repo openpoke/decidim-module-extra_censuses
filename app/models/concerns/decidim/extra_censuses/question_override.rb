@@ -22,8 +22,28 @@ module Decidim
         !!settings["grouped"]
       end
 
+      def force_one_answer_per_group?
+        !!settings["force_one_answer_per_group"]
+      end
+
       def groups
         settings.fetch("groups", []).map { |g| Decidim::ExtraCensuses::ResponseOptionGroup.from_settings_hash(g) }.sort_by(&:position)
+      end
+
+      def exclusive_option?
+        !!settings["exclusive_option"]
+      end
+
+      def exclusive_response_option
+        response_options.find(&:exclusive?)
+      end
+
+      def regular_response_options
+        response_options.reject(&:exclusive?)
+      end
+
+      def voters_count
+        @voters_count ||= votes.distinct.count(:voter_uid)
       end
 
       def voting_method

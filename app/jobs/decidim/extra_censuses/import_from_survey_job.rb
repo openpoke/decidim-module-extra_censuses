@@ -16,7 +16,7 @@ module Decidim
             next if duplicate_exists?(election, census_data)
 
             Decidim::Elections::Voter.create!(
-              election: election,
+              election:,
               data: census_data
             )
             imported_count += 1

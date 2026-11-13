@@ -106,6 +106,19 @@ module Decidim
                 expect { parser.validate!(parsed) }.to raise_error(StandardError, /not contiguous/)
               end
             end
+
+            context "with an exclusive option" do
+              let!(:exclusive) { create(:election_response_option, question:, settings: { "exclusive" => true }) }
+
+              it "accepts it alone below min_choices" do
+                expect { parser.validate!(build_parsed(exclusive.id => 1)) }.not_to raise_error
+              end
+
+              it "raises when combined with other options" do
+                parsed = build_parsed(exclusive.id => 1, opt_a.id => 2)
+                expect { parser.validate!(parsed) }.to raise_error(StandardError, /chosen alone/)
+              end
+            end
           end
         end
       end

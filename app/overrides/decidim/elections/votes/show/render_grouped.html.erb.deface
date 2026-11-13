@@ -1,7 +1,7 @@
 <!-- surround_contents "div.question__response-options" -->
 <% if (response_options_cell = voting_method_cell(question, "response_options", votes_buffer:, voter_uid:, wrapper_class: "js-check-box-collection")) %>
   <%= response_options_cell %>
-<% elsif question.grouped? %>
+<% elsif question.grouped? || question.exclusive_option? %>
   <%= render "decidim/extra_censuses/elections/votes/grouped_question_response_options",
              question: question,
              wrapper_class: "js-check-box-collection" %>

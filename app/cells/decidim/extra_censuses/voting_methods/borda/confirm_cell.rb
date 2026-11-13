@@ -17,6 +17,10 @@ module Decidim
             context[:selected] || []
           end
 
+          def exclusive_selection
+            selected_options.find(&:exclusive?)
+          end
+
           def response_groups
             confirm_response_groups(model, selected_options)
           end

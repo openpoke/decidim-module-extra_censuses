@@ -153,7 +153,7 @@ es:
               meta:
                 choices:
                   at_least: Elige al menos %{min}
-                  range: Elige %{min}–%{max}
+                  range: Elige %{min}-%{max}
                   up_to: Elige hasta %{max}
                 scoring_scale:
                   start_from_max: Conteo Borda estándar

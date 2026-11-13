@@ -5,7 +5,7 @@
     <div class="editor-content"><%= description %></div>
   <% end %>
 
-  <% grouped_response_options(question).each do |group, options| %>
+  <% response_option_sections(question).each do |group, options| %>
     <% if group %>
       <h3 class="question-group-title h5 mt-4 mb-2"><%= translated_attribute(group.title) %></h3>
     <% end %>

@@ -1,0 +1,20 @@
+<div class="card questionnaire-question-exclusive-option mx-4 my-8" data-admin-exclusive-option-target="wrapper">
+  <div class="card-divider row column">
+    <%= form.check_box :exclusive_option,
+                       label: t("exclusive_option_label", scope: "decidim.extra_censuses.elections.admin.questions"),
+                       help_text: t("exclusive_option_help_text", scope: "decidim.extra_censuses.elections.admin.questions"),
+                       disabled: !editable,
+                       data: { "admin-exclusive-option-target": "checkbox", "admin-exclusive-option-frozen": (!editable).to_s } %>
+  </div>
+  <div class="card-section row column" data-admin-exclusive-option-target="body">
+    <%=
+      form.translated(
+        :text_field,
+        :exclusive_option_body,
+        tabs_id: "#{tabs_id}-exclusive-option",
+        label: t("exclusive_option_body_label", scope: "decidim.extra_censuses.elections.admin.questions"),
+        disabled: !editable
+      )
+    %>
+  </div>
+</div>

@@ -29,6 +29,7 @@ module Decidim
 
           def votes_by_voter
             @votes_by_voter ||= question.votes.where.not(position: nil)
+                                        .where.not(response_option_id: question.exclusive_response_option&.id)
                                         .select(:voter_uid, :response_option_id, :position)
                                         .group_by(&:voter_uid)
           end

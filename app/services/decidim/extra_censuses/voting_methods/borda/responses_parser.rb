@@ -26,6 +26,8 @@ module Decidim
             max = @question.max_votable_options
 
             raise StandardError, "Borda vote has no positions for question #{@question.id}" if ranked_options_count.zero?
+            return validate_exclusive!(parsed) if parsed.responses.any?(&:exclusive?)
+
             raise StandardError, "Borda vote below min_choices for question #{@question.id}" if min.positive? && ranked_options_count < min
             raise StandardError, "Borda vote above max_choices for question #{@question.id}" if max.positive? && ranked_options_count > max
 
@@ -37,6 +39,13 @@ module Decidim
           end
 
           private
+
+          def validate_exclusive!(parsed)
+            exclusive = parsed.responses.find(&:exclusive?)
+            return if parsed.positions == { exclusive.id => 1 }
+
+            raise StandardError, "Borda exclusive option must be chosen alone for question #{@question.id}"
+          end
 
           def parse_payload(payload)
             pairs = payload.try(:to_unsafe_h) || payload

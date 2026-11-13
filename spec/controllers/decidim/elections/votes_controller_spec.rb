@@ -50,7 +50,7 @@ module Decidim
           end
 
           it "allows an empty selection (no range enforcement)" do
-            patch :update, params: params
+            patch(:update, params:)
             expect(response).to redirect_to(confirm_election_votes_path)
           end
         end
@@ -65,7 +65,7 @@ module Decidim
 
             expect(response).to have_http_status(:ok)
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/cannot select more than 3/)
+            expect(flash.now[:alert]).to include("cannot select more than 3")
           end
 
           it "accepts a selection equal to max_choices" do
@@ -95,7 +95,7 @@ module Decidim
 
             expect(response).to have_http_status(:ok)
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/at least 2/)
+            expect(flash.now[:alert]).to include("at least 2")
           end
 
           it "accepts a selection equal to min_choices" do
@@ -125,7 +125,7 @@ module Decidim
             )
 
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/between 2 and 3/)
+            expect(flash.now[:alert]).to include("between 2 and 3")
           end
 
           it "rejects a selection above the range" do
@@ -134,7 +134,7 @@ module Decidim
             )
 
             expect(response).to render_template(:show)
-            expect(flash.now[:alert]).to match(/between 2 and 3/)
+            expect(flash.now[:alert]).to include("between 2 and 3")
           end
 
           it "accepts a selection within the range" do
@@ -143,6 +143,27 @@ module Decidim
             )
 
             expect(response).to redirect_to(confirm_election_votes_path)
+          end
+        end
+
+        context "with a Borda question with an exclusive option" do
+          let!(:question) do
+            create(:election_question, :voting_enabled,
+                   election:, question_type: "multiple_option", min_choices: 2, max_choices: 3,
+                   settings: { "voting_method" => "borda", "scoring_scale" => "start_from_max", "exclusive_option" => true })
+          end
+          let!(:exclusive) { create(:election_response_option, question:, settings: { "exclusive" => true }) }
+
+          it "accepts the exclusive option alone below min_choices" do
+            patch :update, params: params.merge(response: { question.id.to_s => { exclusive.id.to_s => "1" } })
+
+            expect(response).to redirect_to(confirm_election_votes_path)
+          end
+
+          it "rejects the exclusive option combined with others" do
+            patch :update, params: params.merge(response: { question.id.to_s => { exclusive.id.to_s => "1", response_options.first.id.to_s => "2" } })
+
+            expect(flash.now[:alert]).to include("cannot be combined")
           end
         end
       end

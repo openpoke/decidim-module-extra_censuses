@@ -10,18 +10,18 @@ module Decidim
         helper_method :election, :identifier_column
 
         def index
-          enforce_permission_to :edit, :census, election: election
+          enforce_permission_to(:edit, :census, election:)
           @voters = paginate(filtered_voters)
         end
 
         def new
-          enforce_permission_to :update, :census, election: election
-          @form = form(CensusUpdateForm).instance(election: election)
+          enforce_permission_to(:update, :census, election:)
+          @form = form(CensusUpdateForm).instance(election:)
         end
 
         def create
-          enforce_permission_to :update, :census, election: election
-          @form = CensusUpdateForm.new(data: census_data_params).with_context(election: election, current_user: current_user)
+          enforce_permission_to(:update, :census, election:)
+          @form = CensusUpdateForm.new(data: census_data_params).with_context(election:, current_user:)
 
           CreateCensusEntry.call(@form, election) do
             on(:ok) do
@@ -36,7 +36,7 @@ module Decidim
         end
 
         def destroy
-          enforce_permission_to :update, :census, election: election
+          enforce_permission_to(:update, :census, election:)
           voter = election.voters.find(params[:id])
           @form = CensusUpdateForm.new.with_context(election:, voter:, current_user:)
 
@@ -69,7 +69,7 @@ module Decidim
           return {} if params[:data].blank?
 
           allowed_keys = election.census_settings&.dig("columns")&.map { |c| c["name"] } || []
-          params.require(:data).permit(*allowed_keys).to_h
+          params.expect(data: [*allowed_keys]).to_h
         end
       end
     end
