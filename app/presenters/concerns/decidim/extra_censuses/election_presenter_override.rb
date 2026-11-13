@@ -19,6 +19,7 @@ module Decidim
             next unless manifest&.computes_results?
 
             extra_censuses_annotate_results(question_hash, manifest.results_calculator_for(question))
+            extra_censuses_annotate_exclusive_option(question_hash, question)
           end
 
           data
@@ -45,6 +46,17 @@ module Decidim
             option_hash[:result_score_text] = I18n.t("decidim.extra_censuses.elections.results.points", count: score)
             option_hash[:result_score_percent_text] = number_to_percentage(Decidim::ExtraCensuses::ResultsHelper.percentage(score, total), precision: 1)
           end
+        end
+
+        def extra_censuses_annotate_exclusive_option(question_hash, question)
+          return unless question.exclusive_option?
+
+          option = question.exclusive_response_option
+          option_hash = Array(question_hash[:response_options]).find { |hash| hash[:id] == option&.id }
+          return unless option_hash&.has_key?(:votes_count)
+
+          option_hash[:voters_percent] = option.voters_percent
+          option_hash[:voters_percent_text] = number_to_percentage(option.voters_percent, precision: 1)
         end
       end
     end

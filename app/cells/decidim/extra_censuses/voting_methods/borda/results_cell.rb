@@ -49,11 +49,6 @@ module Decidim
             @exclusive_response_option ||= model.exclusive_response_option
           end
 
-          def exclusive_percentage
-            voters = model.votes.distinct.count(:voter_uid)
-            Decidim::ExtraCensuses::ResultsHelper.percentage(exclusive_response_option.votes_count, voters)
-          end
-
           def winner_options
             model.regular_response_options.each_with_index
                  .select { |option, _index| option.labeled? }

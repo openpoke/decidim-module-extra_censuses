@@ -11,7 +11,6 @@ module Decidim
         attribute :groups, [Decidim::ExtraCensuses::Elections::Admin::ResponseOptionGroupForm]
         attribute :voting_method, String, default: "approval"
         attribute :force_one_answer_per_group, :boolean, default: false
-        validates :force_one_answer_per_group, absence: true, unless: :grouped?
         attribute :exclusive_option, :boolean, default: false
         translatable_attribute :exclusive_option_body, String
         validates :exclusive_option_body, translatable_presence: true, if: :exclusive_option?

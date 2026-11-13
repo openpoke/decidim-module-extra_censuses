@@ -215,6 +215,7 @@ module Decidim
                      question_type: "multiple_option",
                      settings: {
                        "grouped" => true,
+                       "force_one_answer_per_group" => true,
                        "groups" => [{ "id" => "g1aaaaaa", "title" => { "en" => "G" }, "position" => 0 }]
                      }).tap do |q|
                 create(:election_response_option, question: q, group_id: "g1aaaaaa", body: { en: "Opt" })
@@ -230,6 +231,7 @@ module Decidim
                     "description" => grouped_question.description,
                     "question_type" => "multiple_option",
                     "grouped" => "0",
+                    "force_one_answer_per_group" => "1",
                     "response_options" => [
                       { "id" => grouped_question.response_options.first.id,
                         "body" => grouped_question.response_options.first.body,
@@ -256,6 +258,11 @@ module Decidim
             it "nullifies group_id on existing options" do
               command.call
               expect(grouped_question.response_options.first.reload.group_id).to be_nil
+            end
+
+            it "clears force_one_answer_per_group even if the hidden checkbox is still checked" do
+              expect { command.call }.to broadcast(:ok)
+              expect(grouped_question.reload.force_one_answer_per_group?).to be false
             end
           end
         end

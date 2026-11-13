@@ -23,6 +23,10 @@ module Decidim
       def exclusive?
         !!settings["exclusive"]
       end
+
+      def voters_percent
+        @voters_percent ||= Decidim::ExtraCensuses::ResultsHelper.percentage(votes_count, question.voters_count)
+      end
     end
   end
 end

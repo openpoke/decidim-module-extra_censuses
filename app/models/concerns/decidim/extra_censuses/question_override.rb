@@ -42,6 +42,10 @@ module Decidim
         response_options.reject(&:exclusive?)
       end
 
+      def voters_count
+        @voters_count ||= votes.distinct.count(:voter_uid)
+      end
+
       def voting_method
         settings.fetch("voting_method", "approval")
       end
